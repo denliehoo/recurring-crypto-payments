@@ -30,3 +30,4 @@ cd client
 
 - in 1 terminal: ganache-cli
 - in another terminal: truffle migrate --reset
+- or to test contracts: truffle test
