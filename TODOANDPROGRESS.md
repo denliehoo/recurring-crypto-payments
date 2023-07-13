@@ -1,7 +1,5 @@
 # Todo:
-
-- Set up server properly with mongodb and proper folder structures
-
+- Smart contract POC
 # Rough backlog
 
 - Create smart contract POC
@@ -37,3 +35,4 @@
 # Done
 
 - 13/07/23: Initialised server, client and contracts with some basic boiler plate
+- 13/07/23: Basic folder structure and code for user entity in server
