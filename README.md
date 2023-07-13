@@ -31,3 +31,8 @@ cd client
 - in 1 terminal: ganache-cli
 - in another terminal: truffle migrate --reset
 - or to test contracts: truffle test
+
+# .env in server:
+
+DB_URL=mongodb://127.0.0.1:27017/recurring-crypto-payments
+JWT_KEY=TEMPKEY

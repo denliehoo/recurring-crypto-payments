@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
 import User from "./user";
 
+const dbUrl = process.env.DB_URL;
+
+if (!dbUrl) {
+  throw new Error("DB_URL environment variable is not set");
+}
+
 const connectDb = () => {
-  return mongoose.connect("mongodb://127.0.0.1:27017/recurring-crypto-payments"); //refactor this eventually
+  return mongoose.connect(dbUrl); //refactor this eventually
 };
 
 const models = { User }; // import more models here in the future

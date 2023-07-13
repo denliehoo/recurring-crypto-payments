@@ -1,7 +1,6 @@
 # Todo:
 
 - Basic server infrastructure:
-  - User Entity: Logins + API key
   - Client Entity: The clients of the users; should be linked to user entity.
   - Payments route and controller (place checkout session, payment details, etc..)
 -
@@ -43,3 +42,4 @@
 - 13/07/23: Initialised server, client and contracts with some basic boiler plate
 - 13/07/23: Basic folder structure and code for user entity in server
 - 13/07/23: Smart contract POC
+- 13/07/23: Basic user entity
