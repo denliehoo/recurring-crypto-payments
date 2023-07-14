@@ -1,6 +1,5 @@
 # Todo:
 
-- Test VendorClient entity
 - Basic server infrastructure:
   - Payments route and controller (place checkout session, payment details, etc..)
 
@@ -43,3 +42,4 @@
 - 13/07/23: Smart contract POC
 - 13/07/23: Basic user entity
 - 14/07/23: Renamed user entity to vendor entity for clarity. Also created basic VendorClients entity
+- 14/07/23: VendorClient done but with no auth yet
