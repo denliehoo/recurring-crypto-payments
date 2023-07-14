@@ -1,22 +1,22 @@
 import models from "../models";
-const { User } = models;
+const { Vendor } = models;
 
-const findUserByEmail = async (email: string) => {
+const findVendorByEmail = async (email: string) => {
   try {
-    const user = await User.find({ email: email });
-    return user[0];
+    const vendor = await Vendor.find({ email: email });
+    return vendor[0];
   } catch {
     return null;
   }
 };
 
-const findUserById = async (id: string) => {
+const findVendorById = async (id: string) => {
   try {
-    const user = await User.findById(id);
-    return user;
+    const vendor = await Vendor.findById(id);
+    return vendor;
   } catch {
     return null;
   }
 };
 
-export { findUserByEmail, findUserById };
+export { findVendorByEmail, findVendorById };

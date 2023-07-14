@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import User from "./user";
+import Vendor from "./vendor";
+import VendorClient from "./vendorClient";
 
 const dbUrl = process.env.DB_URL;
 
@@ -11,7 +12,7 @@ const connectDb = () => {
   return mongoose.connect(dbUrl); //refactor this eventually
 };
 
-const models = { User }; // import more models here in the future
+const models = { Vendor, VendorClient }; // import more models here in the future
 
 export { connectDb };
 

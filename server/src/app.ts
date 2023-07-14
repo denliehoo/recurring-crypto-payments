@@ -12,7 +12,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use(express.json());
 
-app.use("/users", routes.user);
+app.use("/vendors", routes.vendor);
 
 const port = 3030;
 connectDb().then(async () => {
@@ -23,7 +23,7 @@ connectDb().then(async () => {
     // clear database
     await Promise.all([
       // models.Project.deleteMany({}),
-      models.User.deleteMany({}),
+      models.Vendor.deleteMany({}),
       // models.Task.deleteMany({}),
     ]);
     // await seedDataBase()

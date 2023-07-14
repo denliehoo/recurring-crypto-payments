@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/user";
+import Vendor, { IVendor } from "../models/vendor";
 import { v4 as uuidv4 } from "uuid";
 import {
   comparePasswords,
   hashPassword,
   validatePasswordStrength,
 } from "../utility/credentials";
-import { findUserByEmail, findUserById } from "../utility/findFromDb";
+import { findVendorByEmail, findVendorById } from "../utility/findFromDb";
 const jwt = require("jsonwebtoken");
 
-export const createUser = async (req: Request, res: Response) => {
+export const createVendor = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
     const apiKey = "sk-" + uuidv4() + uuidv4() + uuidv4();
@@ -26,39 +26,39 @@ export const createUser = async (req: Request, res: Response) => {
 
     const hashedPassword = await hashPassword(password);
 
-    // Create the user in the database
-    const user: IUser = await User.create({
+    // Create the vendor in the database
+    const vendor: IVendor = await Vendor.create({
       name,
       email,
       apiKey,
       password: hashedPassword,
     });
 
-    res.status(201).json(user);
+    res.status(201).json(vendor);
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Failed to create user" });
+    console.error("Error creating vendor:", error);
+    res.status(500).json({ error: "Failed to create vendor" });
   }
 };
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getVendors = async (req: Request, res: Response) => {
   try {
-    // Retrieve all users from the database
-    const users: IUser[] = await User.find();
+    // Retrieve all vendors from the database
+    const vendors: IVendor[] = await Vendor.find();
 
-    res.json(users);
+    res.json(vendors);
   } catch (error) {
-    console.error("Error retrieving users:", error);
-    res.status(500).json({ error: "Failed to retrieve users" });
+    console.error("Error retrieving vendors:", error);
+    res.status(500).json({ error: "Failed to retrieve vendors" });
   }
 };
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  let user = await findUserByEmail(email);
-  if (!user) return res.status(404).json({ error: "User not found" });
+  let vendor = await findVendorByEmail(email);
+  if (!vendor) return res.status(404).json({ error: "Vendor not found" });
 
-  const isCorrectPassword = await comparePasswords(password, user.password); // true or false
+  const isCorrectPassword = await comparePasswords(password, vendor.password); // true or false
   if (!isCorrectPassword)
     return res.status(400).json({ error: "Incorrect Password" });
 
@@ -66,17 +66,17 @@ export const login = async (req: Request, res: Response) => {
   return res.send({ token: token });
 };
 
-export const getUserByEmail = async (req: Request, res: Response) => {
+export const getVendorByEmail = async (req: Request, res: Response) => {
   const { email } = req.body;
-  const user = await findUserByEmail(email);
-  if (!user) return res.status(404).json({ error: "User not found" });
-  return res.send(user);
+  const vendor = await findVendorByEmail(email);
+  if (!vendor) return res.status(404).json({ error: "Vendor not found" });
+  return res.send(vendor);
 };
-export const getUserById = async (req: Request, res: Response) => {
+export const getVendorById = async (req: Request, res: Response) => {
   const { id } = req.body;
-  const user = await findUserById(id);
-  if (!user) return res.status(404).json({ error: "User not found" });
-  return res.send(user);
+  const vendor = await findVendorById(id);
+  if (!vendor) return res.status(404).json({ error: "Vendor not found" });
+  return res.send(vendor);
 };
 
 const generateJWT = (email: string) => {
