@@ -1,7 +1,7 @@
 # Todo:
 
-- Basic server infrastructure:
-  - Payments route and controller (place checkout session, payment details, etc..)
+- Do up manage subscription page on frontend
+- Continue on payments controller
 
 # Rough backlog
 
@@ -43,3 +43,4 @@
 - 13/07/23: Basic user entity
 - 14/07/23: Renamed user entity to vendor entity for clarity. Also created basic VendorClients entity
 - 14/07/23: VendorClient done but with no auth yet
+- 14/07/23: Skeleton for payments controller
