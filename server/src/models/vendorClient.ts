@@ -23,6 +23,7 @@ const vendorClientSchema: Schema = new Schema(
     email: { type: String, required: true },
     vendor: { type: Schema.Types.ObjectId, ref: "Vendor", required: true },
     nextPaymentDate: { type: Date, default: null },
+    // status: enum: cancelled inactive (never bought before) active
     payments: [
       {
         date: { type: Date, required: true },

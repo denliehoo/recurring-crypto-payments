@@ -1,5 +1,6 @@
 # recurring crypto payments
 
+RecurCrypt
 This is a application that allows vendors or users to accept recurring cryptocurrency payments from ERC20 tokens from stable coins such as USDC and USDT.
 This allows users to have a subscription based model similar to stripe
 Stack includes: MERN + Typescript + Solidity (Smart Contract) + AWS Lambda (cron job)
