@@ -1,6 +1,10 @@
 # Todo:
 
-- Do up manage subscription page on frontend
+- Do up manage subscription page on frontend:
+  - Connect wallet
+  - Check balance
+  - Check allowance
+  - Confirm subscription
 - Continue on payments controller
 
 # Rough backlog
@@ -44,3 +48,4 @@
 - 14/07/23: Renamed user entity to vendor entity for clarity. Also created basic VendorClients entity
 - 14/07/23: VendorClient done but with no auth yet
 - 14/07/23: Skeleton for payments controller
+- 17/07/23: Skeleton for frontend of external manage subscription page

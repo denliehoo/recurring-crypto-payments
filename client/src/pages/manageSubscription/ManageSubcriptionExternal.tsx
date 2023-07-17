@@ -15,7 +15,8 @@ import {
   activeSampleData,
   cancelledSampleData,
   inactiveSampleData,
-} from "../../utils/ManageSubscriptionExternalSampleData";
+} from "../../utils/manageSubscriptionExternalSampleData";
+import StartPlanModal from "./StartPlanModal";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -24,13 +25,16 @@ export default function ManageSubscriptionExternal() {
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
+
+  const [startPlanModal, setStartPlanModal] = useState(false);
   useEffect(() => {
     // simulate got this from call API
+    // const sampleData = activeSampleData;
     const sampleData = inactiveSampleData;
+    // const sampleData = cancelledSampleData;
     setDetails(sampleData);
     setIsLoading(false);
   }, []);
-  console.log(details);
 
   const textBasedOnStatus = (
     active: string,
@@ -92,11 +96,14 @@ export default function ManageSubscriptionExternal() {
                   } ${details!.nextDate?.toString()}`
                 )}
               </Box>
-              {
-                <Button variant="contained">
-                  {textBasedOnStatus("Cancel", "Start", "Renew")} Plan
+              {details!.status === "inactive" && (
+                <Button
+                  variant="contained"
+                  onClick={() => setStartPlanModal(true)}
+                >
+                  Start Plan
                 </Button>
-              }
+              )}
             </Box>
 
             <Typography component="h1" variant="h5" sx={{ mt: 3 }}>
@@ -163,6 +170,15 @@ export default function ManageSubscriptionExternal() {
             </Box>
           </Box>
         </Grid>
+        {startPlanModal && (
+          <StartPlanModal
+            startPlanModal={startPlanModal}
+            closeStartPlanModal={() => setStartPlanModal(false)}
+            tokenAddress={details!.tokenAddress}
+            token={details!.token}
+            amount={details!.amount}
+          />
+        )}
       </Grid>
     </ThemeProvider>
   );
