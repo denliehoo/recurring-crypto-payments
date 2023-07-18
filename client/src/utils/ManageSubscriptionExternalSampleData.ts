@@ -1,7 +1,7 @@
 import { VendorClientSubscriptionDetails } from "../types/VendorClientSubscriptionDetails";
 const today = new Date(); // Get today's date
 // CHANGE TO ACTUAL VENDOR CONTRACT IN THE FUTURE
-const vendorContract = "0xC2CA4DFa527902c440d71F162403A3BB93045a24";
+const vendorContract = "0xC2CA4DFa527902c440d71F162403A3BB93045a24"; 
 
 export const activeSampleData: VendorClientSubscriptionDetails = {
   vendor: "Company Test Name",

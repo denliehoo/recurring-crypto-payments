@@ -28,7 +28,6 @@ const StartPlanModal = (props: any) => {
   };
   const { startPlanModal, closeStartPlanModal, tokenAddress, token, amount } =
     props;
-
   const steps = [
     "Connect Wallet",
     "Check Balance",
@@ -39,23 +38,30 @@ const StartPlanModal = (props: any) => {
   // e.g. after connecting wallet, check if balance and allowance enough
   // if enough change text to "You have sufficient xxx" or something for that step
   // as leave it as that and proceed
-  const stepsText = [
+  const [stepsText, setStepsText] = useState([
     "To start, please connect your wallet",
-    "Please ensure you have at least XXX USDT to proceed",
-    "Please ensure you have enough allowance",
+    "You have a sufficient balance of XXX USDT and may proceed",
+    "You have sufficient allowance and may proceed",
     "Please confirm your subscription. Subsequently, we will be deducting XXX USDT monthly",
-  ];
-  const stepsButtonText = [
+  ]);
+  const [stepsButtonText, setStepsButtonText] = useState([
     "Connect Wallet",
     "Next",
     "Approve Allowance", // or NEXT
     "Confirm",
-  ];
+  ]);
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [address, setAddress] = useState("");
+  const [userToken, setUserToken] = useState({
+    balance: 0,
+    allowance: 0,
+    balanceSufficient: false,
+    allowanceSufficient: false,
+  });
   const MASTER_CONTRACT_ADDRESS = tokenAddress; // change in the future to the actual vendor contract address
   const handleNext = async () => {
     // connect wallet
@@ -76,18 +82,60 @@ const StartPlanModal = (props: any) => {
       setContract(usdt);
       const name = await usdt.methods.name().call();
       console.log(name);
-      const userBalance = await usdt.methods.balanceOf(accounts[0]).call();
-      const userAllowance = await usdt.methods.allowance(
-        accounts[0],
-        MASTER_CONTRACT_ADDRESS
-      );
-      // get the allowances and balance too...
+      // const userBalance = await usdt.methods.balanceOf(accounts[0]).call();
+      // const userAllowance = await usdt.methods.allowance(
+      //   accounts[0],
+      //   MASTER_CONTRACT_ADDRESS
+      // );
+      // simulate setting balance and allowance
+      const balanceIsSufficient = true;
+      const allowanceIsSufficient = false;
+      setUserToken({
+        balance: 1000000000000,
+        allowance: 1000000000000,
+        balanceSufficient: balanceIsSufficient,
+        allowanceSufficient: allowanceIsSufficient,
+      });
+      if (!balanceIsSufficient) {
+        setButtonDisabled(true);
+        console.log("here");
+        const temp = [...stepsText];
+        temp[1] = `Please ensure you have at least XXX USDT to proceed`;
+      }
+      if (!allowanceIsSufficient) {
+        const temp = [...stepsText];
+        temp[2] = `Please ensure you have given an allowance of at least XXX to proceed. It is advised to give at least XXX*12 allowance to proceed to ensure a smooth subscription`;
+        setStepsText(temp);
+      }
     }
     // checkbalance
     if (activeStep === 1) {
     }
     // check allowance
     if (activeStep === 2) {
+      if (userToken.allowanceSufficient) {
+        // just go to next step
+      } else {
+        // need to ask for allowance
+        // simulate ask for allowance and that user approved
+        const allowanceIsSufficient = true;
+        setTimeout(() => {
+          console.log("approving....");
+        }, 1000);
+
+        if (allowanceIsSufficient) {
+          setUserToken({ ...userToken, allowanceSufficient: true });
+          let temp = [...stepsText];
+          temp[2] = "You have sufficient allowance and may proceed";
+          setStepsText(temp);
+          temp = [...stepsButtonText];
+          temp[2] = "Next";
+          setStepsButtonText(temp);
+          return;
+        }
+        // if reach here means user rejected
+        return;
+      }
     }
     //confirm subscription
     if (activeStep === 3) {
@@ -105,7 +153,7 @@ const StartPlanModal = (props: any) => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            "& > :first-child": {
+            "& > :first-of-type": {
               marginRight: "auto",
             },
           }}
@@ -151,6 +199,7 @@ const StartPlanModal = (props: any) => {
                 text={stepsButtonText[activeStep]}
                 onClick={handleNext}
                 loading={buttonLoading}
+                disabled={buttonDisabled}
               />
             </Box>
           </React.Fragment>
