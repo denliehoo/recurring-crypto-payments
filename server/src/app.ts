@@ -54,9 +54,6 @@ const seedDataBase = async () => {
   await testVendor.save();
 
   const vendorClient = new models.VendorClient({
-    name: "Vendor Client1",
-    email: "vendorclient@test.com",
-    wallet: "0xtesting1234",
     vendor: testVendor._id.toString(),
   });
   await vendorClient.save();

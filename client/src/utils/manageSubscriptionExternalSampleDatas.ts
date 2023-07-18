@@ -6,7 +6,7 @@ const vendorContract = "0xC2CA4DFa527902c440d71F162403A3BB93045a24";
 export const activeSampleData: VendorClientSubscriptionDetails = {
   vendor: "Company Test Name",
   plan: "Company Name Premium Subscription",
-  amount: "20",
+  amount: 20,
   token: "USDT",
   status: "active", // enum: active, inactive, cancelled
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
@@ -54,7 +54,7 @@ export const activeSampleData: VendorClientSubscriptionDetails = {
 export const cancelledSampleData: VendorClientSubscriptionDetails = {
   vendor: "Company Test Name",
   plan: "Company Name Premium Subscription",
-  amount: "20",
+  amount: 20,
   token: "USDT",
   status: "cancelled", // enum: active, inactive, cancelled
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
@@ -103,7 +103,7 @@ export const cancelledSampleData: VendorClientSubscriptionDetails = {
 export const inactiveSampleData: VendorClientSubscriptionDetails = {
   vendor: "Company Test Name",
   plan: "Company Name Premium Subscription",
-  amount: "20",
+  amount: 20,
   token: "USDT",
   status: "inactive", // enum: active, inactive, cancelled
   nextDate: null, //do a timestamp instead

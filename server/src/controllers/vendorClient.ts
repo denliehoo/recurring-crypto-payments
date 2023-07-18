@@ -5,15 +5,12 @@ import { findVendorById } from "../utility/findFromDb";
 // Create a VendorClient
 export const createVendorClient = async (req: Request, res: Response) => {
   try {
-    const { name, wallet, email, vendor } = req.body;
+    const { vendor } = req.body;
     const vendorExists = await findVendorById(vendor);
     if (!vendorExists)
       return res.status(404).json({ error: "Vendor not found" });
 
     const newVendorClient: IVendorClient = new VendorClient({
-      name,
-      wallet,
-      email,
       vendor, // id of the vendor
     });
     const createdVendorClient: IVendorClient = await newVendorClient.save();
@@ -63,16 +60,19 @@ export const getAllVendorClients = async (req: Request, res: Response) => {
 export const updateVendorClient = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const { name, wallet, email, vendor } = req.body;
+
+    const { email, billingInfo, paymentMethod, nextDate, status } = req.body;
     let vendorClient = await VendorClient.findById(id);
     if (!vendorClient)
       return res.status(404).json({ error: "Vendor Client not found" });
-    if (!name || !wallet || !email)
-      return res.status(400).json({ error: "Cannot be empty" });
+    // if (!name || !wallet || !email)
+    //   return res.status(400).json({ error: "Cannot be empty" });
 
-    vendorClient.name = name;
-    vendorClient.wallet = wallet;
     vendorClient.email = email;
+    vendorClient.billingInfo = billingInfo;
+    vendorClient.paymentMethod = paymentMethod;
+    vendorClient.nextDate = nextDate;
+    vendorClient.status = status;
 
     vendorClient = await vendorClient.save();
 

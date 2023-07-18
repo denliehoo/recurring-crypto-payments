@@ -1,6 +1,5 @@
 # Todo:
 
-- update vendorclient entity to fit what is needed
 - Continue on payments controller:
   - When user calls create a session, send them to the manage subscription page
   - create apis to "add" and "schedule" the payments
@@ -54,3 +53,4 @@
 - 14/07/23: Skeleton for payments controller
 - 17/07/23: Skeleton for frontend of external manage subscription page
 - 18/07/23: Updated vendor entity to match what is needed and started on payments controller
+- 18/07/23: update vendorclient entity to fit what is needed

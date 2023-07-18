@@ -1,37 +1,51 @@
 import mongoose, { Schema, Document } from "mongoose";
-
-export interface IPayment {
-  date: Date;
-  amount: number;
-  token: string;
-  wallet: string;
-}
+import {
+  BillingInfo,
+  Invoice,
+  PaymentMethod,
+} from "../../../shared/types/VendorClientSubscriptionDetails";
 
 export interface IVendorClient extends Document {
-  name: string;
-  wallet: string;
-  email: string;
   vendor: mongoose.Types.ObjectId; // Reference to the Vendor model
-  nextPaymentDate?: Date | null;
-  payments?: IPayment[];
+  email: string | null;
+  billingInfo: BillingInfo | null;
+  paymentMethod: PaymentMethod | null;
+  nextDate: Date | null;
+  invoices: Invoice[];
+  status: "inactive" | "active" | "cancelled";
 }
 
 const vendorClientSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
-    wallet: { type: String, required: true }, // wallet address 0x....
-    email: { type: String, required: true },
     vendor: { type: Schema.Types.ObjectId, ref: "Vendor", required: true },
-    nextPaymentDate: { type: Date, default: null },
-    // status: enum: cancelled inactive (never bought before) active
-    payments: [
+    email: { type: String },
+    billingInfo: {
+      name: { type: String },
+      address: { type: String },
+    },
+    paymentMethod: {
+      token: { type: String },
+      tokenAddress: { type: String },
+      wallet: { type: String },
+      sufficientAllowance: { type: Boolean, default: false },
+      sufficientBalance: { type: Boolean, default: false },
+    },
+    nextDate: { type: Date, default: null },
+    invoices: [
       {
-        date: { type: Date, required: true },
-        amount: { type: Number, required: true },
-        token: { type: String, required: true },
-        wallet: { type: String, required: true },
+        date: { type: Date },
+        amount: { type: Number },
+        token: { type: String },
+        status: { type: String },
+        hash: { type: String },
+        invoice: { type: String },
       },
     ],
+    status: {
+      type: String,
+      enum: ["inactive", "active", "cancelled"],
+      default: "inactive",
+    },
   },
   { timestamps: true }
 );

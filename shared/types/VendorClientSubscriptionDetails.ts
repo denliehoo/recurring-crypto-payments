@@ -21,14 +21,14 @@ export interface Invoice {
 }
 
 export interface VendorClientSubscriptionDetails {
-  vendor: string;
-  plan: string;
-  amount: string;
-  token: string;
+  vendor: string; // vendor Id
+  plan: string; // plan name
+  amount: number;
+  token: string; // token name
+  vendorContract: string;
+  tokenAddress: string;
   status: "active" | "inactive" | "cancelled";
   nextDate: Date | null;
-  tokenAddress: string;
-  vendorContract: string;
   paymentMethod: PaymentMethod | null;
   billingInfo: BillingInfo | null;
   invoices: Invoice[];
