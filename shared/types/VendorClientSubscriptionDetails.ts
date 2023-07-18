@@ -1,4 +1,4 @@
-interface PaymentMethod {
+export interface PaymentMethod {
   token: string;
   tokenAddress: string;
   wallet: string;
@@ -6,12 +6,12 @@ interface PaymentMethod {
   sufficientBalance: boolean;
 }
 
-interface BillingInfo {
+export interface BillingInfo {
   name: string;
   address: string;
 }
 
-interface Invoice {
+export interface Invoice {
   date: Date;
   amount: number;
   token: string;

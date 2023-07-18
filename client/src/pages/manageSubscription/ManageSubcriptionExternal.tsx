@@ -8,20 +8,22 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider } from "@mui/material";
-import { VendorClientSubscriptionDetails } from "../../types/VendorClientSubscriptionDetails";
+import { VendorClientSubscriptionDetails } from "../../../../shared/types/VendorClientSubscriptionDetails";
 import { Receipt, TagRounded } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import {
   activeSampleData,
   cancelledSampleData,
   inactiveSampleData,
-} from "../../utils/manageSubscriptionExternalSampleData";
+} from "../../utils/manageSubscriptionExternalSampleDatas";
 import StartPlanModal from "./StartPlanModal";
+import { useParams } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function ManageSubscriptionExternal() {
+  const { token } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);

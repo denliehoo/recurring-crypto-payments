@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use("/vendors", routes.vendor);
 app.use("/vendorclients", routes.vendorClient);
+app.use("/payments", routes.payments);
 
 const port = 3030;
 
@@ -45,6 +46,9 @@ const seedDataBase = async () => {
     email: "test@test.com",
     password: testPassword,
     apiKey: testApiKeys,
+    tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+    vendorContract: "0xTESTVENDORCONTRACT",
+    amount: 15000000, // 15 USDT
   });
 
   await testVendor.save();

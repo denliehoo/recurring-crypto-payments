@@ -8,6 +8,6 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": ["src"],
+  "include": ["src", "../shared"],
   "exclude": ["node_modules", "dist"]
 }

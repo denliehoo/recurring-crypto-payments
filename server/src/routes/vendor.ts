@@ -6,10 +6,12 @@ import {
   getVendorById,
   getVendors,
   login,
+  updateVendor,
 } from "../controllers/vendor";
 router.get("/", getVendors);
 router.post("/", createVendor);
 router.post("/login", login);
+router.put("/", updateVendor);
 router.get("/getVendorByEmail", getVendorByEmail);
 router.get("/getVendorById", getVendorById);
 

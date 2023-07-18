@@ -1,11 +1,15 @@
 # Todo:
 
-- Do up manage subscription page on frontend:
+- update vendorclient entity to fit what is needed
+- Continue on payments controller:
+  - When user calls create a session, send them to the manage subscription page
+  - create apis to "add" and "schedule" the payments
+  - create apis to give the data to the page
+- Do up manage subscription page on frontend and connect smart contract to it:
   - Connect wallet
   - Check balance
   - Check allowance
   - Confirm subscription
-- Continue on payments controller
 
 # Rough backlog
 
@@ -49,3 +53,4 @@
 - 14/07/23: VendorClient done but with no auth yet
 - 14/07/23: Skeleton for payments controller
 - 17/07/23: Skeleton for frontend of external manage subscription page
+- 18/07/23: Updated vendor entity to match what is needed and started on payments controller

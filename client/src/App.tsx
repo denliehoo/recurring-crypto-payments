@@ -7,7 +7,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/manage" element={<ManageSubscriptionExternal />} />
+      <Route
+        path="/manage-subscription/:token"
+        element={<ManageSubscriptionExternal />}
+      />
     </Routes>
   );
 }

@@ -79,6 +79,29 @@ export const getVendorById = async (req: Request, res: Response) => {
   return res.send(vendor);
 };
 
+export const updateVendor = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  //
+  try {
+    const { webhookUrl, tokenAddress, amount, vendorContract, id } = req.body;
+    let vendor = await findVendorById(id);
+    if (!vendor) return res.status(404).json({ error: "Vendor not found" });
+    if (!webhookUrl || !tokenAddress || !amount || !vendorContract)
+      return res.status(400).json({ error: "Cannot be empty" });
+
+    vendor.webhookUrl = webhookUrl;
+    vendor.tokenAddress = tokenAddress;
+    vendor.amount = amount;
+    vendor.vendorContract = vendorContract;
+
+    vendor = await vendor.save();
+
+    return res.send(vendor);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to update vendor" });
+  }
+};
+
 const generateJWT = (email: string) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)
   // if want to change the time, change the 3600 (which is 60s * 60 min = 3600s = 1 hr)

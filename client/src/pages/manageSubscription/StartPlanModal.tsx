@@ -139,6 +139,16 @@ const StartPlanModal = (props: any) => {
     }
     //confirm subscription
     if (activeStep === 3) {
+      // get this from api or something
+      const isSubscribed = false;
+      if (isSubscribed) {
+        // means they want to change payment method
+        // change the payment method accordingly on server
+        // on next billing, bill this address instead
+      } else {
+        // means they want to add payment method and begin subscription
+        // call the function to deduct token
+      }
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };

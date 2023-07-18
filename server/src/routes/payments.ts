@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   cancelSubscription,
+  getSubscriptionPageDetails,
   initiateSubscription,
   manageSubscription,
   paymentReceived,
@@ -9,6 +10,7 @@ const router = Router();
 
 router.put("/manage-subscription", manageSubscription);
 router.put("/initiate-payments", initiateSubscription);
+router.get("/get-subscription-page-details", getSubscriptionPageDetails);
 router.put("/received", paymentReceived);
 router.put("/cancel", cancelSubscription);
 
