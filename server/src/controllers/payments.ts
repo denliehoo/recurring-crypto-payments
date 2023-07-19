@@ -3,16 +3,18 @@ import { IVendor } from "../models/vendor";
 import { findVendorById, findVendorClientById } from "../utility/findFromDb";
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 import models from "../models";
+const Web3 = require("web3");
+import RecurringPayments from "../contractABIs/RecurringPayments.json";
 // import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 const jwt = require("jsonwebtoken");
 
-const {Vendor, VendorClient} = models
+const { Vendor, VendorClient } = models;
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
 
   const vendor = await Vendor.find();
-  const vendorClient = await VendorClient.find()
+  const vendorClient = await VendorClient.find();
   // get these from req.body in the future
   const data = {
     vendor: vendor[0]._id.toString(),
@@ -20,8 +22,8 @@ export const manageSubscription = async (req: Request, res: Response) => {
   };
 
   const token = generateJWT(data);
-  const baseUrl = 'http://localhost:3001'
-  return res.send({url: `${baseUrl}/manage-subscription/${token}`})
+  const baseUrl = "http://localhost:3001";
+  return res.send({ url: `${baseUrl}/manage-subscription/${token}` });
 };
 
 export const getSubscriptionPageDetails = async (
@@ -42,25 +44,28 @@ export const getSubscriptionPageDetails = async (
       const vendorId = decoded.vendor;
       const clientId = decoded.vendorClient;
       const v = await findVendorById(vendorId);
-      const c = await findVendorClientById(clientId)
-      if(!v || !c) return res.status(401).json({error: "Vendor or client id not found"})
-      console.log(v)
-      console.log(c)
-      // continue from here....
+      const c = await findVendorClientById(clientId);
+      if (!v || !c)
+        return res.status(401).json({ error: "Vendor or client id not found" });
+      console.log(v);
+      console.log(c);
+      // need check whether balance and allowance is sufficient here also
+      // if there is a change, then need to update the client also
+
       const data: VendorClientSubscriptionDetails = {
         vendor: v!.name,
-        plan: v!.plan || '',
+        plan: v!.plan || "",
         amount: v!.amount || 0,
-        token: 'USDT', // get the token name via api or something and put heere
+        token: "USDT", // get the token name via api or something and put heere
         status: c!.status,
         nextDate: c?.nextDate || null,
-        tokenAddress: v?.tokenAddress || '',
-        vendorContract: v?.vendorContract || '',
+        tokenAddress: v?.tokenAddress || "",
+        vendorContract: v?.vendorContract || "",
         paymentMethod: c?.paymentMethod || null,
         billingInfo: c?.billingInfo || null,
         invoices: c?.invoices || [],
       };
-      return res.send(data)
+      return res.send(data);
     });
   } else {
     return res.status(401).json({ error: "Unauthorized" });
@@ -72,6 +77,10 @@ export const getSubscriptionPageDetails = async (
 export const initiateSubscription = async (req: Request, res: Response) => {
   // attempt to deduct from wallet
   // if deduct from wallet, set next payment date
+};
+
+export const changePaymentMethod = async (req: Request, res: Response) => {
+  // change payment method of client
 };
 
 // the cloud server is the one that calls this (?)
@@ -94,4 +103,68 @@ const generateJWT = (data: any) => {
 
   const token = jwt.sign({ ...data, exp: expirationTime }, process.env.JWT_KEY);
   return token;
+};
+
+const sendReduceUserBalanceTransactionasync = async () => {
+  try {
+    // Create a Web3 instance connected to a provider (e.g., Infura)
+    const web3 = new Web3(
+      "https://mainnet.infura.io/v3/your-infura-project-id"
+    );
+
+    // Contract address and ABI
+    const contractAddress = "0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7";
+    const contract = new web3.eth.Contract(
+      RecurringPayments.abi,
+      contractAddress
+    );
+
+    // Sender's account address and private key
+    const senderAddress = "0xYourSenderAddress";
+    const senderPrivateKey = "YourSenderPrivateKey";
+
+    // Parameters for the reduceUserBalance function
+    const vendorAddress = "0xVendorContract";
+    const userAddress = "0xUsrAddress";
+    const amount = web3.utils.toBN("15");
+
+    // Transaction data
+    const contractMethod = contract.methods.reduceUserBalance(
+      vendorAddress,
+      userAddress,
+      amount
+    );
+    const transactionData = contractMethod.encodeABI();
+
+    // Nonce and gas price
+    const nonce = await web3.eth.getTransactionCount(senderAddress);
+    const gasPrice = await web3.eth.getGasPrice();
+    const gasPriceHex = web3.utils.toHex(gasPrice);
+    const gasLimitHex = web3.utils.toHex(300000); // Adjust the gas limit as needed
+
+    // Create the transaction object
+    const transactionObject = {
+      from: senderAddress,
+      to: contractAddress,
+      nonce: web3.utils.toHex(nonce),
+      gasPrice: gasPriceHex,
+      gasLimit: gasLimitHex,
+      data: transactionData,
+    };
+
+    // Sign the transaction
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transactionObject,
+      senderPrivateKey
+    );
+
+    // Broadcast the signed transaction
+    const receipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction
+    );
+
+    console.log("Transaction receipt:", receipt);
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };

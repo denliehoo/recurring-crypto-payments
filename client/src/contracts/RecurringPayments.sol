@@ -44,8 +44,3 @@ contract RecurringPayments {
 interface IRecurringPaymentsVendor {
     function reduceUserBalance(address _user, uint256 _amount) external;
 }
-
-/*
-    1. Increase allowance for this smart contract from the ERC20 token contract for the user calling
-    2. Call the function (the server will call) to reduce user balance directly
-*/

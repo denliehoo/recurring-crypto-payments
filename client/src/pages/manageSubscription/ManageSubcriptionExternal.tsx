@@ -203,6 +203,7 @@ export default function ManageSubscriptionExternal() {
             tokenAddress={details!.tokenAddress}
             token={details!.token}
             amount={details!.amount}
+            vendorContract={details!.vendorContract}
           />
         )}
       </Grid>

@@ -4,8 +4,7 @@ import express, { Request, Response } from "express";
 import routes from "./routes";
 import models, { connectDb } from "./models";
 import { hashPassword } from "./utility/credentials";
-const cors = require('cors')
-
+const cors = require("cors");
 
 const app = express();
 
@@ -14,7 +13,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 app.use("/vendors", routes.vendor);
 app.use("/vendorclients", routes.vendorClient);
@@ -50,9 +49,9 @@ const seedDataBase = async () => {
     password: testPassword,
     apiKey: testApiKeys,
     tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
-    vendorContract: "0xTESTVENDORCONTRACT",
+    vendorContract: "0xEff966e8fA76014FFBb88B1F356e991058eDdfee",
     amount: 15000000, // 15 USDT
-    plan: "Testing Company Premium Plan"
+    plan: "Testing Company Premium Plan",
   });
 
   await testVendor.save();

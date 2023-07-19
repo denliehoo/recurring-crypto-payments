@@ -16,7 +16,7 @@ contract RecurringPaymentsVendor {
     event VendorWithdraw(uint256 amount, address contractAddress);
 
     constructor(address _token, address _owner) {
-        owner = _owner; //
+        owner = _owner; // the vendor
         token = _token; // this is the token that will be used for payments
         master = msg.sender;
     }

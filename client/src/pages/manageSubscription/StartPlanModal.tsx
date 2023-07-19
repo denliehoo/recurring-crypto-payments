@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import { connectWallet } from "../../utils/connectWallet";
 import CustomButton from "../../components/UI/CustomButton";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
+// import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
 const StartPlanModal = (props: any) => {
   const style = {
@@ -26,14 +27,21 @@ const StartPlanModal = (props: any) => {
     boxShadow: 24,
     p: 4,
   };
-  const { startPlanModal, closeStartPlanModal, tokenAddress, token, amount } =
-    props;
+  const {
+    startPlanModal,
+    closeStartPlanModal,
+    tokenAddress,
+    token,
+    amount,
+    vendorContract,
+  } = props;
   const steps = [
     "Connect Wallet",
     "Check Balance",
     "Check Allowance",
     "Confirm Subscription",
   ];
+  const minAmountText = amount / 10 ** 6;
   // as we go through the steps, check for the necessary
   // e.g. after connecting wallet, check if balance and allowance enough
   // if enough change text to "You have sufficient xxx" or something for that step
@@ -62,7 +70,6 @@ const StartPlanModal = (props: any) => {
     balanceSufficient: false,
     allowanceSufficient: false,
   });
-  const MASTER_CONTRACT_ADDRESS = tokenAddress; // change in the future to the actual vendor contract address
   const handleNext = async () => {
     // connect wallet
     if (activeStep === 0) {
@@ -70,43 +77,54 @@ const StartPlanModal = (props: any) => {
       const w3 = await connectWallet();
       console.log(w3);
       setWeb3(w3);
-      setButtonLoading(false);
       if (!w3) {
+        setButtonLoading(false);
         return;
       }
       const accounts = await w3.eth.getAccounts();
       setAddress(accounts[0]);
 
-      const usdt: any = new w3.eth.Contract(USDTABI.abi, tokenAddress);
+      const abi: any = USDTABI.abi;
+      const usdt: any = new w3.eth.Contract(abi, tokenAddress);
       console.log(usdt);
       setContract(usdt);
       const name = await usdt.methods.name().call();
       console.log(name);
-      // const userBalance = await usdt.methods.balanceOf(accounts[0]).call();
-      // const userAllowance = await usdt.methods.allowance(
-      //   accounts[0],
-      //   MASTER_CONTRACT_ADDRESS
-      // );
-      // simulate setting balance and allowance
-      const balanceIsSufficient = true;
-      const allowanceIsSufficient = false;
+      let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
+      userBalance = parseInt(userBalance);
+      let userAllowance = await usdt.methods
+        .allowance(accounts[0], vendorContract)
+        .call();
+      userAllowance = parseInt(userAllowance);
+
+      const balanceIsSufficient = userBalance > amount;
+      const allowanceIsSufficient = userAllowance > amount;
+      console.log(balanceIsSufficient, allowanceIsSufficient);
       setUserToken({
-        balance: 1000000000000,
-        allowance: 1000000000000,
+        balance: userBalance,
+        allowance: userAllowance,
         balanceSufficient: balanceIsSufficient,
         allowanceSufficient: allowanceIsSufficient,
       });
+      const tempStepsText = [...stepsText];
+
       if (!balanceIsSufficient) {
         setButtonDisabled(true);
+        tempStepsText[1] = `Please ensure you have at least ${minAmountText} USDT to proceed`;
+      } else {
         console.log("here");
-        const temp = [...stepsText];
-        temp[1] = `Please ensure you have at least XXX USDT to proceed`;
+        tempStepsText[1] = `You have a sufficient balance of ${
+          userBalance / 10 ** 6
+        } USDT and may proceed`;
+        console.log(tempStepsText);
       }
       if (!allowanceIsSufficient) {
-        const temp = [...stepsText];
-        temp[2] = `Please ensure you have given an allowance of at least XXX to proceed. It is advised to give at least XXX*12 allowance to proceed to ensure a smooth subscription`;
-        setStepsText(temp);
+        tempStepsText[2] = `Please ensure you have given an allowance of at least ${minAmountText} USDT to proceed. It is advised to give an allowance of at least ${
+          minAmountText * 12
+        } to proceed to ensure a smooth subscription`;
       }
+      setButtonLoading(false);
+      setStepsText(tempStepsText);
     }
     // checkbalance
     if (activeStep === 1) {
@@ -116,12 +134,46 @@ const StartPlanModal = (props: any) => {
       if (userToken.allowanceSufficient) {
         // just go to next step
       } else {
-        // need to ask for allowance
-        // simulate ask for allowance and that user approved
-        const allowanceIsSufficient = true;
-        setTimeout(() => {
-          console.log("approving....");
-        }, 1000);
+        setButtonLoading(true);
+        let allowanceIsSufficient;
+        try {
+          const approveToken = await contract.methods
+            .approve(vendorContract, "1000000000000000")
+            .send({ from: address })
+            .on("transactionHash", (hash: any) => {
+              console.log(hash);
+              // showPendingNotification('token approval')
+            });
+          console.log(approveToken);
+
+          let newAllowance = approveToken.events.Approval.returnValues.value;
+          const receipt = await web3.eth.getTransactionReceipt(
+            approveToken.transactionHash
+          );
+          console.log(receipt);
+
+          if (parseInt(newAllowance) > amount) {
+            console.log("gave enough allowance");
+            allowanceIsSufficient = true;
+            // update user stuff here
+            setUserToken({
+              ...userToken,
+              allowanceSufficient: true,
+              allowance: parseInt(newAllowance),
+            });
+          } else {
+            console.log("didnt give enough allowance");
+            allowanceIsSufficient = false;
+            setUserToken({
+              ...userToken,
+              allowanceSufficient: false,
+              allowance: parseInt(newAllowance),
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          allowanceIsSufficient = false;
+        }
 
         if (allowanceIsSufficient) {
           setUserToken({ ...userToken, allowanceSufficient: true });
@@ -131,9 +183,8 @@ const StartPlanModal = (props: any) => {
           temp = [...stepsButtonText];
           temp[2] = "Next";
           setStepsButtonText(temp);
-          return;
         }
-        // if reach here means user rejected
+        setButtonLoading(false);
         return;
       }
     }
