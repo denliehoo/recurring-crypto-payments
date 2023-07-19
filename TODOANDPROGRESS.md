@@ -1,7 +1,6 @@
 # Todo:
 
 - Continue on payments controller:
-  - When user calls create a session, send them to the manage subscription page
   - create apis to "add" and "schedule" the payments
   - create apis to give the data to the page
 - Do up manage subscription page on frontend and connect smart contract to it:
@@ -54,3 +53,4 @@
 - 17/07/23: Skeleton for frontend of external manage subscription page
 - 18/07/23: Updated vendor entity to match what is needed and started on payments controller
 - 18/07/23: update vendorclient entity to fit what is needed
+- 19/07/23: Set up and connected API to get details from external frontend; also created API to get the session for it. Note: in the future need change the manage subscription API to get the data from body cause currently getting it manually through code

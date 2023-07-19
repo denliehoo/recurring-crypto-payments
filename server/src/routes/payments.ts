@@ -8,7 +8,7 @@ import {
 } from "../controllers/payments";
 const router = Router();
 
-router.put("/manage-subscription", manageSubscription);
+router.post("/manage-subscription", manageSubscription);
 router.put("/initiate-payments", initiateSubscription);
 router.get("/get-subscription-page-details", getSubscriptionPageDetails);
 router.put("/received", paymentReceived);

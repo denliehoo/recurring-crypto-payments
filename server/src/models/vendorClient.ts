@@ -27,8 +27,8 @@ const vendorClientSchema: Schema = new Schema(
       token: { type: String },
       tokenAddress: { type: String },
       wallet: { type: String },
-      sufficientAllowance: { type: Boolean, default: false },
-      sufficientBalance: { type: Boolean, default: false },
+      sufficientAllowance: { type: Boolean },
+      sufficientBalance: { type: Boolean },
     },
     nextDate: { type: Date, default: null },
     invoices: [

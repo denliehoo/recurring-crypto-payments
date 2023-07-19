@@ -1,5 +1,5 @@
 import models from "../models";
-const { Vendor } = models;
+const { Vendor, VendorClient } = models;
 
 const findVendorByEmail = async (email: string) => {
   try {
@@ -19,4 +19,13 @@ const findVendorById = async (id: string) => {
   }
 };
 
-export { findVendorByEmail, findVendorById };
+const findVendorClientById = async (id: string) => {
+  try {
+    const vendorClient = await VendorClient.findById(id);
+    return vendorClient;
+  } catch {
+    return null;
+  }
+};
+
+export { findVendorByEmail, findVendorById , findVendorClientById};

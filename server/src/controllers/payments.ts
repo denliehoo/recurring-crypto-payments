@@ -1,24 +1,27 @@
 import { Request, Response } from "express";
-import Vendor, { IVendor } from "../models/vendor";
+import { IVendor } from "../models/vendor";
+import { findVendorById, findVendorClientById } from "../utility/findFromDb";
+import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
+import models from "../models";
 // import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 const jwt = require("jsonwebtoken");
 
+const {Vendor, VendorClient} = models
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
 
-  // return redirect to webpage to handle payments
-  // send the link as localhost3001/manage-subscription/xxxxxtokenherexxx
-  // then, when in that page, send that token as in the api to decrypt
-  // and get vendor and vendor client info, and then return them
-  // relevant details (in getSubscriptionPageDetails)
+  const vendor = await Vendor.find();
+  const vendorClient = await VendorClient.find()
+  // get these from req.body in the future
   const data = {
-    vendor: "64b65102922feb7846fc2324",
-    vendorClient: "64b65102922feb7846fc2326",
+    vendor: vendor[0]._id.toString(),
+    vendorClient: vendorClient[0]._id.toString(),
   };
 
   const token = generateJWT(data);
-  res.send(token);
+  const baseUrl = 'http://localhost:3001'
+  return res.send({url: `${baseUrl}/manage-subscription/${token}`})
 };
 
 export const getSubscriptionPageDetails = async (
@@ -27,7 +30,7 @@ export const getSubscriptionPageDetails = async (
 ) => {
   const token = req.headers.authorization;
   if (token) {
-    jwt.verify(token, process.env.JWT_KEY, (err: any, decoded: any) => {
+    jwt.verify(token, process.env.JWT_KEY, async (err: any, decoded: any) => {
       if (err) {
         return res.sendStatus(401);
         // return res.sendStatus(403) // Forbidden
@@ -36,22 +39,28 @@ export const getSubscriptionPageDetails = async (
       if (Math.floor(Date.now() / 1000) > decoded.exp) {
         return res.status(401).json({ error: "Token expired" });
       }
+      const vendorId = decoded.vendor;
+      const clientId = decoded.vendorClient;
+      const v = await findVendorById(vendorId);
+      const c = await findVendorClientById(clientId)
+      if(!v || !c) return res.status(401).json({error: "Vendor or client id not found"})
+      console.log(v)
+      console.log(c)
       // continue from here....
-
-      // const data: VendorClientSubscriptionDetails = {
-      //   vendor: "Company Test Name",
-      //   plan: "Company Name Premium Subscription",
-      //   amount: "20",
-      //   token: "USDT",
-      //   status: "inactive", // enum: active, inactive, cancelled
-      //   nextDate: null, //do a timestamp instead
-      //   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
-      //   vendorContract: vendorContract,
-      //   paymentMethod: null,
-      //   billingInfo: null,
-      //   invoices: [],
-      // }
-      return res.send(decoded);
+      const data: VendorClientSubscriptionDetails = {
+        vendor: v!.name,
+        plan: v!.plan || '',
+        amount: v!.amount || 0,
+        token: 'USDT', // get the token name via api or something and put heere
+        status: c!.status,
+        nextDate: c?.nextDate || null,
+        tokenAddress: v?.tokenAddress || '',
+        vendorContract: v?.vendorContract || '',
+        paymentMethod: c?.paymentMethod || null,
+        billingInfo: c?.billingInfo || null,
+        invoices: c?.invoices || [],
+      };
+      return res.send(data)
     });
   } else {
     return res.status(401).json({ error: "Unauthorized" });

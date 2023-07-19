@@ -4,6 +4,8 @@ import express, { Request, Response } from "express";
 import routes from "./routes";
 import models, { connectDb } from "./models";
 import { hashPassword } from "./utility/credentials";
+const cors = require('cors')
+
 
 const app = express();
 
@@ -12,6 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use(express.json());
+app.use(cors())
 
 app.use("/vendors", routes.vendor);
 app.use("/vendorclients", routes.vendorClient);
@@ -21,7 +24,7 @@ const port = 3030;
 
 connectDb().then(async () => {
   // change to true/false if want to reset and seed db
-  if (true) {
+  if (false) {
     console.log("Re-seeding database!");
 
     // clear database
@@ -42,13 +45,14 @@ const seedDataBase = async () => {
   const testApiKeys =
     "sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b";
   const testVendor = new models.Vendor({
-    name: "Test User",
+    name: "Test Company",
     email: "test@test.com",
     password: testPassword,
     apiKey: testApiKeys,
     tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
     vendorContract: "0xTESTVENDORCONTRACT",
     amount: 15000000, // 15 USDT
+    plan: "Testing Company Premium Plan"
   });
 
   await testVendor.save();

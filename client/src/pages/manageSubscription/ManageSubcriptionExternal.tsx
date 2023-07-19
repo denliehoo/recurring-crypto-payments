@@ -18,6 +18,7 @@ import {
 } from "../../utils/manageSubscriptionExternalSampleDatas";
 import StartPlanModal from "./StartPlanModal";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -27,15 +28,38 @@ export default function ManageSubscriptionExternal() {
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const [startPlanModal, setStartPlanModal] = useState(false);
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const headers = {
+          Authorization: token,
+        };
+        const res = await axios.get(
+          `${apiUrl}/payments/get-subscription-page-details`,
+          {
+            headers,
+          }
+        );
+        console.log(res);
+        console.log(res.data.paymentMethod);
+        setDetails(res.data);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getData();
+
     // simulate got this from call API
     // const sampleData = activeSampleData;
-    const sampleData = inactiveSampleData;
+    // const sampleData = inactiveSampleData;
     // const sampleData = cancelledSampleData;
-    setDetails(sampleData);
-    setIsLoading(false);
+
+    // setDetails(sampleData);
+    // setIsLoading(false);
   }, []);
 
   const textBasedOnStatus = (
@@ -113,7 +137,7 @@ export default function ManageSubscriptionExternal() {
             </Typography>
             <Divider />
             <Box sx={{ mt: 1 }}>
-              {details!.paymentMethod ? (
+              {details?.paymentMethod?.wallet ? (
                 <Box>
                   [Logo]{details!.paymentMethod!.token}{" "}
                   {details!.paymentMethod!.wallet}{" "}
