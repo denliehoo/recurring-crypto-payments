@@ -15,6 +15,7 @@ import React, { ChangeEvent, useState } from "react";
 import { connectWallet } from "../../utils/connectWallet";
 import CustomButton from "../../components/UI/CustomButton";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
+import axios from "axios";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
 const StartPlanModal = (props: any) => {
@@ -33,14 +34,15 @@ const StartPlanModal = (props: any) => {
     startPlanModal,
     closeStartPlanModal,
     tokenAddress,
-    token,
     amount,
     vendorContract,
+    authToken,
   } = props;
   // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
   // if its false, means that they want to change payment method
   const isStartPlan = true;
 
+  const apiUrl = process.env.REACT_APP_API_URL;
   const steps = [
     "Connect Wallet",
     "Check Balance",
@@ -224,7 +226,40 @@ const StartPlanModal = (props: any) => {
         // call api to add billing method
         console.log(nameInput, emailInput, addressInput);
 
-        return; // for now just return
+        setButtonLoading(true);
+        try {
+          const headers = {
+            Authorization: authToken,
+          };
+          const body = {
+            billingInfo: {
+              name: nameInput,
+              email: emailInput,
+              address: addressInput,
+            },
+            paymentMethod: {
+              token: "USDT",
+              tokenAddress: tokenAddress,
+              wallet: address,
+              sufficientAllowance: true,
+              sufficientBalance: true,
+            },
+            userAddress: address,
+          };
+          const res = await axios.post(
+            `${apiUrl}/payments/initiate-subscription`,
+            body,
+            {
+              headers,
+            }
+          );
+          console.log(res);
+        } catch (err) {
+          console.log(err);
+          // if api call fail, dont proceed
+          return;
+        }
+        setButtonLoading(false);
       } else {
         // means they want to change payment method
         // change the payment method accordingly on server

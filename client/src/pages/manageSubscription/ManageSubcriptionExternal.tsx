@@ -24,7 +24,7 @@ import axios from "axios";
 const defaultTheme = createTheme();
 
 export default function ManageSubscriptionExternal() {
-  const { token } = useParams();
+  const { authToken } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
@@ -32,10 +32,11 @@ export default function ManageSubscriptionExternal() {
 
   const [startPlanModal, setStartPlanModal] = useState(false);
   useEffect(() => {
+    console.log(authToken);
     const getData = async () => {
       try {
         const headers = {
-          Authorization: token,
+          Authorization: authToken,
         };
         const res = await axios.get(
           `${apiUrl}/payments/get-subscription-page-details`,
@@ -109,7 +110,7 @@ export default function ManageSubscriptionExternal() {
             <Box sx={{ mt: 1 }}>
               <Box>{details!.plan}</Box>
               <Box>
-                {details!.amount} {details!.token} per month
+                {details!.amount / 10 ** 6} {details!.token} per month
               </Box>
               <Box>
                 {textBasedOnStatus(
@@ -189,7 +190,7 @@ export default function ManageSubscriptionExternal() {
                     <IconButton onClick={() => console.log(i.hash)}>
                       <TagRounded />
                     </IconButton>
-                    {i.amount} {i.token} {i.status}
+                    {i.amount / 10 ** 6} {i.token} {i.status}
                   </Box>
                 ))
               )}
@@ -204,6 +205,7 @@ export default function ManageSubscriptionExternal() {
             token={details!.token}
             amount={details!.amount}
             vendorContract={details!.vendorContract}
+            authToken={authToken}
           />
         )}
       </Grid>

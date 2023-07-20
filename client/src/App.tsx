@@ -8,7 +8,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route
-        path="/manage-subscription/:token"
+        path="/manage-subscription/:authToken"
         element={<ManageSubscriptionExternal />}
       />
     </Routes>
