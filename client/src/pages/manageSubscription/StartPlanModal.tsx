@@ -75,7 +75,6 @@ const StartPlanModal = (props: any) => {
     if (activeStep === 0) {
       setButtonLoading(true);
       const w3 = await connectWallet();
-      console.log(w3);
       setWeb3(w3);
       if (!w3) {
         setButtonLoading(false);
@@ -86,10 +85,7 @@ const StartPlanModal = (props: any) => {
 
       const abi: any = USDTABI.abi;
       const usdt: any = new w3.eth.Contract(abi, tokenAddress);
-      console.log(usdt);
       setContract(usdt);
-      const name = await usdt.methods.name().call();
-      console.log(name);
       let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
       userBalance = parseInt(userBalance);
       let userAllowance = await usdt.methods
@@ -99,7 +95,6 @@ const StartPlanModal = (props: any) => {
 
       const balanceIsSufficient = userBalance > amount;
       const allowanceIsSufficient = userAllowance > amount;
-      console.log(balanceIsSufficient, allowanceIsSufficient);
       setUserToken({
         balance: userBalance,
         allowance: userAllowance,
@@ -112,17 +107,20 @@ const StartPlanModal = (props: any) => {
         setButtonDisabled(true);
         tempStepsText[1] = `Please ensure you have at least ${minAmountText} USDT to proceed`;
       } else {
-        console.log("here");
         tempStepsText[1] = `You have a sufficient balance of ${
           userBalance / 10 ** 6
         } USDT and may proceed`;
-        console.log(tempStepsText);
       }
       if (!allowanceIsSufficient) {
         tempStepsText[2] = `Please ensure you have given an allowance of at least ${minAmountText} USDT to proceed. It is advised to give an allowance of at least ${
           minAmountText * 12
         } to proceed to ensure a smooth subscription`;
+      } else {
+        const tempButtonText = [...stepsButtonText];
+        tempButtonText[2] = "Next";
+        setStepsButtonText(tempButtonText);
       }
+      tempStepsText[3] = `Please confirm your subscription. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
       setButtonLoading(false);
       setStepsText(tempStepsText);
     }
@@ -142,27 +140,22 @@ const StartPlanModal = (props: any) => {
             .send({ from: address })
             .on("transactionHash", (hash: any) => {
               console.log(hash);
-              // showPendingNotification('token approval')
             });
-          console.log(approveToken);
 
           let newAllowance = approveToken.events.Approval.returnValues.value;
           const receipt = await web3.eth.getTransactionReceipt(
             approveToken.transactionHash
           );
-          console.log(receipt);
 
           if (parseInt(newAllowance) > amount) {
-            console.log("gave enough allowance");
             allowanceIsSufficient = true;
-            // update user stuff here
             setUserToken({
               ...userToken,
               allowanceSufficient: true,
               allowance: parseInt(newAllowance),
             });
           } else {
-            console.log("didnt give enough allowance");
+            // insufficient allowance was given
             allowanceIsSufficient = false;
             setUserToken({
               ...userToken,
@@ -190,7 +183,7 @@ const StartPlanModal = (props: any) => {
     }
     //confirm subscription
     if (activeStep === 3) {
-      // get this from api or something
+      // get this from api or something; for now leave it as false
       const isSubscribed = false;
       if (isSubscribed) {
         // means they want to change payment method

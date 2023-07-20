@@ -5,7 +5,6 @@ import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorCli
 import models from "../models";
 const Web3 = require("web3");
 import RecurringPayments from "../contractABIs/RecurringPayments.json";
-// import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 const jwt = require("jsonwebtoken");
 
 const { Vendor, VendorClient } = models;
