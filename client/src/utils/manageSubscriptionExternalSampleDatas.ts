@@ -22,6 +22,7 @@ export const activeSampleData: VendorClientSubscriptionDetails = {
   billingInfo: {
     name: "Test Customer",
     address: "123 Jurong Street 321 \n#12-30 \nSINGAPORE 123456 SG",
+    email:"testclient@test.com"
   },
   invoices: [
     {
@@ -66,10 +67,12 @@ export const cancelledSampleData: VendorClientSubscriptionDetails = {
     wallet: "0x12...user",
     sufficientAllowance: true,
     sufficientBalance: false,
+
   },
   billingInfo: {
     name: "Test Customer",
     address: "123 Jurong Street 321 \n#12-30 \nSINGAPORE 123456 SG",
+    email:"testclient@test.com"
   },
   invoices: [
     {

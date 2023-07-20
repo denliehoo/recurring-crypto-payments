@@ -9,6 +9,7 @@ export interface PaymentMethod {
 export interface BillingInfo {
   name: string;
   address: string;
+  email: string;
 }
 
 export interface Invoice {

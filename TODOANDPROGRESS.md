@@ -54,3 +54,4 @@
   - Connect wallet [ok]
   - Check balance [ok]
   - Check allowance & approve allowance [ok]
+- 20/07/23: Added fiels on frontend to get billingInfo, updated vendorclient entity, and added working function reduce user balance from server

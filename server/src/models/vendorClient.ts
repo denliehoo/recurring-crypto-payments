@@ -7,7 +7,6 @@ import {
 
 export interface IVendorClient extends Document {
   vendor: mongoose.Types.ObjectId; // Reference to the Vendor model
-  email: string | null;
   billingInfo: BillingInfo | null;
   paymentMethod: PaymentMethod | null;
   nextDate: Date | null;
@@ -18,10 +17,10 @@ export interface IVendorClient extends Document {
 const vendorClientSchema: Schema = new Schema(
   {
     vendor: { type: Schema.Types.ObjectId, ref: "Vendor", required: true },
-    email: { type: String },
     billingInfo: {
       name: { type: String },
       address: { type: String },
+      email: {type: String}
     },
     paymentMethod: {
       token: { type: String },

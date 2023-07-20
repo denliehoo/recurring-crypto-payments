@@ -3,13 +3,15 @@
 import {
   Box,
   Button,
+  Grid,
   Modal,
   Step,
   StepLabel,
   Stepper,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { connectWallet } from "../../utils/connectWallet";
 import CustomButton from "../../components/UI/CustomButton";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
@@ -35,11 +37,15 @@ const StartPlanModal = (props: any) => {
     amount,
     vendorContract,
   } = props;
+  // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
+  // if its false, means that they want to change payment method
+  const isStartPlan = true;
+
   const steps = [
     "Connect Wallet",
     "Check Balance",
     "Check Allowance",
-    "Confirm Subscription",
+    `Confirm ${isStartPlan ? "Subscription" : "Change"}`,
   ];
   const minAmountText = amount / 10 ** 6;
   // as we go through the steps, check for the necessary
@@ -70,6 +76,26 @@ const StartPlanModal = (props: any) => {
     balanceSufficient: false,
     allowanceSufficient: false,
   });
+  const [nameInput, setNameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [addressInput, setAddressInput] = useState("");
+  const [inputError, setInputError] = useState("");
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNameInput(e.target.value);
+    setInputError("");
+  };
+
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmailInput(e.target.value);
+    setInputError("");
+  };
+
+  const handleAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAddressInput(e.target.value);
+    setInputError("");
+  };
+
   const handleNext = async () => {
     // connect wallet
     if (activeStep === 0) {
@@ -120,7 +146,11 @@ const StartPlanModal = (props: any) => {
         tempButtonText[2] = "Next";
         setStepsButtonText(tempButtonText);
       }
-      tempStepsText[3] = `Please confirm your subscription. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
+      if (isStartPlan) {
+        tempStepsText[3] = `Please confirm your subscription and billing information. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
+      } else {
+        tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
+      }
       setButtonLoading(false);
       setStepsText(tempStepsText);
     }
@@ -183,15 +213,22 @@ const StartPlanModal = (props: any) => {
     }
     //confirm subscription
     if (activeStep === 3) {
-      // get this from api or something; for now leave it as false
-      const isSubscribed = false;
-      if (isSubscribed) {
+      if (isStartPlan) {
+        // means they want to add payment method and begin subscription
+        if (!nameInput || !emailInput || !addressInput) {
+          setInputError("Please ensure fields are not empty");
+          return;
+        }
+
+        // call api to begin subscription
+        // call api to add billing method
+        console.log(nameInput, emailInput, addressInput);
+
+        return; // for now just return
+      } else {
         // means they want to change payment method
         // change the payment method accordingly on server
         // on next billing, bill this address instead
-      } else {
-        // means they want to add payment method and begin subscription
-        // call the function to deduct token
       }
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -248,6 +285,43 @@ const StartPlanModal = (props: any) => {
             <Typography sx={{ mt: 2, mb: 1 }}>
               {stepsText[activeStep]}
             </Typography>
+            {activeStep === 3 && isStartPlan && (
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    type="text"
+                    label="Name"
+                    variant="outlined"
+                    fullWidth
+                    value={nameInput}
+                    onChange={handleNameChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    type="text"
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    value={emailInput}
+                    onChange={handleEmailChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    type="text"
+                    label="Address"
+                    variant="outlined"
+                    fullWidth
+                    value={addressInput}
+                    onChange={handleAddressChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  {inputError && <span>{inputError}</span>}
+                </Grid>
+              </Grid>
+            )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <CustomButton
                 text={stepsButtonText[activeStep]}

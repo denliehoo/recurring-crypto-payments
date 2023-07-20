@@ -35,12 +35,19 @@ cd client
 
 # .env in server:
 
+```Javascript
 DB_URL=mongodb://127.0.0.1:27017/recurring-crypto-payments
 JWT_KEY=TEMPKEY
+WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_GOERLI
+OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
+OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
+```
 
 # .env in client:
 
+```Javascript
 REACT_APP_API_URL=http://localhost:3030
+```
 
 # deployed smart contracts:
 

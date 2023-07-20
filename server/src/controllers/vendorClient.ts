@@ -61,14 +61,13 @@ export const updateVendorClient = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    const { email, billingInfo, paymentMethod, nextDate, status } = req.body;
+    const {  billingInfo, paymentMethod, nextDate, status } = req.body;
     let vendorClient = await VendorClient.findById(id);
     if (!vendorClient)
       return res.status(404).json({ error: "Vendor Client not found" });
     // if (!name || !wallet || !email)
     //   return res.status(400).json({ error: "Cannot be empty" });
 
-    vendorClient.email = email;
     vendorClient.billingInfo = billingInfo;
     vendorClient.paymentMethod = paymentMethod;
     vendorClient.nextDate = nextDate;
