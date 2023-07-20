@@ -1,11 +1,11 @@
 # Todo:
 
-- Update get subscription details api to check for client balance and allowance and update the entity if needed
 - Payments controller: API to schedule the payments
 - API to update invoices etc upon receiving payments
 - "Change payment method" function on frontend for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
+- Add allowance button on frontend
 - Simulate sending webhook to the vendor upon successful XXX
 
 # Rough backlog
@@ -59,3 +59,4 @@
   - Check allowance & approve allowance [ok]
 - 20/07/23: Added fiels on frontend to get billingInfo, updated vendorclient entity, and added working function reduce user balance from server
 - 20/07/23: Worked on Initiate subscription payments API. Now, API will reduce user balance, add billing info and invoice
+- 20/07/23: Update get subscription details api to check for client balance and allowance and update the entity if needed. Updated frontend for payment methods

@@ -5,6 +5,7 @@ import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorCli
 import models from "../models";
 const Web3 = require("web3");
 import RecurringPayments from "../contractABIs/RecurringPayments.json";
+import FakeUSDT from "../contractABIs/FakeUSDT.json";
 import { CustomRequest } from "../types/requests";
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
@@ -35,13 +36,50 @@ export const getSubscriptionPageDetails = async (
   const vendorId = decoded.vendor;
   const clientId = decoded.vendorClient;
   const v = await findVendorById(vendorId);
-  const c = await findVendorClientById(clientId);
+  let c = await findVendorClientById(clientId);
   if (!v || !c)
     return res.status(401).json({ error: "Vendor or client id not found" });
-  console.log(v);
-  console.log(c);
   // need check whether balance and allowance is sufficient here also
   // if there is a change, then need to update the client also
+  let paymentMethod;
+  if (c.paymentMethod) {
+    // call api to check this
+    const userAddress = c.paymentMethod.wallet;
+    const web3 = new Web3(process.env.WEB3_PROVIDER);
+    const tokenContract = new web3.eth.Contract(FakeUSDT.abi, v.tokenAddress);
+    const balance = await tokenContract.methods.balanceOf(userAddress).call();
+    const allowance = await tokenContract.methods
+      .allowance(userAddress, v.vendorContract)
+      .call();
+
+    const sufficientAllowance = parseFloat(allowance) >= v.amount!;
+    const sufficientBalance = parseFloat(balance) >= v.amount!;
+    if (
+      c.paymentMethod.sufficientAllowance !== sufficientAllowance ||
+      c.paymentMethod.sufficientBalance !== sufficientBalance
+    ) {
+      paymentMethod = {
+        ...c.paymentMethod,
+        sufficientAllowance: sufficientAllowance,
+        sufficientBalance: sufficientBalance,
+      };
+      c.paymentMethod = paymentMethod;
+
+      await c.save();
+      try {
+      } catch (err) {
+        console.log(err);
+        return res
+          .status(400)
+          .json({ error: "an error occured in updating the client" });
+      }
+    } else {
+      paymentMethod = c.paymentMethod;
+      console.log("no save needed");
+    }
+  } else {
+    paymentMethod = null;
+  }
 
   const data: VendorClientSubscriptionDetails = {
     vendor: v!.name,
@@ -52,7 +90,7 @@ export const getSubscriptionPageDetails = async (
     nextDate: c?.nextDate || null,
     tokenAddress: v?.tokenAddress || "",
     vendorContract: v?.vendorContract || "",
-    paymentMethod: c?.paymentMethod || null,
+    paymentMethod: paymentMethod,
     billingInfo: c?.billingInfo || null,
     invoices: c?.invoices || [],
   };

@@ -7,9 +7,18 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Divider } from "@mui/material";
+import {
+  Divider,
+  Menu,
+  MenuItem,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { VendorClientSubscriptionDetails } from "../../../../shared/types/VendorClientSubscriptionDetails";
-import { Receipt, TagRounded } from "@mui/icons-material";
+import { Receipt, TagRounded, MoreVert } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import {
   activeSampleData,
@@ -21,13 +30,42 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 // TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+const defaultTheme = createTheme({
+  components: {
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          borderBottom: "none",
+          paddingTop: "2px",
+          paddingBottom: "2px",
+          paddingLeft: "10px",
+          paddingRight: "10px",
+        },
+      },
+    },
+  },
+});
 
 export default function ManageSubscriptionExternal() {
   const { authToken } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openThreeDots = Boolean(anchorEl);
+  const handleThreeDotsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseThreeDots = () => {
+    setAnchorEl(null);
+  };
+  const handleAddAllowance = () => {
+    handleCloseThreeDots();
+    console.log("Add allowance...");
+    // other stuff here...
+  };
+
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const [startPlanModal, setStartPlanModal] = useState(false);
@@ -139,19 +177,76 @@ export default function ManageSubscriptionExternal() {
             <Divider />
             <Box sx={{ mt: 1 }}>
               {details?.paymentMethod?.wallet ? (
-                <Box>
-                  [Logo]{details!.paymentMethod!.token}{" "}
-                  {details!.paymentMethod!.wallet}{" "}
-                  {details!.paymentMethod!.sufficientAllowance ? "y" : "n"}{" "}
-                  {details!.paymentMethod!.sufficientBalance ? "y" : "n"} ...{" "}
-                  <Button variant="contained">Add allowance</Button>
-                </Box>
+                // <Box>
+                //   [Logo]{details!.paymentMethod!.token}{" "}
+                //   {details!.paymentMethod!.wallet}{" "}
+                //   {details!.paymentMethod!.sufficientAllowance ? "y" : "n"}{" "}
+                //   {details!.paymentMethod!.sufficientBalance ? "y" : "n"} ...{" "}
+                //   <Button variant="contained">Add allowance</Button>
+                // </Box>
+                <TableContainer>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell>Allowance</TableCell>
+                      <TableCell>Balance</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>
+                        [Logo]{details!.paymentMethod!.token}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {details!.paymentMethod!.wallet.slice(0, 4)}...
+                        {details!.paymentMethod!.wallet.slice(-4)}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {details!.paymentMethod!.sufficientAllowance
+                          ? "y"
+                          : "n"}
+                      </TableCell>
+                      <TableCell>
+                        {details!.paymentMethod!.sufficientBalance ? "y" : "n"}
+                      </TableCell>
+                      {/* do a popup upon clicking the... with the add allowance optoin */}
+                      <TableCell>
+                        <IconButton
+                          id="basic-button"
+                          aria-controls={
+                            openThreeDots ? "basic-menu" : undefined
+                          }
+                          aria-haspopup="true"
+                          aria-expanded={openThreeDots ? "true" : undefined}
+                          onClick={handleThreeDotsClick}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={openThreeDots}
+                          onClose={handleCloseThreeDots}
+                          MenuListProps={{
+                            "aria-labelledby": "basic-button",
+                          }}
+                        >
+                          <MenuItem onClick={handleAddAllowance}>
+                            Add Allowance
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </TableContainer>
               ) : (
                 <Box>You have no payment methods</Box>
               )}
               {details!.status !== "inactive" && (
                 <Box>
-                  {/* open modal to metamask */}
+                  {/* openThreeDots modal to metamask */}
                   <Button variant="contained"> Change Payment Method</Button>
                 </Box>
               )}
