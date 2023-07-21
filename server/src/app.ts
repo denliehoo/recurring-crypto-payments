@@ -31,6 +31,8 @@ connectDb().then(async () => {
       // models.Project.deleteMany({}),
       models.Vendor.deleteMany({}),
       models.VendorClient.deleteMany({}),
+      models.CompletedPayment.deleteMany({}),
+      models.ScheduledPayment.deleteMany({}),
       // models.Task.deleteMany({}),
     ]);
     await seedDataBase();

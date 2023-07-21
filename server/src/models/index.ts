@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Vendor from "./vendor";
 import VendorClient from "./vendorClient";
+import ScheduledPayment from "./scheduledPayment";
+import CompletedPayment from "./completedPayment";
 
 const dbUrl = process.env.DB_URL;
 
@@ -12,7 +14,7 @@ const connectDb = () => {
   return mongoose.connect(dbUrl); //refactor this eventually
 };
 
-const models = { Vendor, VendorClient }; // import more models here in the future
+const models = { Vendor, VendorClient, ScheduledPayment, CompletedPayment }; // import more models here in the future
 
 export { connectDb };
 

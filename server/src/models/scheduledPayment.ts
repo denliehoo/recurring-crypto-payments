@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IScheduledPayment extends Document {
   vendorContract: string;
@@ -23,4 +23,7 @@ export const scheduledPaymentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IScheduledPayment>('ScheduledPayment', scheduledPaymentSchema);
+export default mongoose.model<IScheduledPayment>(
+  "ScheduledPayment",
+  scheduledPaymentSchema
+);

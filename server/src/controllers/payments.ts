@@ -12,7 +12,7 @@ import { ICompletedPayment } from "../models/completedPayment";
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
-const { Vendor, VendorClient } = models;
+const { Vendor, VendorClient, ScheduledPayment, CompletedPayment } = models;
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
@@ -39,12 +39,16 @@ export const getSubscriptionPageDetails = async (
   const clientId = decoded.vendorClient;
   const v = await findVendorById(vendorId);
   let c = await findVendorClientById(clientId);
+  console.log(v);
+  console.log(c);
   if (!v || !c)
     return res.status(401).json({ error: "Vendor or client id not found" });
   // need check whether balance and allowance is sufficient here also
   // if there is a change, then need to update the client also
+
   let paymentMethod;
-  if (c.paymentMethod) {
+  if (c?.paymentMethod?.wallet) {
+    console.log(process.env.WEB3_PROVIDER);
     // call api to check this
     const userAddress = c.paymentMethod.wallet;
     const web3 = new Web3(process.env.WEB3_PROVIDER);
@@ -124,11 +128,8 @@ export const initiateSubscription = async (
   console.log(vendorClient);
   console.log(vendor);
 
-  // const vendorContract = "0xEff966e8fA76014FFBb88B1F356e991058eDdfee";
-  // const userAddress = "0x1B54FF756E2a04707826b95041C0e9123C6B4F23";
-  // const amount = "15000000"; // 15 USDT
   const vendorContract = vendor?.vendorContract!;
-  const amount = vendor.amount!.toString(); // 15 USDT
+  const amount = vendor.amount!.toString();
 
   // 1. reduces user balance
   const transactionHash = await sendReduceUserBalanceTransactionasync(
@@ -141,14 +142,16 @@ export const initiateSubscription = async (
     return res.status(400).json({ error: "Deduction failed" });
 
   // 2. update vendorClient
+  const nextDate = moment().add(1, "months").toDate();
+  const currentDate = new Date();
   try {
     vendorClient.billingInfo = billingInfo;
     vendorClient.paymentMethod = paymentMethod;
-    vendorClient.nextDate = moment().add(1, "months").toDate();
+    vendorClient.nextDate = nextDate;
     vendorClient.status = "active";
     vendorClient.invoices = [
       {
-        date: new Date(),
+        date: currentDate,
         amount: vendor.amount!, // replace this
         token: "USDT",
         status: "paid",
@@ -161,9 +164,40 @@ export const initiateSubscription = async (
   } catch (error) {
     return res.status(500).json({ error: "Failed to update VendorClient" });
   }
-  // 3. schedule next payment
 
-  // 4. send a webhook to vendor that subscription should begin and payment received
+  const paymentDetails = {
+    vendorContract: vendorContract,
+    userAddress: userAddress,
+    amount: parseInt(amount),
+    tokenAddress: vendor!.tokenAddress!,
+    paymentDate: currentDate,
+    vendorId: vendorId,
+    vendorClientId: vendorClientId,
+  };
+
+  // 3. Add above to CompletedPayments
+  const newCompletedPayment: ICompletedPayment = new CompletedPayment({
+    ...paymentDetails,
+    status: "paid",
+    hash: transactionHash,
+  });
+  const isCompletedPaymentAdded = await addCompletedPayment(
+    newCompletedPayment
+  );
+  if (!isCompletedPaymentAdded)
+    return res.status(500).json({ error: "Failed to update VendorClient" });
+  // 4. schedule next payment
+  const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
+    ...paymentDetails,
+    paymentDate: nextDate,
+  });
+  const isScheduledPaymentAdded = await addScheduledPayment(
+    newScheduledPayment
+  );
+  if (!isScheduledPaymentAdded)
+    return res.status(500).json({ error: "Failed to update VendorClient" });
+
+  // 5. send a webhook to vendor that subscription should begin and payment received
 
   // return at end
   return res.send(vendorClient);
@@ -178,7 +212,7 @@ export const changePaymentMethod = async (req: Request, res: Response) => {
 
 // the cron job runs this every X minutes
 export const cronReduceBalances = async (req: Request, res: Response) => {
-/* 
+  /* 
 - Filter to see scheduledPayments who which are due within X minutes
 - Loop through all those payments and for each of it:
   - Check balance and allowance. If sufficient,
@@ -193,7 +227,6 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
     - Send a webhook to vendor that payment failed
     - Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
 */
-  
 };
 
 export const cancelSubscription = async (req: Request, res: Response) => {
@@ -201,6 +234,27 @@ export const cancelSubscription = async (req: Request, res: Response) => {
   // look for the given vendor id and client id in scheduledPayments
   // delete that data
   // send a webhook to let vendor know
+};
+
+// for testing:
+export const getScheduledPayments = async (req: Request, res: Response) => {
+  try {
+    const scheduledPayments = await ScheduledPayment.find({});
+    res.json(scheduledPayments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const getCompletedPayments = async (req: Request, res: Response) => {
+  try {
+    const completedPayments = await CompletedPayment.find({});
+    res.json(completedPayments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 // helpers
@@ -214,27 +268,89 @@ const generateJWT = (data: any) => {
   return token;
 };
 
-const findScheduledPayments = async (vendorId: string, vendorClientId: string) =>{
-  // find in scheduled payments...
-}
+const findScheduledPayment = async (
+  vendorId: string,
+  vendorClientId: string
+): Promise<IScheduledPayment | null> => {
+  try {
+    // Find the scheduled payment with matching vendorId and vendorClientId
+    const scheduledPayment = await ScheduledPayment.findOne({
+      vendorId,
+      vendorClientId,
+    });
 
-const addScheduledPayment = async (scheduledPaymentDetails: IScheduledPayment) =>{
-  // add it...
-}
+    // Return the scheduled payment or null if not found
+    return scheduledPayment;
+  } catch (error) {
+    console.error("Error finding scheduled payment:", error);
 
-const deleteScheduledPayment = async(scheduledPaymentId: string) =>{
-  // delete it....
-}
+    // Return null if there was an error
+    return null;
+  }
+};
+
+const addScheduledPayment = async (
+  scheduledPayment: IScheduledPayment
+): Promise<boolean> => {
+  try {
+    // const newScheduledPayment = new ScheduledPayment(scheduledPaymentDetails);
+
+    await scheduledPayment.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error adding scheduled payment:", error);
+
+    return false;
+  }
+};
+
+const deleteScheduledPayment = async (
+  scheduledPayment: IScheduledPayment
+): Promise<boolean> => {
+  try {
+    await scheduledPayment.deleteOne();
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting scheduled payment:", error);
+
+    return false;
+  }
+};
 
 // generally only used for changing payment method, hence just change userAddress
-const updateScheduledPayment = async(scheduledPaymentId: string, userAddress: string) =>{
-  // update it...
-}
+const updateScheduledPayment = async (
+  scheduledPayment: IScheduledPayment,
+  userAddress: string
+): Promise<boolean> => {
+  try {
+    // Update the userAddress field
+    scheduledPayment.userAddress = userAddress;
 
-const addCompletedPayment = async(completedPaymentDetails: ICompletedPayment ) =>{
-  // add the Finished payments; details should be everything in scheduledPayment along with hash and status
-}
+    await scheduledPayment.save();
 
+    return true;
+  } catch (error) {
+    console.error("Error updating scheduled payment:", error);
+
+    return false;
+  }
+};
+
+const addCompletedPayment = async (
+  completedPayment: ICompletedPayment
+): Promise<boolean> => {
+  try {
+    await completedPayment.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error adding completed payment:", error);
+
+    return false;
+  }
+};
 const sendReduceUserBalanceTransactionasync = async (
   vendorAddress: string,
   userAddress: string,
@@ -307,3 +423,13 @@ const sendReduceUserBalanceTransactionasync = async (
     return null; // Return false if an error occurred
   }
 };
+
+/* 
+Got this error halfway when doing initiate subscriptions. How to handle this
+Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined!
+    at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21)
+    at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49
+    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+  receipt: undefined
+}
+*/
