@@ -1,5 +1,22 @@
 # Todo:
 
+- Create a api that will do these:
+
+  - Filter to see scheduledPayments who which are due within X minutes
+  - Loop through all those payments and for each of it:
+    - Check balance and allowance. If sufficient,
+    - Execute the reduce balance function, and if successful:
+      - "move" the data to completedPayments with status "paid"
+      - delete the data for that in scheduledPayment
+      - Send a webhook to vendor that it is paid
+      - Add a new scheduledPayment for next month
+    - Else, if unsuccessful or insufficient allowance/balance:
+      - "move" the data to completedPayment with status "failed"
+      - delete the data for that in scheduledPayments
+      - Send a webhook to vendor that payment failed
+      - Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
+
+- Use some AWS Lambda to set up a CRON job to call that api every X minute (e.g. 1 minute)
 - Payments controller: API to schedule the payments
 - API to update invoices etc upon receiving payments
 - "Change payment method" function on frontend for when user wants to change payment method
@@ -7,6 +24,10 @@
   - Should update the schedule payment to deduct the new address
 - Add allowance button on frontend
 - Simulate sending webhook to the vendor upon successful XXX
+
+# Future Task
+
+- For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
 
 # Rough backlog
 
@@ -60,3 +81,4 @@
 - 20/07/23: Added fiels on frontend to get billingInfo, updated vendorclient entity, and added working function reduce user balance from server
 - 20/07/23: Worked on Initiate subscription payments API. Now, API will reduce user balance, add billing info and invoice
 - 20/07/23: Update get subscription details api to check for client balance and allowance and update the entity if needed. Updated frontend for payment methods
+- 20/07/23: Create a new DB entity called ScheduledPayments which has info of the the payment such as: vendorContract, amount, token, date(to pay), etc..;Create a new DB entity called CompletedPayments which has same info as above + status of paid or failed and hash. Also wrote skeleton of apis in payment controller

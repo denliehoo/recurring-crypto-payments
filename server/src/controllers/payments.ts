@@ -7,6 +7,8 @@ const Web3 = require("web3");
 import RecurringPayments from "../contractABIs/RecurringPayments.json";
 import FakeUSDT from "../contractABIs/FakeUSDT.json";
 import { CustomRequest } from "../types/requests";
+import { IScheduledPayment } from "../models/scheduledPayment";
+import { ICompletedPayment } from "../models/completedPayment";
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
@@ -103,10 +105,11 @@ export const initiateSubscription = async (
   req: CustomRequest,
   res: Response
 ) => {
-  // function does 3 things:
+  // function does 4 things:
   // 1. Deduct the balance from user
   // 2. Update vendorclient (billinginfo,paymentmethod, nextdate, status, etc)
   // 3. schedules the next payment (API to aws or something)
+  // 4. send a webhook
   const { billingInfo, paymentMethod, userAddress } = req.body;
 
   const decoded = req.decoded;
@@ -160,23 +163,44 @@ export const initiateSubscription = async (
   }
   // 3. schedule next payment
 
+  // 4. send a webhook to vendor that subscription should begin and payment received
+
   // return at end
   return res.send(vendorClient);
 };
 
+// change payment method of client
 export const changePaymentMethod = async (req: Request, res: Response) => {
-  // change payment method of client
+  // update the new payment method in vendorclient
+  // look for the given vendor id and client id in scheduledPayments entity
+  // update the scheduledPayment to deduct from the new address
 };
 
-// the cloud server is the one that calls this (?)
-export const paymentReceived = async (req: Request, res: Response) => {
-  // add payment to client entity
-  // send an api to the webhook url to let them know payments created
+// the cron job runs this every X minutes
+export const cronReduceBalances = async (req: Request, res: Response) => {
+/* 
+- Filter to see scheduledPayments who which are due within X minutes
+- Loop through all those payments and for each of it:
+  - Check balance and allowance. If sufficient,
+  - Execute the reduce balance function, and if successful:
+    - "move" the data to completedPayments with status "paid"
+    - delete the data for that in scheduledPayment
+    - Send a webhook to vendor that it is paid
+    - Add a new scheduledPayment for next month
+  - Else, if unsuccessful or insufficient allowance/balance:
+    - "move" the data to completedPayment with status "failed"
+    - delete the data for that in scheduledPayments
+    - Send a webhook to vendor that payment failed
+    - Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
+*/
+  
 };
 
 export const cancelSubscription = async (req: Request, res: Response) => {
   // cancel subscription details ....
-  // change next payment date to null
+  // look for the given vendor id and client id in scheduledPayments
+  // delete that data
+  // send a webhook to let vendor know
 };
 
 // helpers
@@ -189,6 +213,27 @@ const generateJWT = (data: any) => {
   const token = jwt.sign({ ...data, exp: expirationTime }, process.env.JWT_KEY);
   return token;
 };
+
+const findScheduledPayments = async (vendorId: string, vendorClientId: string) =>{
+  // find in scheduled payments...
+}
+
+const addScheduledPayment = async (scheduledPaymentDetails: IScheduledPayment) =>{
+  // add it...
+}
+
+const deleteScheduledPayment = async(scheduledPaymentId: string) =>{
+  // delete it....
+}
+
+// generally only used for changing payment method, hence just change userAddress
+const updateScheduledPayment = async(scheduledPaymentId: string, userAddress: string) =>{
+  // update it...
+}
+
+const addCompletedPayment = async(completedPaymentDetails: ICompletedPayment ) =>{
+  // add the Finished payments; details should be everything in scheduledPayment along with hash and status
+}
 
 const sendReduceUserBalanceTransactionasync = async (
   vendorAddress: string,

@@ -4,7 +4,7 @@ import {
   getSubscriptionPageDetails,
   initiateSubscription,
   manageSubscription,
-  paymentReceived,
+  cronReduceBalances,
 } from "../controllers/payments";
 import { verifySubscriptionToken } from "../middleware/verifySubscriptionToken";
 const router = Router();
@@ -20,7 +20,7 @@ router.get(
   verifySubscriptionToken,
   getSubscriptionPageDetails
 );
-router.put("/received", paymentReceived);
+router.post("/cron-reduce-balances", cronReduceBalances);
 router.put("/cancel", cancelSubscription);
 
 export default router;
