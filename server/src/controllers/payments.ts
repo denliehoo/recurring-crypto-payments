@@ -48,18 +48,23 @@ export const getSubscriptionPageDetails = async (
 
   let paymentMethod;
   if (c?.paymentMethod?.wallet) {
-    console.log(process.env.WEB3_PROVIDER);
-    // call api to check this
     const userAddress = c.paymentMethod.wallet;
-    const web3 = new Web3(process.env.WEB3_PROVIDER);
-    const tokenContract = new web3.eth.Contract(FakeUSDT.abi, v.tokenAddress);
-    const balance = await tokenContract.methods.balanceOf(userAddress).call();
-    const allowance = await tokenContract.methods
-      .allowance(userAddress, v.vendorContract)
-      .call();
+    // const web3 = new Web3(process.env.WEB3_PROVIDER);
+    // const tokenContract = new web3.eth.Contract(FakeUSDT.abi, v.tokenAddress);
+    // const balance = await tokenContract.methods.balanceOf(userAddress).call();
+    // const allowance = await tokenContract.methods
+    //   .allowance(userAddress, v.vendorContract)
+    //   .call();
 
-    const sufficientAllowance = parseFloat(allowance) >= v.amount!;
-    const sufficientBalance = parseFloat(balance) >= v.amount!;
+    // const sufficientAllowance = parseFloat(allowance) >= v.amount!;
+    // const sufficientBalance = parseFloat(balance) >= v.amount!;
+    const [sufficientAllowance, sufficientBalance] =
+      await isAllowanceAndBalanceSufficient(
+        userAddress,
+        v.tokenAddress!,
+        v.vendorContract!,
+        v.amount!
+      );
     if (
       c.paymentMethod.sufficientAllowance !== sufficientAllowance ||
       c.paymentMethod.sufficientBalance !== sufficientBalance
@@ -212,21 +217,108 @@ export const changePaymentMethod = async (req: Request, res: Response) => {
 
 // the cron job runs this every X minutes
 export const cronReduceBalances = async (req: Request, res: Response) => {
-  /* 
-- Filter to see scheduledPayments who which are due within X minutes
-- Loop through all those payments and for each of it:
-  - Check balance and allowance. If sufficient,
-  - Execute the reduce balance function, and if successful:
-    - "move" the data to completedPayments with status "paid"
-    - delete the data for that in scheduledPayment
-    - Send a webhook to vendor that it is paid
-    - Add a new scheduledPayment for next month
-  - Else, if unsuccessful or insufficient allowance/balance:
-    - "move" the data to completedPayment with status "failed"
-    - delete the data for that in scheduledPayments
-    - Send a webhook to vendor that payment failed
-    - Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
-*/
+  // Get the date 60 minutes into the future
+  const futureDate = new Date(new Date().getTime() + 60 * 60000);
+  // filter to see all the scheduled payments that are due in less than 60 mins
+  const paymentsDue: IScheduledPayment[] = await ScheduledPayment.find({
+    paymentDate: {
+      $lt: futureDate, // means less than
+    },
+  });
+  if (paymentsDue.length === 0) return res.status(204).end();
+  for (let p of paymentsDue) {
+    let isSuccessful = false;
+    const paymentDetails = {
+      vendorContract: p.vendorContract,
+      userAddress: p.userAddress,
+      amount: p.amount,
+      tokenAddress: p.tokenAddress!,
+      vendorId: p.vendorId,
+      vendorClientId: p.vendorClientId,
+    };
+
+    const [sufficientAllowance, sufficientBalance] =
+      await isAllowanceAndBalanceSufficient(
+        p.userAddress,
+        p.tokenAddress,
+        p.vendorContract,
+        p.amount
+      );
+
+    if (sufficientAllowance && sufficientBalance) {
+      // only if successful, change isSuccessful to true
+      const transactionHash = await sendReduceUserBalanceTransactionasync(
+        p.vendorContract,
+        p.userAddress,
+        p.amount.toString()
+      );
+
+      if (transactionHash) {
+        isSuccessful = true;
+        // need to work more on errorhandling here
+        // "move" the data to completedPayments with status "paid"
+        const newCompletedPayment: ICompletedPayment = new CompletedPayment({
+          ...paymentDetails,
+          paymentDate: new Date(),
+          status: "paid",
+          hash: transactionHash,
+        });
+        const isCompletedPaymentAdded = await addCompletedPayment(
+          newCompletedPayment
+        );
+        if (!isCompletedPaymentAdded) continue;
+
+        // delete the data for that in scheduledPayment
+        const isScheduledPaymentDeleted = await deleteScheduledPayment(p);
+        if (!isScheduledPaymentDeleted) continue;
+
+        // Add a new scheduledPayment for next month
+        const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
+          ...paymentDetails,
+          paymentDate: moment().add(1, "months").toDate(),
+        });
+        const isNewScheduledPaymentAdded = await addScheduledPayment(
+          newScheduledPayment
+        );
+        if (!isNewScheduledPaymentAdded) continue;
+
+        // Send a webhook to vendor that it is paid
+        // code for webhook here....
+      }
+    }
+    if (!isSuccessful) {
+      // "move" the data to completedPayment with status "failed"
+      const newCompletedPayment: ICompletedPayment = new CompletedPayment({
+        ...paymentDetails,
+        paymentDate: new Date(),
+        status: "failed",
+      });
+      const isCompletedPaymentAdded = await addCompletedPayment(
+        newCompletedPayment
+      );
+      if (!isCompletedPaymentAdded) continue;
+
+      // delete the data for that in scheduledPayments
+      const isScheduledPaymentDeleted = await deleteScheduledPayment(p);
+      if (!isScheduledPaymentDeleted) continue;
+
+      // Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
+      let vendorClient = await findVendorClientById(
+        p.vendorClientId.toString()
+      );
+      if (!vendorClient) continue;
+      vendorClient.status = "cancelled";
+      try {
+        vendorClient.save();
+      } catch {
+        continue;
+      }
+
+      // Send a webhook to vendor that payment failed;
+    }
+  }
+
+  // return a successful response
 };
 
 export const cancelSubscription = async (req: Request, res: Response) => {
@@ -234,27 +326,6 @@ export const cancelSubscription = async (req: Request, res: Response) => {
   // look for the given vendor id and client id in scheduledPayments
   // delete that data
   // send a webhook to let vendor know
-};
-
-// for testing:
-export const getScheduledPayments = async (req: Request, res: Response) => {
-  try {
-    const scheduledPayments = await ScheduledPayment.find({});
-    res.json(scheduledPayments);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-export const getCompletedPayments = async (req: Request, res: Response) => {
-  try {
-    const completedPayments = await CompletedPayment.find({});
-    res.json(completedPayments);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
 };
 
 // helpers
@@ -266,6 +337,28 @@ const generateJWT = (data: any) => {
 
   const token = jwt.sign({ ...data, exp: expirationTime }, process.env.JWT_KEY);
   return token;
+};
+
+const isAllowanceAndBalanceSufficient = async (
+  userAddress: string,
+  vendorTokenAddress: string,
+  vendorContractAddress: string,
+  amount: number
+): Promise<[boolean, boolean]> => {
+  const web3 = new Web3(process.env.WEB3_PROVIDER!);
+  const tokenContract = new web3.eth.Contract(FakeUSDT.abi, vendorTokenAddress);
+
+  const balance: string = await tokenContract.methods
+    .balanceOf(userAddress)
+    .call();
+  const allowance: string = await tokenContract.methods
+    .allowance(userAddress, vendorContractAddress)
+    .call();
+
+  const sufficientAllowance: boolean = parseFloat(allowance) >= amount;
+  const sufficientBalance: boolean = parseFloat(balance) >= amount;
+
+  return [sufficientAllowance, sufficientBalance];
 };
 
 const findScheduledPayment = async (
@@ -293,8 +386,6 @@ const addScheduledPayment = async (
   scheduledPayment: IScheduledPayment
 ): Promise<boolean> => {
   try {
-    // const newScheduledPayment = new ScheduledPayment(scheduledPaymentDetails);
-
     await scheduledPayment.save();
 
     return true;
@@ -358,10 +449,6 @@ const sendReduceUserBalanceTransactionasync = async (
 ): Promise<string | null> => {
   try {
     // Create a Web3 instance connected to a provider (e.g., Infura)
-    console.log(process.env.WEB3_PROVIDER);
-    console.log(process.env.OWNER_WALLET_ADDRESS);
-    console.log(process.env.OWNER_PRIVATE_KEY);
-
     const web3 = new Web3(process.env.WEB3_PROVIDER);
 
     // Contract address and ABI of master contract
@@ -371,11 +458,9 @@ const sendReduceUserBalanceTransactionasync = async (
       contractAddress
     );
 
-    // Sender's account address and private key
     const senderAddress = process.env.OWNER_WALLET_ADDRESS;
     const senderPrivateKey = process.env.OWNER_PRIVATE_KEY;
 
-    // Transaction data
     const contractMethod = contract.methods.reduceUserBalance(
       vendorAddress,
       userAddress,
@@ -383,13 +468,14 @@ const sendReduceUserBalanceTransactionasync = async (
     );
     const transactionData = contractMethod.encodeABI();
 
-    // Nonce and gas price
     const nonce = await web3.eth.getTransactionCount(senderAddress);
-    const gasPrice = await web3.eth.getGasPrice();
+    let gasPrice = await web3.eth.getGasPrice();
+    // Add 20% to the gas price to reduce chances of timeout error
+    // since higher gas price = faster mined (temporary solution)
+    gasPrice = gasPrice * 1.2;
     const gasPriceHex = web3.utils.toHex(gasPrice);
-    const gasLimitHex = web3.utils.toHex(300000); // Adjust the gas limit as needed
+    const gasLimitHex = web3.utils.toHex(300000);
 
-    // Create the transaction object
     const transactionObject = {
       from: senderAddress,
       to: contractAddress,
@@ -399,16 +485,24 @@ const sendReduceUserBalanceTransactionasync = async (
       data: transactionData,
     };
 
-    // Sign the transaction
     const signedTransaction = await web3.eth.accounts.signTransaction(
       transactionObject,
       senderPrivateKey
     );
 
     // Broadcast the signed transaction
-    const receipt = await web3.eth.sendSignedTransaction(
-      signedTransaction.rawTransaction
-    );
+    // wait for up to 100 blocks (default 50); this is to prevent error from being thrown
+    // however still need to handle the problem properly in the future
+    // e.g. leave it as pending
+    const receipt = await web3.eth
+      .sendSignedTransaction(signedTransaction.rawTransaction, {
+        transactionConfirmationBlocks: 100,
+      })
+      .on("transactionHash", function (hash: any) {
+        // can get the hash even if transaction times out
+        // might be useful for edge case
+        // console.log(hash);
+      });
 
     console.log("Transaction receipt:", receipt);
 
@@ -416,20 +510,31 @@ const sendReduceUserBalanceTransactionasync = async (
     if (receipt.status === true) {
       return receipt.transactionHash;
     } else {
-      return null; // Return null if the transaction failed
+      return null;
     }
   } catch (error) {
     console.error("Error:", error);
-    return null; // Return false if an error occurred
+    return null;
   }
 };
 
-/* 
-Got this error halfway when doing initiate subscriptions. How to handle this
-Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined!
-    at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21)
-    at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {
-  receipt: undefined
-}
-*/
+// for testing:
+export const getScheduledPayments = async (req: Request, res: Response) => {
+  try {
+    const scheduledPayments = await ScheduledPayment.find({});
+    res.json(scheduledPayments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const getCompletedPayments = async (req: Request, res: Response) => {
+  try {
+    const completedPayments = await CompletedPayment.find({});
+    res.json(completedPayments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

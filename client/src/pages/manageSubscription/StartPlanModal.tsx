@@ -256,6 +256,7 @@ const StartPlanModal = (props: any) => {
           console.log(res);
         } catch (err) {
           console.log(err);
+          setButtonLoading(false);
           // if api call fail, dont proceed
           return;
         }

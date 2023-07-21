@@ -23,6 +23,9 @@ export const scheduledPaymentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+// index paymentDate to improve performance since it will be queried frequently
+scheduledPaymentSchema.index({ paymentDate: 1 });
+
 export default mongoose.model<IScheduledPayment>(
   "ScheduledPayment",
   scheduledPaymentSchema
