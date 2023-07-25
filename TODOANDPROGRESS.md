@@ -1,11 +1,11 @@
 # Todo:
 
-- Test the cron API
 - "Change payment method" function on frontend for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
 - Add allowance button on frontend
 - Simulate sending webhook to the vendor upon successful XXX
+- Frontend of admin panel
 
 # Future Task
 
@@ -14,6 +14,15 @@
 - For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
 - Do edge case of handling this error when calling initiate subscription API. (Basically it ran to an error that it was sent but not mined and might be mined. But since it is an error, it stopped the API there and didnt add scheduled payments etc ) Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined! at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21) at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49 at processTicksAndRejections (node:internal/process/task_queues:96:5) {receipt: undefined}
 - Handle error on frontend for when fail to deduct balance
+- Improve smart contracts to have a multiple deduction so that can improve efficiency (by calling multiple deductions in one transaction instead of one by one). Possible flow for the new CRON API:
+  1. For each of the payments, check the balance and allowance
+  2. If ok, push to an array
+  3. If not ok, delete scheduled payment and move to completed payment with failed, change user entity to cancelled, etc
+  4. Continue with the array of ok payments, now call the multi reduce balance on the contract
+  5. Look at the events (probably) emitted. And change the array accordingly
+  6. For those that pass, do the move the scheduled payment to completed with completed status etc.
+  7. For those that fail, do same as 3.
+  8. API finish
 
 # Rough backlog
 
@@ -70,3 +79,4 @@
 - 21/07/23: Create a new DB entity called ScheduledPayments which has info of the the payment such as: vendorContract, amount, token, date(to pay), etc..;Create a new DB entity called CompletedPayments which has same info as above + status of paid or failed and hash. Also wrote skeleton of apis in payment controller
 - 21/07/23: Added controller helper functions for scheduledPayments and completedPayments; Worked on initiate subscription API to include adding scheduledPayment and completedPayment
 - 21/07/23: Create the CRON api
+- 25/07/23: CRON API test successful

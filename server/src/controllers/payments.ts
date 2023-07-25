@@ -9,6 +9,7 @@ import FakeUSDT from "../contractABIs/FakeUSDT.json";
 import { CustomRequest } from "../types/requests";
 import { IScheduledPayment } from "../models/scheduledPayment";
 import { ICompletedPayment } from "../models/completedPayment";
+import axios from "axios";
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
@@ -43,21 +44,10 @@ export const getSubscriptionPageDetails = async (
   console.log(c);
   if (!v || !c)
     return res.status(401).json({ error: "Vendor or client id not found" });
-  // need check whether balance and allowance is sufficient here also
-  // if there is a change, then need to update the client also
 
   let paymentMethod;
   if (c?.paymentMethod?.wallet) {
     const userAddress = c.paymentMethod.wallet;
-    // const web3 = new Web3(process.env.WEB3_PROVIDER);
-    // const tokenContract = new web3.eth.Contract(FakeUSDT.abi, v.tokenAddress);
-    // const balance = await tokenContract.methods.balanceOf(userAddress).call();
-    // const allowance = await tokenContract.methods
-    //   .allowance(userAddress, v.vendorContract)
-    //   .call();
-
-    // const sufficientAllowance = parseFloat(allowance) >= v.amount!;
-    // const sufficientBalance = parseFloat(balance) >= v.amount!;
     const [sufficientAllowance, sufficientBalance] =
       await isAllowanceAndBalanceSufficient(
         userAddress,
@@ -106,19 +96,12 @@ export const getSubscriptionPageDetails = async (
     invoices: c?.invoices || [],
   };
   return res.send(data);
-
-  // decrypt the token to get the info
 };
 
 export const initiateSubscription = async (
   req: CustomRequest,
   res: Response
 ) => {
-  // function does 4 things:
-  // 1. Deduct the balance from user
-  // 2. Update vendorclient (billinginfo,paymentmethod, nextdate, status, etc)
-  // 3. schedules the next payment (API to aws or something)
-  // 4. send a webhook
   const { billingInfo, paymentMethod, userAddress } = req.body;
 
   const decoded = req.decoded;
@@ -283,7 +266,6 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
         if (!isNewScheduledPaymentAdded) continue;
 
         // Send a webhook to vendor that it is paid
-        // code for webhook here....
       }
     }
     if (!isSuccessful) {
@@ -317,8 +299,8 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
       // Send a webhook to vendor that payment failed;
     }
   }
-
   // return a successful response
+  return res.send("all done");
 };
 
 export const cancelSubscription = async (req: Request, res: Response) => {
@@ -442,6 +424,34 @@ const addCompletedPayment = async (
     return false;
   }
 };
+
+/*
+          {
+            event: "XXXXX",
+            timestamp: "USENEWDATEORSMTH",
+            data: {
+              // data1: "XXXX",
+              // data2 : "YYY"
+            }
+          }
+*/
+const sendWebHook = async (url: string, event: string, data: any) => {
+  try {
+    const headers = {
+      Authorization: "authorizationhere....",
+    };
+    const bodyData = {
+      event: event,
+      data: data,
+    };
+    const res = await axios.post(url, bodyData, {
+      headers,
+    });
+  } catch {
+    return false;
+  }
+};
+
 const sendReduceUserBalanceTransactionasync = async (
   vendorAddress: string,
   userAddress: string,
@@ -472,7 +482,8 @@ const sendReduceUserBalanceTransactionasync = async (
     let gasPrice = await web3.eth.getGasPrice();
     // Add 20% to the gas price to reduce chances of timeout error
     // since higher gas price = faster mined (temporary solution)
-    gasPrice = gasPrice * 1.2;
+    // parseInt to ensure no decimals (which would cause errors)
+    gasPrice = Math.ceil(parseInt(gasPrice) * 1.2);
     const gasPriceHex = web3.utils.toHex(gasPrice);
     const gasLimitHex = web3.utils.toHex(300000);
 

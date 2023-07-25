@@ -54,6 +54,7 @@ const seedDataBase = async () => {
     vendorContract: "0xEff966e8fA76014FFBb88B1F356e991058eDdfee",
     amount: 15000000, // 15 USDT
     plan: "Testing Company Premium Plan",
+    webhookUrl: "https://testing.com",
   });
 
   await testVendor.save();
@@ -62,4 +63,29 @@ const seedDataBase = async () => {
     vendor: testVendor._id.toString(),
   });
   await vendorClient.save();
+
+  const scheduledPaymentDetails = {
+    vendorContract: testVendor.vendorContract,
+    userAddress: "0x1B54FF756E2a04707826b95041C0e9123C6B4F23", // temp hard code
+    amount: testVendor.amount,
+    tokenAddress: testVendor.tokenAddress,
+    vendorId: testVendor._id.toString(),
+    vendorClientId: vendorClient._id.toString(),
+  };
+  const scheduledPayment1 = new models.ScheduledPayment({
+    ...scheduledPaymentDetails,
+    paymentDate: new Date(),
+  });
+  const scheduledPayment2 = new models.ScheduledPayment({
+    ...scheduledPaymentDetails,
+    paymentDate: new Date(Date.now() + 5 * 60000), // 5 minutes from now
+  });
+  // this shouldnt be inside when calling the CRON API since its >60mins
+  const scheduledPayment3 = new models.ScheduledPayment({
+    ...scheduledPaymentDetails,
+    paymentDate: new Date(Date.now() + 60 * 24 * 60000), // 1 day from now
+  });
+  scheduledPayment1.save();
+  scheduledPayment2.save();
+  scheduledPayment3.save();
 };
