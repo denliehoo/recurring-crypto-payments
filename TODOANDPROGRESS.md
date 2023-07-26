@@ -80,3 +80,4 @@
 - 21/07/23: Added controller helper functions for scheduledPayments and completedPayments; Worked on initiate subscription API to include adding scheduledPayment and completedPayment
 - 21/07/23: Create the CRON api
 - 25/07/23: CRON API test successful
+- 26/07/23: Rough skeleton of frontend
