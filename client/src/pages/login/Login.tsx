@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { TextField, Button, Grid, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiCallAuth } from "../../utils/apiRequest";
+import { useDispatch } from "react-redux";
+import { addVendorDetails } from "../../slices/vendorDetailsSlice";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -10,11 +13,7 @@ function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
-
-  const getParameterByName = (name: any) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-  };
+  const dispatch = useDispatch();
 
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
@@ -25,17 +24,14 @@ function Login() {
     setPassword(event.target.value);
     setError("");
   };
-  useEffect(() => {
-    // Check if the token exists in the query parameters
-    const token = getParameterByName("token");
-    console.log(token);
-    if (token) {
-      // Store the token in local storage
-      localStorage.setItem("JWT", token);
-      // Redirect the user to the desired page (e.g., dashboard)
-      navigate("/dashboard");
-    }
-  }, []);
+
+  const setVendorDetails = async () => {
+    const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
+    console.log(res);
+
+    const { name, email, apiKey, plan } = res.data;
+    dispatch(addVendorDetails({ name, email, apiKey, plan }));
+  };
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -52,6 +48,7 @@ function Login() {
         // Redirect to dashboard upon successful login
         if (res.status === 200) {
           localStorage.setItem("JWT", res.data.token);
+          await setVendorDetails();
           navigate("/dashboard");
         }
       } catch (error: any) {

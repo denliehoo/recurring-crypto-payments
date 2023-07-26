@@ -2,11 +2,8 @@ import { Request, Response, NextFunction } from "express";
 const jwt = require("jsonwebtoken");
 
 import { CustomRequest } from "../types/requests";
-// interface CustomRequest extends Request {
-//   decoded?: any;
-// }
 
-export const verifySubscriptionToken = (
+export const verifyToken = (
   req: CustomRequest,
   res: Response,
   next: NextFunction
@@ -20,7 +17,6 @@ export const verifySubscriptionToken = (
   jwt.verify(token, process.env.JWT_KEY, (err: any, decoded: any) => {
     if (err) {
       return res.sendStatus(401);
-      // return res.sendStatus(403) // Forbidden
     }
 
     // if the current time is greater than the expiration time (meaning token expired, redirect to login)

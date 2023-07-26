@@ -1,5 +1,7 @@
 # Todo:
 
+- Work on Integrations Page
+- Work on Payouts page
 - "Change payment method" function on frontend for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
@@ -81,3 +83,4 @@
 - 21/07/23: Create the CRON api
 - 25/07/23: CRON API test successful
 - 26/07/23: Rough skeleton of frontend
+- 26/07/23: Added redux and get vendor details by token

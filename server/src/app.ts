@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import routes from "./routes";
 import models, { connectDb } from "./models";
 import { hashPassword } from "./utility/credentials";
+import mongoose from "mongoose";
 const cors = require("cors");
 
 const app = express();
@@ -25,20 +26,20 @@ connectDb().then(async () => {
   // change to true/false if want to reset and seed db
   if (false) {
     console.log("Re-seeding database!");
+    // drops all collection
+    // dropAllCollections()
 
     // clear database
     await Promise.all([
-      // models.Project.deleteMany({}),
       models.Vendor.deleteMany({}),
       models.VendorClient.deleteMany({}),
       models.CompletedPayment.deleteMany({}),
       models.ScheduledPayment.deleteMany({}),
-      // models.Task.deleteMany({}),
     ]);
     await seedDataBase();
   }
 
-  app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+  app.listen(port, () => console.log(`Server listening on port ${port}!`));
 });
 
 const seedDataBase = async () => {
@@ -88,4 +89,23 @@ const seedDataBase = async () => {
   scheduledPayment1.save();
   scheduledPayment2.save();
   scheduledPayment3.save();
+};
+
+const dropAllCollections = async () => {
+  try {
+    const collections = await mongoose.connection.db
+      .listCollections()
+      .toArray();
+    const collectionNames = collections.map((collection) => collection.name);
+
+    // Drop each collection
+    for (const collectionName of collectionNames) {
+      await mongoose.connection.db.dropCollection(collectionName);
+      console.log(`Dropped collection: ${collectionName}`);
+    }
+
+    console.log("All collections dropped successfully");
+  } catch (error) {
+    console.error("Error dropping collections:", error);
+  }
 };

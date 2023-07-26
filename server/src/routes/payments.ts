@@ -8,18 +8,14 @@ import {
   getScheduledPayments,
   getCompletedPayments,
 } from "../controllers/payments";
-import { verifySubscriptionToken } from "../middleware/verifySubscriptionToken";
+import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
 
 router.post("/manage-subscription", manageSubscription);
-router.post(
-  "/initiate-subscription",
-  verifySubscriptionToken,
-  initiateSubscription
-);
+router.post("/initiate-subscription", verifyToken, initiateSubscription);
 router.get(
   "/get-subscription-page-details",
-  verifySubscriptionToken,
+  verifyToken,
   getSubscriptionPageDetails
 );
 router.post("/cron-reduce-balances", cronReduceBalances);

@@ -83,7 +83,7 @@ export const getSubscriptionPageDetails = async (
   }
 
   const data: VendorClientSubscriptionDetails = {
-    vendor: v!.name,
+    vendor: v!.name || "",
     plan: v!.plan || "",
     amount: v!.amount || 0,
     token: "USDT", // get the token name via api or something and put heere

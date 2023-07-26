@@ -7,6 +7,7 @@ import {
   validatePasswordStrength,
 } from "../utility/credentials";
 import { findVendorByEmail, findVendorById } from "../utility/findFromDb";
+import { CustomRequest } from "../types/requests";
 const jwt = require("jsonwebtoken");
 
 export const createVendor = async (req: Request, res: Response) => {
@@ -83,7 +84,8 @@ export const updateVendor = async (req: Request, res: Response) => {
   const { id } = req.body;
   //
   try {
-    const { webhookUrl, tokenAddress, amount, vendorContract, plan, id } = req.body;
+    const { webhookUrl, tokenAddress, amount, vendorContract, plan, id } =
+      req.body;
     let vendor = await findVendorById(id);
     if (!vendor) return res.status(404).json({ error: "Vendor not found" });
     if (!webhookUrl || !tokenAddress || !amount || !vendorContract || !plan)
@@ -93,7 +95,7 @@ export const updateVendor = async (req: Request, res: Response) => {
     vendor.tokenAddress = tokenAddress;
     vendor.amount = amount;
     vendor.vendorContract = vendorContract;
-    vendor.plan = plan
+    vendor.plan = plan;
 
     vendor = await vendor.save();
 
@@ -101,6 +103,13 @@ export const updateVendor = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ error: "Failed to update vendor" });
   }
+};
+
+export const getVendorByToken = async (req: CustomRequest, res: Response) => {
+  const { email } = req.decoded;
+  const vendor = await findVendorByEmail(email);
+  if (!vendor) return res.status(404).json({ error: "Vendor Not Found" });
+  return res.send(vendor);
 };
 
 const generateJWT = (email: string) => {
