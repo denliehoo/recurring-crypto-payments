@@ -27,7 +27,7 @@ function Login() {
 
   const setVendorDetails = async () => {
     const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
-    console.log(res);
+    // console.log(res);
 
     const { name, email, apiKey, plan } = res.data;
     dispatch(addVendorDetails({ name, email, apiKey, plan }));
@@ -43,7 +43,7 @@ function Login() {
           password: password,
         });
         // Handle the response data or perform further actions
-        console.log("Response:", res);
+        // console.log("Response:", res);
 
         // Redirect to dashboard upon successful login
         if (res.status === 200) {

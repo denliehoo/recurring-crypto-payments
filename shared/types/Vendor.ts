@@ -1,7 +1,7 @@
 export interface Vendor {
   name?: string;
   email: string;
-  password: string;
+  password?: string;
   apiKey: string;
   webhookUrl?: string;
   tokenAddress?: string;
