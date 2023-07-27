@@ -21,15 +21,6 @@ import CustomButton from "../../components/UI/CustomButton";
 import { connectWallet } from "../../utils/connectWallet";
 import RecurringPayments from "../../truffle_abis/RecurringPayments.json";
 
-/*
-       1. Connect Wallet - 2. Fill form which includes: Name, webhookUrl, token
-        address, amount, plan - 3. Click on the Configure button - 4. this will
-        open a metamask popup to ask user to create contract 5. upon confirm of
-        creation (and confirm has been mined), send api the update vendor with
-        the details in 2 AND address of vendorContract created AND other
-        relevant details
-*/
-
 const ConfigureIntegrations = (props: any) => {
   const [vendorDetails, setVendorDetails] = useState<any>({});
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -123,32 +114,6 @@ const ConfigureIntegrations = (props: any) => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const { projectId, resetState, getTasks } = props;
-
-  const handleSubmit = () => {
-    if (!validateForm(vendorDetails, fieldsTypes, setValidationErrors)) return;
-
-    setButtonLoading(true);
-    const addTask = async () => {
-      try {
-        const res = await apiCallAuth("post", "/tasks", {
-          ...vendorDetails,
-          project: projectId,
-        });
-        console.log(res);
-
-        setButtonLoading(false);
-        setVendorDetails(false);
-        resetState();
-
-        await getTasks();
-      } catch (err) {
-        setButtonLoading(false);
-        console.log(err);
-      }
-    };
-    // addTask();
-  };
   return (
     <Box>
       <Typography

@@ -5,6 +5,7 @@ import { apiCallAuth } from "../../utils/apiRequest";
 import { Vendor } from "../../../../shared/types/Vendor";
 import { Box } from "@mui/material";
 import ConfigureIntegrations from "./ConfigureIntegrations";
+import ConfiguredIntergrations from "./ConfiguredIntegrations";
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +50,9 @@ const Integrations = () => {
         <div>Loading...</div>
       ) : vendor!.plan ? (
         // Have configured integrations
-        <Box>Integrations Done</Box>
+        <Box>
+          <ConfiguredIntergrations vendorId={vendorId} vendor={vendor} />
+        </Box>
       ) : (
         // Have not configured integrations
         <Box>
