@@ -5,15 +5,18 @@ import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorCli
 import models from "../models";
 const Web3 = require("web3");
 import RecurringPayments from "../contractABIs/RecurringPayments.json";
+import RecurringPaymentsVendor from "../contractABIs/RecurringPaymentsVendor.json";
 import FakeUSDT from "../contractABIs/FakeUSDT.json";
 import { CustomRequest } from "../types/requests";
 import { IScheduledPayment } from "../models/scheduledPayment";
 import { ICompletedPayment } from "../models/completedPayment";
 import axios from "axios";
+import { IPayout } from "../models/payout";
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
-const { Vendor, VendorClient, ScheduledPayment, CompletedPayment } = models;
+const { Vendor, VendorClient, ScheduledPayment, CompletedPayment, Payout } =
+  models;
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
@@ -310,6 +313,51 @@ export const cancelSubscription = async (req: Request, res: Response) => {
   // send a webhook to let vendor know
 };
 
+export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
+  const { vendorId } = req.params;
+  try {
+    const vendor = await findVendorById(vendorId);
+    if (!vendor) return res.status(404).json({ error: "Vendor doesn't exist" });
+    console.log(vendor);
+    const payouts: IPayout[] = await Payout.find({
+      vendorId: vendorId,
+    });
+
+    const web3 = new Web3(process.env.WEB3_PROVIDER!);
+    const contract = new web3.eth.Contract(
+      RecurringPaymentsVendor.abi,
+      vendor.vendorContract
+    );
+
+    const balance: string = await contract.methods.balance().call();
+
+    return res.send({ payouts: payouts, pendingBalance: balance });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to get payouts.", error });
+  }
+};
+
+export const createPayout = async (req: Request, res: Response) => {
+  const { vendorId } = req.params;
+  const { payoutDate, amount, tokenAddress, userAddress, token, hash } =
+    req.body;
+
+  try {
+    const newPayout: IPayout = new Payout({
+      payoutDate,
+      amount,
+      tokenAddress,
+      userAddress,
+      token,
+      hash,
+      vendorId,
+    });
+    await newPayout.save();
+    return res.send(newPayout);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to create payout.", error });
+  }
+};
 // helpers
 const generateJWT = (data: any) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)

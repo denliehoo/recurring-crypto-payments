@@ -19,6 +19,8 @@ const vendorDetailsSlice = createSlice({
     email: "",
     apiKey: "",
     plan: "",
+    vendorContract: "",
+    tokenAddress: "",
   },
   reducers: {
     addVendorDetails(state, action) {

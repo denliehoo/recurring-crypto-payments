@@ -29,8 +29,18 @@ function Login() {
     const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
     // console.log(res);
 
-    const { name, email, apiKey, plan } = res.data;
-    dispatch(addVendorDetails({ name, email, apiKey, plan }));
+    const { name, email, apiKey, plan, vendorContract, tokenAddress } =
+      res.data;
+    dispatch(
+      addVendorDetails({
+        name,
+        email,
+        apiKey,
+        plan,
+        vendorContract,
+        tokenAddress,
+      })
+    );
   };
 
   const handleSubmit = async (event: any) => {

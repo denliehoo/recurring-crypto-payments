@@ -20,11 +20,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useLocation } from "react-router-dom";
 import SideBar from "./SideBar";
-import { useSelector } from "react-redux";
 
 const Layout = (props: any) => {
   const { pathname } = useLocation();
-  const vendorDetails = useSelector((state: any) => state.vendorDetails);
   // console.log(vendorDetails);
 
   const [open, setOpen] = useState(true);

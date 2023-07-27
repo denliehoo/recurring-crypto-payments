@@ -7,6 +7,8 @@ import {
   cronReduceBalances,
   getScheduledPayments,
   getCompletedPayments,
+  createPayout,
+  getPayoutsDetails,
 } from "../controllers/payments";
 import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
@@ -22,5 +24,8 @@ router.post("/cron-reduce-balances", cronReduceBalances);
 router.put("/cancel", cancelSubscription);
 router.get("/scheduled-payments", getScheduledPayments);
 router.get("/completed-payments", getCompletedPayments);
+
+router.post("/create-payout/:vendorId", verifyToken, createPayout);
+router.get("/get-payouts-details/:vendorId", verifyToken, getPayoutsDetails);
 
 export default router;
