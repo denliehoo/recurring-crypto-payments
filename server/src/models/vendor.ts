@@ -8,10 +8,10 @@ export interface IVendor extends Document, Vendor {}
 const VendorSchema: Schema = new Schema(
   {
     name: { type: String },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     apiKey: { type: String, required: true, unique: true },
-    webhookUrl: { type: String, unique: true, sparse: true }, // allows it to either be unique or null
+    webhookUrl: { type: String },
     tokenAddress: { type: String },
     amount: { type: Number },
     vendorContract: { type: String },
