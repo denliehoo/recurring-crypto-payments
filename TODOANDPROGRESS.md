@@ -1,6 +1,5 @@
 # Todo:
 
-- Work on Integrations Page
 - Work on Payouts page
 - "Change payment method" function on frontend for when user wants to change payment method
   - Should change payment method
@@ -11,6 +10,7 @@
 
 # Future Task
 
+- Add instructions on integrations page on how to integrate (once integrations configured)
 - Auth for api calls
 - Use some AWS Lambda to set up a CRON job to call that api every X minute (e.g. 1 minute)
 - For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
@@ -85,3 +85,4 @@
 - 26/07/23: Rough skeleton of frontend
 - 26/07/23: Added redux and get vendor details by token
 - 27/07/23: Configure Integrations for Integrations Page Completed
+- 27/07/23: Integrations Page Completed

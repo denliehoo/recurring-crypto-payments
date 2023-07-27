@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { apiCallAuth } from "../../utils/apiRequest";
 import { Vendor } from "../../../../shared/types/Vendor";
 import { Box } from "@mui/material";
-import ConfigureIntegrations from "./ConfigureIntegrations";
-import ConfiguredIntergrations from "./ConfiguredIntegrations";
+import ConfigureIntegrations from "./components/ConfigureIntegrations";
+import ConfiguredIntergrations from "./components/ConfiguredIntegrations";
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,15 +43,17 @@ const Integrations = () => {
     getVendorDetails();
   }, [refreshData]);
   return (
-    //Include API Keys, webhook, option to create contract, etc...
-
-    <div>
+    <Box>
       {isLoading ? (
         <div>Loading...</div>
       ) : vendor!.plan ? (
         // Have configured integrations
         <Box>
-          <ConfiguredIntergrations vendorId={vendorId} vendor={vendor} />
+          <ConfiguredIntergrations
+            vendorId={vendorId}
+            vendor={vendor}
+            refreshData={() => setRefreshData(!refreshData)}
+          />
         </Box>
       ) : (
         // Have not configured integrations
@@ -62,7 +64,7 @@ const Integrations = () => {
           />
         </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

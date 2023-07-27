@@ -1,8 +1,6 @@
-// import classes from "./ConfigureIntegrations.module.css";
-import { apiCallAuth } from "../../utils/apiRequest";
+import { apiCallAuth } from "../../../utils/apiRequest";
 import { useState } from "react";
-import { validateForm } from "../../utils/validateForm";
-import CustomFormFields from "../../components/UI/CustomFormFields";
+import { validateForm } from "../../../utils/validateForm";
 import {
   Box,
   Button,
@@ -17,11 +15,20 @@ import {
   FormHelperText,
 } from "@mui/material";
 import React from "react";
-import CustomButton from "../../components/UI/CustomButton";
-import { connectWallet } from "../../utils/connectWallet";
-import RecurringPayments from "../../truffle_abis/RecurringPayments.json";
+import CustomButton from "../../../components/UI/CustomButton";
+import { connectWallet } from "../../../utils/connectWallet";
+import RecurringPayments from "../../../truffle_abis/RecurringPayments.json";
+import IntegrationFormFields from "./IntegrationFormFields";
 
-const ConfigureIntegrations = (props: any) => {
+interface ConfigureIntegrationsProps {
+  vendorId: string;
+  refreshData: () => void;
+}
+
+const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
+  vendorId,
+  refreshData,
+}) => {
   const [vendorDetails, setVendorDetails] = useState<any>({});
   const [buttonLoading, setButtonLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -43,6 +50,7 @@ const ConfigureIntegrations = (props: any) => {
     `Please confirm by signing the smart contract. Subsequently, you may withdraw payments from the smart contract. Please ensure to keep your wallet safely because only your connected wallet address ${walletAddress} may withdraw profits`,
   ];
   const stepsButtonText = ["Connect", "Next", "Create"];
+
   const handleNext = async () => {
     // connect wallet
     if (activeStep === 0) {
@@ -89,8 +97,9 @@ const ConfigureIntegrations = (props: any) => {
             console.log(hash);
           });
 
-        const vendorContractCreated = await createContract.events
-          .VendorContractCreated.returnValues.contractAddress;
+        const vendorContractCreated =
+          createContract.events.VendorContractCreated.returnValues
+            .contractAddress;
         // update the vendor entity
         const bodyData = {
           name: vendorDetails.businessName,
@@ -101,7 +110,7 @@ const ConfigureIntegrations = (props: any) => {
           ),
           plan: vendorDetails.planName,
           vendorContract: vendorContractCreated, // replace later
-          id: props.vendorId,
+          id: vendorId,
         };
         const res = await apiCallAuth("put", "/vendors", bodyData);
         console.log(res);
@@ -117,7 +126,6 @@ const ConfigureIntegrations = (props: any) => {
   return (
     <Box>
       <Typography
-        id="modal-modal-title"
         variant="h5"
         sx={{
           display: "flex",
@@ -134,7 +142,6 @@ const ConfigureIntegrations = (props: any) => {
       </Typography>
 
       {/* Steps */}
-
       <Box sx={{ width: "100%", mt: 2 }}>
         <Stepper activeStep={activeStep}>
           {steps.map((label, index) => {
@@ -154,7 +161,7 @@ const ConfigureIntegrations = (props: any) => {
             <Typography sx={{ mt: 2, mb: 1 }}>
               You have successfully created your smart contract.
             </Typography>
-            <Button variant="contained" fullWidth onClick={props.refreshData}>
+            <Button variant="contained" fullWidth onClick={refreshData}>
               Proceed
             </Button>
           </React.Fragment>
@@ -164,45 +171,16 @@ const ConfigureIntegrations = (props: any) => {
               {stepsText[activeStep]}
             </Typography>
             {/* form fields for fill details step */}
-            {activeStep == 1 && (
-              <React.Fragment>
-                {/* token addres field */}
-                <FormControl fullWidth sx={{ mb: 2 }} error={addressError}>
-                  <InputLabel>Token Address</InputLabel>
-                  <Select
-                    value={vendorDetails.tokenAddress || ""}
-                    label="Token Address"
-                    onChange={(e) => {
-                      setVendorDetails({
-                        ...vendorDetails,
-                        tokenAddress: e.target.value,
-                      });
-                      setAddressError(false);
-                    }}
-                  >
-                    <MenuItem
-                      value={"0xC2CA4DFa527902c440d71F162403A3BB93045a24"}
-                    >
-                      USDT (Goerli)
-                    </MenuItem>
-                    {/* <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem> */}
-                  </Select>
-                  {addressError && (
-                    <FormHelperText>
-                      Token Address field cannot be empty
-                    </FormHelperText>
-                  )}
-                </FormControl>
-                {/* other fields */}
-                <CustomFormFields
-                  detailsToSubmit={vendorDetails}
-                  setDetailsToSubmit={setVendorDetails}
-                  validationErrors={validationErrors}
-                  setValidationErrors={setValidationErrors}
-                  fieldsTypes={fieldsTypes}
-                />
-              </React.Fragment>
+            {activeStep === 1 && (
+              <IntegrationFormFields
+                vendorDetails={vendorDetails}
+                setVendorDetails={setVendorDetails}
+                validationErrors={validationErrors}
+                setValidationErrors={setValidationErrors}
+                fieldsTypes={fieldsTypes}
+                addressError={addressError}
+                setAddressError={setAddressError}
+              />
             )}
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <CustomButton
@@ -216,7 +194,6 @@ const ConfigureIntegrations = (props: any) => {
           </React.Fragment>
         )}
       </Box>
-      {/*  */}
     </Box>
   );
 };
