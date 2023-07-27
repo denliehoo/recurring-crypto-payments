@@ -9,6 +9,8 @@ import ConfigureIntegrations from "./ConfigureIntegrations";
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [vendor, setVendor] = useState<Vendor | null>(null);
+  const [vendorId, setVendorId] = useState("");
+  const [refreshData, setRefreshData] = useState(false);
   useEffect(() => {
     const getVendorDetails = async () => {
       const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
@@ -22,6 +24,7 @@ const Integrations = () => {
         amount,
         vendorContract,
         plan,
+        _id: id,
       } = res.data;
       setVendor({
         name,
@@ -33,10 +36,11 @@ const Integrations = () => {
         vendorContract,
         plan,
       });
+      setVendorId(id);
       setIsLoading(false);
     };
     getVendorDetails();
-  }, []);
+  }, [refreshData]);
   return (
     //Include API Keys, webhook, option to create contract, etc...
 
@@ -49,7 +53,10 @@ const Integrations = () => {
       ) : (
         // Have not configured integrations
         <Box>
-          <ConfigureIntegrations />
+          <ConfigureIntegrations
+            vendorId={vendorId}
+            refreshData={() => setRefreshData(!refreshData)}
+          />
         </Box>
       )}
     </div>

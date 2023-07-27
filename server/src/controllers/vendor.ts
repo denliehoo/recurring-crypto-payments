@@ -59,7 +59,7 @@ export const login = async (req: Request, res: Response) => {
   let vendor = await findVendorByEmail(email);
   if (!vendor) return res.status(404).json({ error: "Vendor not found" });
 
-  const isCorrectPassword = await comparePasswords(password, vendor.password); // true or false
+  const isCorrectPassword = await comparePasswords(password, vendor.password!); // true or false
   if (!isCorrectPassword)
     return res.status(400).json({ error: "Incorrect Password" });
 
@@ -81,16 +81,16 @@ export const getVendorById = async (req: Request, res: Response) => {
 };
 
 export const updateVendor = async (req: Request, res: Response) => {
-  const { id } = req.body;
   //
   try {
-    const { webhookUrl, tokenAddress, amount, vendorContract, plan, id } =
-      req.body;
+    const { name, webhookUrl, tokenAddress, amount, vendorContract, plan, id } =
+    req.body;
     let vendor = await findVendorById(id);
     if (!vendor) return res.status(404).json({ error: "Vendor not found" });
-    if (!webhookUrl || !tokenAddress || !amount || !vendorContract || !plan)
+    if (!webhookUrl || !tokenAddress || !amount || !vendorContract || !plan || !name)
       return res.status(400).json({ error: "Cannot be empty" });
 
+    vendor.name = name;
     vendor.webhookUrl = webhookUrl;
     vendor.tokenAddress = tokenAddress;
     vendor.amount = amount;

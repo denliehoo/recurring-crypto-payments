@@ -84,3 +84,4 @@
 - 25/07/23: CRON API test successful
 - 26/07/23: Rough skeleton of frontend
 - 26/07/23: Added redux and get vendor details by token
+- 27/07/23: Configure Integrations for Integrations Page Completed
