@@ -48,7 +48,7 @@ const Payouts = () => {
     //   webhookUrl: "https://testing.com",
     //   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
     //   amount: 15000000,
-    //   vendorContract: "0xEff966e8fA76014FFBb88B1F356e991058eDdfee",
+    //   vendorContract: "0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E",
     //   plan: "Testing Company Premium Plan",
     // };
 
@@ -64,6 +64,8 @@ const Payouts = () => {
         );
         console.log(res);
         const { payouts, pendingBalance, owner, vendor } = await res!.data;
+        console.log(pendingBalance);
+        console.log(typeof pendingBalance);
         setOwner(owner);
         setRows(payouts);
         setPendingBalance(pendingBalance);
@@ -94,7 +96,7 @@ const Payouts = () => {
                 onClick={() => setRequestPayoutModal(true)}
                 text="Request Payout"
                 fullWidth
-                disabled={pendingBalance === 0} // disable if no usdt pending
+                disabled={pendingBalance.toString() === "0"} // disable if no usdt pending
               />
               <Box>
                 <Divider sx={{ mt: 2, mb: 2 }} />

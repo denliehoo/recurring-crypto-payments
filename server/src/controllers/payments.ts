@@ -521,7 +521,7 @@ const sendReduceUserBalanceTransactionasync = async (
     const web3 = new Web3(process.env.WEB3_PROVIDER);
 
     // Contract address and ABI of master contract
-    const contractAddress = "0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7";
+    const contractAddress = "0x92971a37d9ea86ad18591A0f86A90E273439F19e";
     const contract = new web3.eth.Contract(
       RecurringPayments.abi,
       contractAddress

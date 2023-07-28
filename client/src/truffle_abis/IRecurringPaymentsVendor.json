@@ -20,7 +20,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"reduceUserBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/RecurringPayments.sol\":\"IRecurringPaymentsVendor\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/IERC20.sol\":{\"keccak256\":\"0xc74becaae91e56c65d8ba3cbc664c3dd3b9abb2fe310383decc0356330170d58\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://a8a11a860d152ce5cb34ed4ef2f416d6a5107de64522d838e09c1982dc43711a\",\"dweb:/ipfs/QmVC3j6fDnhWZMcrqKQ5YKv9y8YbT9vwA8sYDnu6uHWLiV\"]},\"project:/src/contracts/RecurringPayments.sol\":{\"keccak256\":\"0x63216cfc393f6e12b484506b595ebd8f8b6ab9f0639b9b7b430f398f4dd87507\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://224ae85dc2e2c1c3747b4f931c885f72ae9f3e806f203cd75064179a35930e92\",\"dweb:/ipfs/QmcWFpqg7nrbrtssGSMdpBwn54Vgi7BYDbGzheQNGmZ2GE\"]},\"project:/src/contracts/RecurringPaymentsVendor.sol\":{\"keccak256\":\"0x825a9e2bee18dc027d9c5d5ca4f4b13b4e42c54ebe3e0050fed64af61133e24e\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://4a1e1be3ba410931bd7bc6de3c6372c495e8b46f208286fec6935b33ad9ebf9a\",\"dweb:/ipfs/QmU6DW78EAYh6wrvUp6paPYtH8i5Ax379tSQGQ6NpcLrRw\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"reduceUserBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/RecurringPayments.sol\":\"IRecurringPaymentsVendor\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/IERC20.sol\":{\"keccak256\":\"0xc74becaae91e56c65d8ba3cbc664c3dd3b9abb2fe310383decc0356330170d58\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://a8a11a860d152ce5cb34ed4ef2f416d6a5107de64522d838e09c1982dc43711a\",\"dweb:/ipfs/QmVC3j6fDnhWZMcrqKQ5YKv9y8YbT9vwA8sYDnu6uHWLiV\"]},\"project:/src/contracts/RecurringPayments.sol\":{\"keccak256\":\"0x19af7e428084b4265b65dde7cff9f1aa8aeffacef1066ad3fb86f687775dff16\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://295b83b565b5b10e976fe45a28f92c70f4c0fc5d5a21bf39b87445daa43499e6\",\"dweb:/ipfs/QmZDCtdDUiAG3h8cZBjGMhA37j8RSjYJ3dv8jzMCXedN6r\"]},\"project:/src/contracts/RecurringPaymentsVendor.sol\":{\"keccak256\":\"0xb4b9f7817682cc614ab30d5734990dfdca1d1ce615871de360e5307335f2e4b6\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://089e7aef2e7a9a47402cab7020914de513b9d8658563eb7fcddaa963ff1f46dc\",\"dweb:/ipfs/QmfShWheH2andViLxX9k23gk9bSesTitgp3DabREohbTmd\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -28,7 +28,7 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.0;\nimport \"./IERC20.sol\";\nimport \"./RecurringPaymentsVendor.sol\";\n\ncontract RecurringPayments {\n    address public owner;\n    mapping(address => address[]) public vendorContracts; // maps the vendor address to the vendor's contract\n\n    event VendorContractCreated(address vendor, address contractAddress);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    function createVendorContract(address _token) public returns (address) {\n        // the msg.sender will be the owner of the new contract\n        address newContract = address(\n            new RecurringPaymentsVendor(_token, msg.sender)\n        );\n        vendorContracts[msg.sender].push(newContract);\n        emit VendorContractCreated(msg.sender, newContract);\n        return newContract;\n    }\n\n    function withdrawProfits(address _token, uint256 _amount) public onlyOwner {\n        IERC20(_token).transfer(msg.sender, _amount);\n    }\n\n    function reduceUserBalance(\n        address _vendor,\n        address _user,\n        uint256 _amount\n    ) public onlyOwner {\n        IRecurringPaymentsVendor(_vendor).reduceUserBalance(_user, _amount);\n    }\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"Only owner can call\");\n        _;\n    }\n}\n\ninterface IRecurringPaymentsVendor {\n    function reduceUserBalance(address _user, uint256 _amount) external;\n}\n\n/*\n    1. Increase allowance for this smart contract from the ERC20 token contract for the user calling\n    2. Call the function (the server will call) to reduce user balance directly\n*/\n",
+  "source": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.0;\nimport \"./IERC20.sol\";\nimport \"./RecurringPaymentsVendor.sol\";\n\ncontract RecurringPayments {\n    address public owner;\n    mapping(address => address[]) public vendorContracts; // maps the vendor address to the vendor's contract\n\n    event VendorContractCreated(address vendor, address contractAddress);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    function createVendorContract(address _token) public returns (address) {\n        // the msg.sender will be the owner of the new contract\n        address newContract = address(\n            new RecurringPaymentsVendor(_token, msg.sender)\n        );\n        vendorContracts[msg.sender].push(newContract);\n        emit VendorContractCreated(msg.sender, newContract);\n        return newContract;\n    }\n\n    function withdrawProfits(address _token, uint256 _amount) public onlyOwner {\n        IERC20(_token).transfer(msg.sender, _amount);\n    }\n\n    function reduceUserBalance(\n        address _vendor,\n        address _user,\n        uint256 _amount\n    ) public onlyOwner {\n        IRecurringPaymentsVendor(_vendor).reduceUserBalance(_user, _amount);\n    }\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"Only owner can call\");\n        _;\n    }\n}\n\ninterface IRecurringPaymentsVendor {\n    function reduceUserBalance(address _user, uint256 _amount) external;\n}\n",
   "sourcePath": "/Users/denlie/Desktop/Coding/recurring-crypto-payments/client/src/contracts/RecurringPayments.sol",
   "ast": {
     "absolutePath": "project:/src/contracts/RecurringPayments.sol",
@@ -43,7 +43,7 @@
         191
       ],
       "RecurringPaymentsVendor": [
-        350
+        354
       ]
     },
     "id": 200,
@@ -78,7 +78,7 @@
         "id": 80,
         "nodeType": "ImportDirective",
         "scope": 200,
-        "sourceUnit": 351,
+        "sourceUnit": 355,
         "src": "86:39:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -87,7 +87,7 @@
         "abstract": false,
         "baseContracts": [],
         "contractDependencies": [
-          350
+          354
         ],
         "contractKind": "contract",
         "fullyImplemented": true,
@@ -443,7 +443,7 @@
                           "nodeType": "NewExpression",
                           "src": "615:27:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_creation_nonpayable$_t_address_$_t_address_$returns$_t_contract$_RecurringPaymentsVendor_$350_$",
+                            "typeIdentifier": "t_function_creation_nonpayable$_t_address_$_t_address_$returns$_t_contract$_RecurringPaymentsVendor_$354_$",
                             "typeString": "function (address,address) returns (contract RecurringPaymentsVendor)"
                           },
                           "typeName": {
@@ -453,13 +453,13 @@
                               "id": 113,
                               "name": "RecurringPaymentsVendor",
                               "nodeType": "IdentifierPath",
-                              "referencedDeclaration": 350,
+                              "referencedDeclaration": 354,
                               "src": "619:23:1"
                             },
-                            "referencedDeclaration": 350,
+                            "referencedDeclaration": 354,
                             "src": "619:23:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$350",
+                              "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$354",
                               "typeString": "contract RecurringPaymentsVendor"
                             }
                           }
@@ -475,7 +475,7 @@
                         "src": "615:47:1",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$350",
+                          "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$354",
                           "typeString": "contract RecurringPaymentsVendor"
                         }
                       }
@@ -483,7 +483,7 @@
                     "expression": {
                       "argumentTypes": [
                         {
-                          "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$350",
+                          "typeIdentifier": "t_contract$_RecurringPaymentsVendor_$354",
                           "typeString": "contract RecurringPaymentsVendor"
                         }
                       ],
@@ -1543,7 +1543,7 @@
         "src": "1288:111:1"
       }
     ],
-    "src": "39:1549:1"
+    "src": "39:1361:1"
   },
   "compiler": {
     "name": "solc",
@@ -1551,7 +1551,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.8",
-  "updatedAt": "2023-07-13T11:36:13.066Z",
+  "updatedAt": "2023-07-28T10:12:16.478Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

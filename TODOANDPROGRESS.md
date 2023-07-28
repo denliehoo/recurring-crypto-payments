@@ -1,10 +1,10 @@
 # Todo:
 
-- Redeploy vendor smart contracts( because of a fix in withdraw; previously withdraw doesnt reduce balance variable). Update ABI on server file and client. Change any hardcoded addresses
-- "Change payment method" function on frontend for when user wants to change payment method
+- Customers Page
+- "Change payment method" function on frontend (external page) for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
-- Add allowance button on frontend
+- Add allowance button on frontend (external page)
 - Simulate sending webhook to the vendor upon successful XXX
 - Frontend of admin panel
 
@@ -89,3 +89,4 @@
 - 27/07/23: Added Payout database entity
 - 28/07/23: Connected get payout API to frontend
 - 28/07/23: Request Payout Modal completeds; cleaned up frontend for payouts; clean up console errors for integrations modal
+- 28/07/23: Redeploy vendor smart contracts( because of a fix in withdraw; previously withdraw doesnt reduce balance variable). Update ABI on server file and client. Change any hardcoded addresses

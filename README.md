@@ -51,6 +51,6 @@ REACT_APP_API_URL=http://localhost:3030
 
 # deployed smart contracts:
 
-- Master (0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7): https://goerli.etherscan.io/address/0x8880da75707ea777c0bdfbbf679b56cfac41a7d7#code
-- VendorContract (0xEff966e8fA76014FFBb88B1F356e991058eDdfee): https://goerli.etherscan.io/address/0xEff966e8fA76014FFBb88B1F356e991058eDdfee#code
+- Master (0x92971a37d9ea86ad18591A0f86A90E273439F19e): https://goerli.etherscan.io/address/0x92971a37d9ea86ad18591a0f86a90e273439f19e#code
+- VendorContract (0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E): https://goerli.etherscan.io/address/0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E#code
 - FakeUSDT (0xC2CA4DFa527902c440d71F162403A3BB93045a24): https://goerli.etherscan.io/address/0xc2ca4dfa527902c440d71f162403a3bb93045a24#code
