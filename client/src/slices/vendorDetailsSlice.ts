@@ -10,6 +10,7 @@ export interface Vendor {
   amount?: number;
   vendorContract?: string;
   plan?: string; // plan name
+  id: string;
 }
 
 const vendorDetailsSlice = createSlice({
@@ -21,6 +22,7 @@ const vendorDetailsSlice = createSlice({
     plan: "",
     vendorContract: "",
     tokenAddress: "",
+    id: ""
   },
   reducers: {
     addVendorDetails(state, action) {

@@ -25,7 +25,10 @@ router.put("/cancel", cancelSubscription);
 router.get("/scheduled-payments", getScheduledPayments);
 router.get("/completed-payments", getCompletedPayments);
 
-router.post("/create-payout/:vendorId", verifyToken, createPayout);
-router.get("/get-payouts-details/:vendorId", verifyToken, getPayoutsDetails);
+router.post("/create-payout/:vendorId", 
+verifyToken, createPayout);
+router.get("/get-payouts-details",
+ verifyToken, 
+ getPayoutsDetails);
 
 export default router;

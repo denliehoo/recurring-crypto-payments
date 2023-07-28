@@ -1,7 +1,7 @@
 # Todo:
 
 - Work on Payouts page
-  - API for get payout data
+  - Error handling for get payout
   - Req Payout Modal
 - "Change payment method" function on frontend for when user wants to change payment method
   - Should change payment method
@@ -89,3 +89,4 @@
 - 27/07/23: Configure Integrations for Integrations Page Completed
 - 27/07/23: Integrations Page Completed
 - 27/07/23: Added Payout database entity
+- 28/07/23: Connected get payout API to frontend

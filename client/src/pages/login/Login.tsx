@@ -29,7 +29,7 @@ function Login() {
     const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
     // console.log(res);
 
-    const { name, email, apiKey, plan, vendorContract, tokenAddress } =
+    const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } =
       res.data;
     dispatch(
       addVendorDetails({
@@ -39,6 +39,7 @@ function Login() {
         plan,
         vendorContract,
         tokenAddress,
+        id: _id,
       })
     );
   };

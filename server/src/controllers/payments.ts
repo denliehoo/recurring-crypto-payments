@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IVendor } from "../models/vendor";
-import { findVendorById, findVendorClientById } from "../utility/findFromDb";
+import { findVendorByEmail, findVendorById, findVendorClientById } from "../utility/findFromDb";
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 import models from "../models";
 const Web3 = require("web3");
@@ -314,13 +314,14 @@ export const cancelSubscription = async (req: Request, res: Response) => {
 };
 
 export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
-  const { vendorId } = req.params;
+  const decoded = req.decoded
+  const {email} = decoded
   try {
-    const vendor = await findVendorById(vendorId);
+    const vendor = await findVendorByEmail(email);
     if (!vendor) return res.status(404).json({ error: "Vendor doesn't exist" });
     console.log(vendor);
     const payouts: IPayout[] = await Payout.find({
-      vendorId: vendorId,
+      vendorId: vendor._id.toString(),
     });
 
     const web3 = new Web3(process.env.WEB3_PROVIDER!);
@@ -330,8 +331,10 @@ export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
     );
 
     const balance: string = await contract.methods.balance().call();
+    const owner: string = await contract.methods.owner().call()
+    console.log(owner)
 
-    return res.send({ payouts: payouts, pendingBalance: balance });
+    return res.send({ payouts: payouts, vendor: vendor,pendingBalance: balance, owner: owner });
   } catch (error) {
     return res.status(500).json({ message: "Failed to get payouts.", error });
   }
