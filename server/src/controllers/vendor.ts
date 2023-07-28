@@ -59,11 +59,12 @@ export const login = async (req: Request, res: Response) => {
   let vendor = await findVendorByEmail(email);
   if (!vendor) return res.status(404).json({ error: "Vendor not found" });
 
+  console.log(vendor);
   const isCorrectPassword = await comparePasswords(password, vendor.password!); // true or false
   if (!isCorrectPassword)
     return res.status(400).json({ error: "Incorrect Password" });
 
-  const token = generateJWT(email);
+  const token = generateJWT(email, vendor._id.toString());
   return res.send({ token: token });
 };
 
@@ -84,10 +85,17 @@ export const updateVendor = async (req: Request, res: Response) => {
   //
   try {
     const { name, webhookUrl, tokenAddress, amount, vendorContract, plan, id } =
-    req.body;
+      req.body;
     let vendor = await findVendorById(id);
     if (!vendor) return res.status(404).json({ error: "Vendor not found" });
-    if (!webhookUrl || !tokenAddress || !amount || !vendorContract || !plan || !name)
+    if (
+      !webhookUrl ||
+      !tokenAddress ||
+      !amount ||
+      !vendorContract ||
+      !plan ||
+      !name
+    )
       return res.status(400).json({ error: "Cannot be empty" });
 
     vendor.name = name;
@@ -112,14 +120,14 @@ export const getVendorByToken = async (req: CustomRequest, res: Response) => {
   return res.send(vendor);
 };
 
-const generateJWT = (email: string) => {
+const generateJWT = (email: string, vendorId: string) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)
   // if want to change the time, change the 3600 (which is 60s * 60 min = 3600s = 1 hr)
   // const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour (in seconds)
   const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour (in seconds)
 
   const token = jwt.sign(
-    { email: email, exp: expirationTime },
+    { email: email, vendorId: vendorId, exp: expirationTime },
     process.env.JWT_KEY
   );
   return token;

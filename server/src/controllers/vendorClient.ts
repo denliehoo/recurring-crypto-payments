@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import VendorClient, { IVendorClient } from "../models/vendorClient";
 import { findVendorById } from "../utility/findFromDb";
+import { CustomRequest } from "../types/requests";
 
 // Create a VendorClient
 export const createVendorClient = async (req: Request, res: Response) => {
@@ -35,10 +36,18 @@ export const getVendorClientById = async (req: Request, res: Response) => {
   }
 };
 
-export const getVendorClientsByVendor = async (req: Request, res: Response) => {
-  const id = req.params.id;
+export const getVendorClientsByVendor = async (
+  req: CustomRequest,
+  res: Response
+) => {
+  const decoded = req.decoded;
+  const vendorId = decoded.vendorId;
+
   try {
-    const vendorClients = await VendorClient.find({ vendor: id });
+    const vendor = await findVendorById(vendorId);
+    if (!vendor)
+      return res.status(404).json({ error: "Unable to find vendor" });
+    const vendorClients = await VendorClient.find({ vendor: vendorId });
     return res.send(vendorClients);
   } catch {
     return res
@@ -61,7 +70,7 @@ export const updateVendorClient = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
 
-    const {  billingInfo, paymentMethod, nextDate, status } = req.body;
+    const { billingInfo, paymentMethod, nextDate, status } = req.body;
     let vendorClient = await VendorClient.findById(id);
     if (!vendorClient)
       return res.status(404).json({ error: "Vendor Client not found" });

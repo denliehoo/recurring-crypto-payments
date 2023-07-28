@@ -7,9 +7,14 @@ import {
   getVendorClientsByVendor,
   updateVendorClient,
 } from "../controllers/vendorClient";
+import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
 
-router.get("/getByVendorId/:id", getVendorClientsByVendor);
+router.get(
+  "/get-vendor-clients-by-vendor",
+  verifyToken,
+  getVendorClientsByVendor
+);
 router.get("/getAll", getAllVendorClients);
 router.get("/getById/:id", getVendorClientById);
 router.post("/create", createVendorClient);
