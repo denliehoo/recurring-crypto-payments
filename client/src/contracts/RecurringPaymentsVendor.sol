@@ -36,6 +36,7 @@ contract RecurringPaymentsVendor {
         require(balance > 0, "Can only with if balance > 0");
         IERC20(token).transfer(msg.sender, balance);
         emit VendorWithdraw(balance, address(this));
+        balance = 0;
     }
 
     modifier onlyOwner() {

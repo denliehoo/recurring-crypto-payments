@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Divider,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -18,6 +19,7 @@ import { useEffect, useState } from "react";
 import CustomButton from "../../components/UI/CustomButton";
 import RequestPayoutModal from "./components/RequestPayoutModal";
 import { apiCallAuth } from "../../utils/apiRequest";
+import TagIcon from "@mui/icons-material/Tag";
 
 const Payouts = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +28,7 @@ const Payouts = () => {
   const [owner, setOwner] = useState("");
   const [pendingBalance, setPendingBalance] = useState(0);
   const [vendorDetails, setVendorDetails] = useState<any>(null);
+  const [refreshData, setRefreshData] = useState(true);
   useEffect(() => {
     // const fakeRows = [
     //   { payoutDate: new Date(), amount: 10, token: "USDT", hash: "0x..." },
@@ -54,21 +57,25 @@ const Payouts = () => {
     // setPendingBalance(fakePendingBalance);
     // setVendorDetails(fakeVendor);
     const getDetails = async () => {
-      // need do error handling here
-      const res: any = await apiCallAuth(
-        "get",
-        "/payments/get-payouts-details"
-      );
-      console.log(res);
-      const { payouts, pendingBalance, owner, vendor } = await res!.data;
-      setOwner(owner);
-      setRows(payouts);
-      setPendingBalance(pendingBalance);
-      setVendorDetails(vendor);
-      setIsLoading(false);
+      try {
+        const res: any = await apiCallAuth(
+          "get",
+          "/payments/get-payouts-details"
+        );
+        console.log(res);
+        const { payouts, pendingBalance, owner, vendor } = await res!.data;
+        setOwner(owner);
+        setRows(payouts);
+        setPendingBalance(pendingBalance);
+        setVendorDetails(vendor);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        console.log(err);
+      }
     };
     getDetails();
-  }, []);
+  }, [refreshData]);
 
   return (
     <div>
@@ -76,7 +83,7 @@ const Payouts = () => {
         <div>Loading...</div>
       ) : (
         <div>
-          {vendorDetails!.tokenAddress ? (
+          {vendorDetails?.tokenAddress ? (
             <Box>
               <Typography variant="h5">Payouts</Typography>
               <Typography>
@@ -87,7 +94,7 @@ const Payouts = () => {
                 onClick={() => setRequestPayoutModal(true)}
                 text="Request Payout"
                 fullWidth
-                // disabled={true} // disable if no usdt pending
+                disabled={pendingBalance === 0} // disable if no usdt pending
               />
               <Box>
                 <Divider sx={{ mt: 2, mb: 2 }} />
@@ -113,11 +120,34 @@ const Payouts = () => {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              {row.payoutDate.toString()}
+                              {new Date(row.payoutDate).toLocaleString(
+                                "en-US",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                  hour: "numeric",
+                                  minute: "numeric",
+                                  second: "numeric",
+                                  hour12: true,
+                                }
+                              )}
                             </TableCell>
-                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell align="right">
+                              {row.amount / 10 ** 6}
+                            </TableCell>
                             <TableCell align="right">{row.token}</TableCell>
-                            <TableCell align="right">{row.hash}</TableCell>
+                            <TableCell align="right">
+                              <IconButton>
+                                <a
+                                  href={`https://goerli.etherscan.io/tx/${row.hash}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  <TagIcon />{" "}
+                                </a>
+                              </IconButton>
+                            </TableCell>
                           </TableRow>
                         ))
                       ) : (
@@ -133,6 +163,7 @@ const Payouts = () => {
                   closeRequestPayoutModal={() => setRequestPayoutModal(false)}
                   vendor={vendorDetails}
                   owner={owner}
+                  refreshData={() => setRefreshData(!refreshData)}
                 />
               )}
             </Box>

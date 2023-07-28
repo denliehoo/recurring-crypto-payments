@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { IVendor } from "../models/vendor";
-import { findVendorByEmail, findVendorById, findVendorClientById } from "../utility/findFromDb";
+import {
+  findVendorByEmail,
+  findVendorById,
+  findVendorClientById,
+} from "../utility/findFromDb";
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 import models from "../models";
 const Web3 = require("web3");
@@ -314,12 +318,12 @@ export const cancelSubscription = async (req: Request, res: Response) => {
 };
 
 export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
-  const decoded = req.decoded
-  const {email} = decoded
+  const decoded = req.decoded;
+  const { email } = decoded;
   try {
     const vendor = await findVendorByEmail(email);
     if (!vendor) return res.status(404).json({ error: "Vendor doesn't exist" });
-    console.log(vendor);
+
     const payouts: IPayout[] = await Payout.find({
       vendorId: vendor._id.toString(),
     });
@@ -331,23 +335,27 @@ export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
     );
 
     const balance: string = await contract.methods.balance().call();
-    const owner: string = await contract.methods.owner().call()
-    console.log(owner)
+    const owner: string = await contract.methods.owner().call();
 
-    return res.send({ payouts: payouts, vendor: vendor,pendingBalance: balance, owner: owner });
+    return res.send({
+      payouts: payouts,
+      vendor: vendor,
+      pendingBalance: balance,
+      owner: owner,
+    });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Failed to get payouts.", error });
   }
 };
 
 export const createPayout = async (req: Request, res: Response) => {
   const { vendorId } = req.params;
-  const { payoutDate, amount, tokenAddress, userAddress, token, hash } =
-    req.body;
+  const { amount, tokenAddress, userAddress, token, hash } = req.body;
 
   try {
     const newPayout: IPayout = new Payout({
-      payoutDate,
+      payoutDate: new Date(),
       amount,
       tokenAddress,
       userAddress,

@@ -46,7 +46,7 @@ const CustomFormFields = (props: any) => {
   return (
     <Grid container spacing={2}>
       {Object.keys(fieldsTypes).map((f) => (
-        <Grid item xs={12}>
+        <Grid item xs={12} key={f}>
           <TextField
             error={!!validationErrors[f]}
             helperText={validationErrors[f]}
