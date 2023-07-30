@@ -1,12 +1,11 @@
 # Todo:
 
-- Test Customers Page With Data
+- Payments Page
 - "Change payment method" function on frontend (external page) for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
 - Add allowance button on frontend (external page)
 - Simulate sending webhook to the vendor upon successful XXX
-- Frontend of admin panel
 
 # Future Task
 
