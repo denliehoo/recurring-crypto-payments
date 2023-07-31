@@ -1,4 +1,4 @@
-// import classes from "./StartPlanModal.module.css";
+// import classes from "./ConfigurePlanModal.module.css";
 
 import {
   Box,
@@ -18,7 +18,7 @@ import USDTABI from "../../truffle_abis/FakeUSDT.json";
 import axios from "axios";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
-const StartPlanModal = (props: any) => {
+const ConfigurePlanModal = (props: any) => {
   const style = {
     position: "absolute" as "absolute",
     top: "50%",
@@ -37,17 +37,24 @@ const StartPlanModal = (props: any) => {
     amount,
     vendorContract,
     authToken,
+    status,
+    currentWallet,
   } = props;
+  // status: active means user change plan
+  // status: cancelled means user wants to start plan again on the current payment method
+  // status: inactive means user wants to start plan
+  console.log(status);
   // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
   // if its false, means that they want to change payment method
-  const isStartPlan = true;
+  // const isStartPlan = true;
 
   const apiUrl = process.env.REACT_APP_API_URL;
   const steps = [
     "Connect Wallet",
     "Check Balance",
     "Check Allowance",
-    `Confirm ${isStartPlan ? "Subscription" : "Change"}`,
+    // if active, it is confirm change , if inactive/cancelled confirm subscription
+    `Confirm ${status === "active" ? "Change" : "Subscription"}`,
   ];
   const minAmountText = amount / 10 ** 6;
   // as we go through the steps, check for the necessary
@@ -55,7 +62,10 @@ const StartPlanModal = (props: any) => {
   // if enough change text to "You have sufficient xxx" or something for that step
   // as leave it as that and proceed
   const [stepsText, setStepsText] = useState([
-    "To start, please connect your wallet",
+    status === "active"
+      ? `Your current payment wallet is ${currentWallet}. To change payment wallet, please connect to a different wallet`
+      : "To start, please connect your wallet",
+
     "You have a sufficient balance of XXX USDT and may proceed",
     "You have sufficient allowance and may proceed",
     "Please confirm your subscription. Subsequently, we will be deducting XXX USDT monthly",
@@ -111,6 +121,18 @@ const StartPlanModal = (props: any) => {
       const accounts = await w3.eth.getAccounts();
       setAddress(accounts[0]);
 
+      if (
+        status === "active" &&
+        accounts[0].toLowerCase() === currentWallet.toLowerCase()
+      ) {
+        const temp = [...stepsText];
+        temp[0] = `You are connected to the wallet address: ${accounts[0]}. To proceed with changing payment method
+        please change to a different wallet address`;
+        setStepsText(temp);
+        setButtonLoading(false);
+        return;
+      }
+
       const abi: any = USDTABI.abi;
       const usdt: any = new w3.eth.Contract(abi, tokenAddress);
       setContract(usdt);
@@ -148,7 +170,7 @@ const StartPlanModal = (props: any) => {
         tempButtonText[2] = "Next";
         setStepsButtonText(tempButtonText);
       }
-      if (isStartPlan) {
+      if (status === "inactive" || status === "cancelled") {
         tempStepsText[3] = `Please confirm your subscription and billing information. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
       } else {
         tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
@@ -215,7 +237,10 @@ const StartPlanModal = (props: any) => {
     }
     //confirm subscription
     if (activeStep === 3) {
-      if (isStartPlan) {
+      const headers = {
+        Authorization: authToken,
+      };
+      if (status === "inactive") {
         // means they want to add payment method and begin subscription
         if (!nameInput || !emailInput || !addressInput) {
           setInputError("Please ensure fields are not empty");
@@ -228,9 +253,6 @@ const StartPlanModal = (props: any) => {
 
         setButtonLoading(true);
         try {
-          const headers = {
-            Authorization: authToken,
-          };
           const body = {
             billingInfo: {
               name: nameInput,
@@ -260,13 +282,33 @@ const StartPlanModal = (props: any) => {
           // if api call fail, dont proceed
           return;
         }
-        setButtonLoading(false);
-      } else {
-        // means they want to change payment method
-        // change the payment method accordingly on server
-        // on next billing, bill this address instead
+      } else if (status === "active") {
+        setButtonLoading(true);
+        try {
+          const body = {
+            newAddress: address,
+          };
+          const res = await axios.post(
+            `${apiUrl}/payments/change-payment-method`,
+            body,
+            {
+              headers,
+            }
+          );
+          console.log(res);
+        } catch (err) {
+          console.log(err);
+          setButtonLoading(false);
+          // if api call fail, dont proceed
+          return;
+        }
+      } else if (status === "cancelled") {
+        // means they want to continue subscription
+        // make them start the payment again but dont need add the details
+        // for payment method
       }
     }
+    setButtonLoading(false);
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -285,7 +327,9 @@ const StartPlanModal = (props: any) => {
             },
           }}
         >
-          <span>Start plan</span>
+          <span>
+            {status === "active" ? "Change Payment Method" : "Start Plan"}
+          </span>
           <span>{`${address.substring(0, 4)}...${address.substring(
             address.length - 4
           )}`}</span>
@@ -309,10 +353,13 @@ const StartPlanModal = (props: any) => {
         {activeStep === steps.length ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
-              You have successfully subscribed!
+              {status === "inactive"
+                ? "You have successfully subscribed!"
+                : "You have successfully changed your payment wallet!"}
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
+              {/* Need to refresh data upon closing */}
               <Button onClick={closeStartPlanModal}>Close</Button>
             </Box>
           </React.Fragment>
@@ -321,7 +368,7 @@ const StartPlanModal = (props: any) => {
             <Typography sx={{ mt: 2, mb: 1 }}>
               {stepsText[activeStep]}
             </Typography>
-            {activeStep === 3 && isStartPlan && (
+            {activeStep === 3 && status === "inactive" && (
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -374,4 +421,4 @@ const StartPlanModal = (props: any) => {
   );
 };
 
-export default StartPlanModal;
+export default ConfigurePlanModal;

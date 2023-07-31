@@ -1,8 +1,7 @@
 # Todo:
 
-- "Change payment method" function on frontend (external page) for when user wants to change payment method
-  - Should change payment method
-  - Should update the schedule payment to deduct the new address
+- Cancel Plan
+- Continue Plan
 - Add allowance button on frontend (external page)
 - Dashboard
 - Logout functionality
@@ -93,3 +92,6 @@
 - 28/07/23: Basic Structure Of Customers page
 - 31/07/23: Payments Page
 - 31/07/23: Remarks field for completedPayments db entity
+- 31/07/23: "Change payment method" function on frontend (external page) for when user wants to change payment method
+  - Should change payment method
+  - Should update the schedule payment to deduct the new address

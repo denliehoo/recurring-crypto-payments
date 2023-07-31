@@ -10,6 +10,7 @@ import {
   createPayout,
   getPayoutsDetails,
   getAllPayments,
+  changePaymentMethod,
 } from "../controllers/payments";
 import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
@@ -21,16 +22,17 @@ router.get(
   verifyToken,
   getSubscriptionPageDetails
 );
-router.post("/cron-reduce-balances", cronReduceBalances);
+router.post("/change-payment-method", verifyToken, changePaymentMethod);
 router.put("/cancel", cancelSubscription);
+
+router.post("/cron-reduce-balances", cronReduceBalances);
+router.get("/get-all-payments", verifyToken, getAllPayments);
+
+router.post("/create-payout/:vendorId", verifyToken, createPayout);
+router.get("/get-payouts-details", verifyToken, getPayoutsDetails);
+
+// for testing
 router.get("/scheduled-payments", getScheduledPayments);
 router.get("/completed-payments", getCompletedPayments);
-router.get("/get-all-payments", verifyToken, getAllPayments)
-
-router.post("/create-payout/:vendorId", 
-verifyToken, createPayout);
-router.get("/get-payouts-details",
- verifyToken, 
- getPayoutsDetails);
 
 export default router;

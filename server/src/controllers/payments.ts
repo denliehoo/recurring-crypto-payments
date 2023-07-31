@@ -199,10 +199,54 @@ export const initiateSubscription = async (
 };
 
 // change payment method of client
-export const changePaymentMethod = async (req: Request, res: Response) => {
+export const changePaymentMethod = async (
+  req: CustomRequest,
+  res: Response
+) => {
   // update the new payment method in vendorclient
   // look for the given vendor id and client id in scheduledPayments entity
   // update the scheduledPayment to deduct from the new address
+  const { newAddress } = req.body;
+  if (!newAddress)
+    return res
+      .status(401)
+      .json({ error: "User Address field cannot be empty" });
+
+  const decoded = req.decoded;
+  const vendorId = decoded.vendor;
+  const clientId = decoded.vendorClient;
+  const v = await findVendorById(vendorId);
+  let c = await findVendorClientById(clientId);
+  console.log(v);
+  console.log(c);
+  if (!v || !c)
+    return res.status(404).json({ error: "Vendor or client id not found" });
+  if (!c?.paymentMethod?.wallet)
+    return res
+      .status(401)
+      .json({ error: "The user does not have a current payment method" });
+  const sp = await findScheduledPayment(vendorId, clientId);
+  if (!sp)
+    return res.status(404).json({ error: "Unable to find scheduled payment" });
+
+  const isScheduledPaymentUpdated = await updateScheduledPayment(
+    sp,
+    newAddress
+  );
+  if (!isScheduledPaymentUpdated)
+    return res
+      .status(500)
+      .json({ error: "An error occured in updating the scheduled payment" });
+
+  c!.paymentMethod!.wallet = newAddress;
+  try {
+    c = await c.save();
+  } catch {
+    return res
+      .status(500)
+      .json({ error: "An error occured in updating the vendor client" });
+  }
+  return res.send(c);
 };
 
 // the cron job runs this every X minutes
@@ -277,16 +321,17 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
     }
     if (!isSuccessful) {
       let remarks: string | null = null;
-      if(!sufficientAllowance) remarks = "Insufficient Allowance"
-      if(!sufficientBalance) remarks = "Insufficient Balance"
-      if(!sufficientAllowance && !sufficientBalance) remarks = "Insufficient Allowance & Balance"
+      if (!sufficientAllowance) remarks = "Insufficient Allowance";
+      if (!sufficientBalance) remarks = "Insufficient Balance";
+      if (!sufficientAllowance && !sufficientBalance)
+        remarks = "Insufficient Allowance & Balance";
 
       // "move" the data to completedPayment with status "failed"
       const newCompletedPayment: ICompletedPayment = new CompletedPayment({
         ...paymentDetails,
         paymentDate: new Date(),
         status: "failed",
-        remarks: remarks
+        remarks: remarks,
       });
       const isCompletedPaymentAdded = await addCompletedPayment(
         newCompletedPayment
@@ -375,24 +420,26 @@ export const createPayout = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to create payout.", error });
   }
 };
-export const getAllPayments = async(req: CustomRequest, res: Response) => {
-  const decoded = req.decoded
-  const {vendorId} = decoded
-  const scheduledPayments = await ScheduledPayment.find({ vendorId: vendorId })
+export const getAllPayments = async (req: CustomRequest, res: Response) => {
+  const decoded = req.decoded;
+  const { vendorId } = decoded;
+  const scheduledPayments = await ScheduledPayment.find({ vendorId: vendorId });
   const completedPayments = await CompletedPayment.find({ vendorId: vendorId });
   // add remarks in the map too next time once completedpayments has remarks too
   const results = scheduledPayments
-  .map(p => ({ ...p.toObject(), status: "pending", remarks: null as string | null }))
-  .concat(completedPayments)
-  .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    .map((p) => ({
+      ...p.toObject(),
+      status: "pending",
+      remarks: null as string | null,
+    }))
+    .concat(completedPayments)
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 
-
-
-  return res.send(results)
-
+  return res.send(results);
 };
-
-
 
 // helpers
 const generateJWT = (data: any) => {

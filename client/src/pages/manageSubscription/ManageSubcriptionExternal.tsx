@@ -25,7 +25,7 @@ import {
   cancelledSampleData,
   inactiveSampleData,
 } from "../../utils/manageSubscriptionExternalSampleDatas";
-import StartPlanModal from "./StartPlanModal";
+import ConfigurePlanModal from "./ConfigurePlanModal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -177,13 +177,6 @@ export default function ManageSubscriptionExternal() {
             <Divider />
             <Box sx={{ mt: 1 }}>
               {details?.paymentMethod?.wallet ? (
-                // <Box>
-                //   [Logo]{details!.paymentMethod!.token}{" "}
-                //   {details!.paymentMethod!.wallet}{" "}
-                //   {details!.paymentMethod!.sufficientAllowance ? "y" : "n"}{" "}
-                //   {details!.paymentMethod!.sufficientBalance ? "y" : "n"} ...{" "}
-                //   <Button variant="contained">Add allowance</Button>
-                // </Box>
                 <TableContainer>
                   <TableHead>
                     <TableRow>
@@ -247,7 +240,13 @@ export default function ManageSubscriptionExternal() {
               {details!.status !== "inactive" && (
                 <Box>
                   {/* openThreeDots modal to metamask */}
-                  <Button variant="contained"> Change Payment Method</Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => setStartPlanModal(true)}
+                  >
+                    {" "}
+                    Change Payment Method
+                  </Button>
                 </Box>
               )}
             </Box>
@@ -293,7 +292,7 @@ export default function ManageSubscriptionExternal() {
           </Box>
         </Grid>
         {startPlanModal && (
-          <StartPlanModal
+          <ConfigurePlanModal
             startPlanModal={startPlanModal}
             closeStartPlanModal={() => setStartPlanModal(false)}
             tokenAddress={details!.tokenAddress}
@@ -301,6 +300,8 @@ export default function ManageSubscriptionExternal() {
             amount={details!.amount}
             vendorContract={details!.vendorContract}
             authToken={authToken}
+            status={details!.status}
+            currentWallet={details?.paymentMethod?.wallet}
           />
         )}
       </Grid>
