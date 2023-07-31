@@ -276,11 +276,17 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
       }
     }
     if (!isSuccessful) {
+      let remarks: string | null = null;
+      if(!sufficientAllowance) remarks = "Insufficient Allowance"
+      if(!sufficientBalance) remarks = "Insufficient Balance"
+      if(!sufficientAllowance && !sufficientBalance) remarks = "Insufficient Allowance & Balance"
+
       // "move" the data to completedPayment with status "failed"
       const newCompletedPayment: ICompletedPayment = new CompletedPayment({
         ...paymentDetails,
         paymentDate: new Date(),
         status: "failed",
+        remarks: remarks
       });
       const isCompletedPaymentAdded = await addCompletedPayment(
         newCompletedPayment
@@ -376,9 +382,11 @@ export const getAllPayments = async(req: CustomRequest, res: Response) => {
   const completedPayments = await CompletedPayment.find({ vendorId: vendorId });
   // add remarks in the map too next time once completedpayments has remarks too
   const results = scheduledPayments
-                  .map(p=>({...p.toObject(), status: "pending"}))
-                  .concat(completedPayments)
-                  .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  .map(p => ({ ...p.toObject(), status: "pending", remarks: null as string | null }))
+  .concat(completedPayments)
+  .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+
 
   return res.send(results)
 
