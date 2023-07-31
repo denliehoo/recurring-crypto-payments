@@ -1,6 +1,6 @@
 # Todo:
 
-- Payments Page
+- Add in a remarks field for completedPayments (e.g. "insufficient allowance/userbalance/etc.."; i.e. give a reason why it failed)
 - "Change payment method" function on frontend (external page) for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
@@ -90,3 +90,4 @@
 - 28/07/23: Request Payout Modal completeds; cleaned up frontend for payouts; clean up console errors for integrations modal
 - 28/07/23: Redeploy vendor smart contracts( because of a fix in withdraw; previously withdraw doesnt reduce balance variable). Update ABI on server file and client. Change any hardcoded addresses
 - 28/07/23: Basic Structure Of Customers page
+- 31/07/23: Payments Page

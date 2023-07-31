@@ -369,6 +369,23 @@ export const createPayout = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to create payout.", error });
   }
 };
+export const getAllPayments = async(req: CustomRequest, res: Response) => {
+  const decoded = req.decoded
+  const {vendorId} = decoded
+  const scheduledPayments = await ScheduledPayment.find({ vendorId: vendorId })
+  const completedPayments = await CompletedPayment.find({ vendorId: vendorId });
+  // add remarks in the map too next time once completedpayments has remarks too
+  const results = scheduledPayments
+                  .map(p=>({...p.toObject(), status: "pending"}))
+                  .concat(completedPayments)
+                  .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+  return res.send(results)
+
+};
+
+
+
 // helpers
 const generateJWT = (data: any) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)
