@@ -40,14 +40,11 @@ const ConfigurePlanModal = (props: any) => {
     status,
     currentWallet,
     refreshData,
+    nextDate,
   } = props;
-  // status: active means user change plan
-  // status: cancelled means user wants to start plan again on the current payment method
-  // status: inactive means user wants to start plan
-  console.log(status);
-  // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
-  // if its false, means that they want to change payment method
-  // const isStartPlan = true;
+  // status: active means user want to change payment method
+  // status: cancelled means user wants to start plan again / renew plan
+  // status: inactive means user wants to start plan (for the first time)
 
   const apiUrl = process.env.REACT_APP_API_URL;
   const steps = [
@@ -171,10 +168,16 @@ const ConfigurePlanModal = (props: any) => {
         tempButtonText[2] = "Next";
         setStepsButtonText(tempButtonText);
       }
-      if (status === "inactive" || status === "cancelled") {
+      if (status === "inactive") {
         tempStepsText[3] = `Please confirm your subscription and billing information. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
-      } else {
+      } else if (status === "active") {
         tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
+      } else if (status === "cancelled") {
+        tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly from your wallet ${
+          new Date(nextDate).getTime() > new Date().getTime()
+            ? `on ${nextDate}`
+            : ""
+        } if you confirm your renewal.`;
       }
       setButtonLoading(false);
       setStepsText(tempStepsText);
@@ -247,11 +250,6 @@ const ConfigurePlanModal = (props: any) => {
           setInputError("Please ensure fields are not empty");
           return;
         }
-
-        // call api to begin subscription
-        // call api to add billing method
-        console.log(nameInput, emailInput, addressInput);
-
         setButtonLoading(true);
         try {
           const body = {
@@ -280,10 +278,10 @@ const ConfigurePlanModal = (props: any) => {
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
-          // if api call fail, dont proceed
           return;
         }
       } else if (status === "active") {
+        // means they want to change payment method
         setButtonLoading(true);
         try {
           const body = {
@@ -300,13 +298,28 @@ const ConfigurePlanModal = (props: any) => {
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
-          // if api call fail, dont proceed
           return;
         }
       } else if (status === "cancelled") {
         // means they want to continue subscription
-        // make them start the payment again but dont need add the details
-        // for payment method
+        setButtonLoading(true);
+        try {
+          const body = {
+            wallet: address,
+          };
+          const res = await axios.post(
+            `${apiUrl}/payments/renew-subscription`,
+            body,
+            {
+              headers,
+            }
+          );
+          console.log(res);
+        } catch (err) {
+          console.log(err);
+          setButtonLoading(false);
+          return;
+        }
       }
     }
     setButtonLoading(false);

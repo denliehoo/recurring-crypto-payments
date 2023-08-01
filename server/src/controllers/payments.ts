@@ -180,7 +180,7 @@ export const initiateSubscription = async (
     newCompletedPayment
   );
   if (!isCompletedPaymentAdded)
-    return res.status(500).json({ error: "Failed to update VendorClient" });
+    return res.status(500).json({ error: "Failed to add completed payment" });
   // 4. schedule next payment
   const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
     ...paymentDetails,
@@ -368,21 +368,20 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
   const v = await findVendorById(vendorId);
   let c = await findVendorClientById(clientId);
 
-  
   if (!v || !c)
     return res.status(404).json({ error: "Vendor or client id not found" });
 
-    
   const sp = await findScheduledPayment(vendorId, clientId);
   if (!sp)
     return res.status(404).json({ error: "Unable to find scheduled payment" });
 
   const isScheduledPaymentDeleted = await deleteScheduledPayment(sp);
 
-  if(!isScheduledPaymentDeleted) return res
+  if (!isScheduledPaymentDeleted)
+    return res
       .status(500)
       .json({ error: "An error occured in deleting the scheduled payment" });
-  
+
   // "move" the data to completedPayment with status "failed"
   const newCompletedPayment: ICompletedPayment = new CompletedPayment({
     vendorContract: sp.vendorContract,
@@ -398,23 +397,129 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
   const isCompletedPaymentAdded = await addCompletedPayment(
     newCompletedPayment
   );
-  
-  if (!isCompletedPaymentAdded) return res.status(500).json({ error: "An error occured in adding the completed payment" });
 
-  c.status = 'cancelled';
+  if (!isCompletedPaymentAdded)
+    return res
+      .status(500)
+      .json({ error: "An error occured in adding the completed payment" });
 
-  try{
-    await c.save()
-  } catch{
+  c.status = "cancelled";
+
+  try {
+    await c.save();
+  } catch {
     return res
       .status(500)
       .json({ error: "An error occured in updating the vendor client entity" });
-  }     
+  }
 
   // send a webhook to inform vendor that user cancelled...
   // ...
 
-  return res.status(204).end()
+  return res.status(204).end();
+};
+
+export const renewSubscription = async (req: CustomRequest, res: Response) => {
+  const { wallet } = req.body;
+  if (!wallet)
+    return res.status(401).json({ error: "Wallet field cannot be empty" });
+
+  const decoded = req.decoded;
+  const vendorId = decoded.vendor;
+  const clientId = decoded.vendorClient;
+  const v = await findVendorById(vendorId);
+  let c = await findVendorClientById(clientId);
+
+  if (!v || !c)
+    return res.status(404).json({ error: "Vendor or client id not found" });
+
+  const paymentDetails = {
+    vendorContract: v.vendorContract,
+    userAddress: wallet,
+    amount: v.amount,
+    tokenAddress: v.tokenAddress!,
+    vendorId: vendorId,
+    vendorClientId: clientId,
+  };
+  let schedluledPaymentDate;
+
+  if (c.nextDate! > new Date()) {
+    // means still have time in subscription
+    schedluledPaymentDate = c.nextDate;
+  } else {
+    // means subscription has expired
+    const [sufficientAllowance, sufficientBalance] =
+      await isAllowanceAndBalanceSufficient(
+        wallet,
+        v.tokenAddress!,
+        v.vendorContract!,
+        v.amount!
+      );
+
+    if (!sufficientAllowance || !sufficientBalance)
+      return res.status(401).json({
+        error: "Unable to proceed because of insufficient allowance or balance",
+      });
+
+    const transactionHash = await sendReduceUserBalanceTransactionasync(
+      v.vendorContract!,
+      wallet,
+      v.amount!.toString()
+    );
+
+    if (!transactionHash)
+      return res.status(400).json({ error: "Deduction failed" });
+
+    schedluledPaymentDate = moment().add(1, "months").toDate();
+
+    c.nextDate = schedluledPaymentDate;
+    c.invoices.push({
+      date: new Date(),
+      amount: v.amount!, // replace this
+      token: "USDT",
+      status: "paid",
+      hash: `https://goerli.etherscan.io/tx/${transactionHash}`,
+      invoice: "https://www.google.com/", // eventually put the actual invoice link
+    });
+
+    const newCompletedPayment: ICompletedPayment = new CompletedPayment({
+      ...paymentDetails,
+      status: "paid",
+      hash: transactionHash,
+    });
+    const isCompletedPaymentAdded = await addCompletedPayment(
+      newCompletedPayment
+    );
+    if (!isCompletedPaymentAdded)
+      return res.status(500).json({ error: "Failed to add completed payment" });
+  }
+
+  // add the newe scheduled payment
+  const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
+    ...paymentDetails,
+    paymentDate: schedluledPaymentDate,
+  });
+  const isNewScheduledPaymentAdded = await addScheduledPayment(
+    newScheduledPayment
+  );
+  if (!isNewScheduledPaymentAdded)
+    return res
+      .status(500)
+      .json({ error: "An error occured while adding the scheduled payment" });
+
+  // update vendor client
+  c.status = "active";
+  c.paymentMethod!.wallet = wallet;
+  try {
+    c = await c.save();
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: "An error occured while updating vendor client" });
+  }
+  // send webhook that user renew plan....
+
+  return res.send(c);
 };
 
 export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {

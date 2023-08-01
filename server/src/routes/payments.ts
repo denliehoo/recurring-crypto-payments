@@ -11,6 +11,7 @@ import {
   getPayoutsDetails,
   getAllPayments,
   changePaymentMethod,
+  renewSubscription,
 } from "../controllers/payments";
 import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
@@ -23,7 +24,8 @@ router.get(
   getSubscriptionPageDetails
 );
 router.post("/change-payment-method", verifyToken, changePaymentMethod);
-router.post("/cancel-subscription",verifyToken, cancelSubscription);
+router.post("/cancel-subscription", verifyToken, cancelSubscription);
+router.post("/renew-subscription", verifyToken, renewSubscription);
 
 router.post("/cron-reduce-balances", cronReduceBalances);
 router.get("/get-all-payments", verifyToken, getAllPayments);

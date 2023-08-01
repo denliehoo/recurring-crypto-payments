@@ -1,8 +1,7 @@
 # Todo:
 
-- Test Cancel plan; particularly; might have error in how subscription works after cancelled if still have time in subscription left; etc
-- Continue Plan
 - Add allowance button on frontend (external page)
+- Update billingInfo Modal
 - Dashboard
 - Logout functionality
 - Simulate sending webhook to the vendor upon successful XXX
@@ -97,3 +96,4 @@
   - Should change payment method
   - Should update the schedule payment to deduct the new address
 - 01/08/23: Cancel Plan; added cancelled status to completed payment; added API for cancel plan; connected to frontend
+- 01/08/23: Renew Plan feature

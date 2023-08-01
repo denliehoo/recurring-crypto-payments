@@ -158,26 +158,36 @@ export default function ManageSubscriptionExternal() {
                   `Your plan will auto renew on ${details!.nextDate?.toString()}`,
                   "",
                   `Your plan has been cancelled and ${
-                    details?.nextDate && details.nextDate > new Date()
+                    details?.nextDate &&
+                    new Date(details.nextDate).getTime() > new Date().getTime()
                       ? "will stop on"
                       : "has stopped since"
-                  } ${details!.nextDate?.toString()}`
+                  } ${details!.nextDate?.toString()}
+                  `
                 )}
               </Box>
+              <Button
+                variant="contained"
+                onClick={() =>
+                  // if active, cancel plan modal, if inactive/cancelled, configure plan
+                  details!.status === "active"
+                    ? setCancelPlanModal(true)
+                    : setConfigurePlanModal(true)
+                }
+              >
+                {details!.status === "inactive"
+                  ? "Start "
+                  : details!.status === "active"
+                  ? "Cancel "
+                  : "Renew "}
+                Plan
+              </Button>
               {details!.status === "inactive" && (
                 <Button
                   variant="contained"
                   onClick={() => setConfigurePlanModal(true)}
                 >
                   Start Plan
-                </Button>
-              )}
-              {details!.status === "active" && (
-                <Button
-                  variant="contained"
-                  onClick={() => setCancelPlanModal(true)}
-                >
-                  Cancel Plan
                 </Button>
               )}
             </Box>
@@ -316,6 +326,7 @@ export default function ManageSubscriptionExternal() {
             status={details!.status}
             currentWallet={details?.paymentMethod?.wallet}
             refreshData={() => setRefreshData(!refreshData)}
+            nextDate={details?.nextDate}
           />
         )}
         {cancelPlanModal && (
