@@ -1,11 +1,12 @@
 # Todo:
 
-- Cancel Plan
+- Test Cancel plan; particularly; might have error in how subscription works after cancelled if still have time in subscription left; etc
 - Continue Plan
 - Add allowance button on frontend (external page)
 - Dashboard
 - Logout functionality
 - Simulate sending webhook to the vendor upon successful XXX
+- Refactor modal component
 
 # Future Task
 
@@ -95,3 +96,4 @@
 - 31/07/23: "Change payment method" function on frontend (external page) for when user wants to change payment method
   - Should change payment method
   - Should update the schedule payment to deduct the new address
+- 01/08/23: Cancel Plan; added cancelled status to completed payment; added API for cancel plan; connected to frontend

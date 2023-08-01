@@ -23,7 +23,7 @@ router.get(
   getSubscriptionPageDetails
 );
 router.post("/change-payment-method", verifyToken, changePaymentMethod);
-router.put("/cancel", cancelSubscription);
+router.post("/cancel-subscription",verifyToken, cancelSubscription);
 
 router.post("/cron-reduce-balances", cronReduceBalances);
 router.get("/get-all-payments", verifyToken, getAllPayments);

@@ -28,6 +28,7 @@ import {
 import ConfigurePlanModal from "./ConfigurePlanModal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import CancelPlanModal from "./CancelPlanModal";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
@@ -51,6 +52,7 @@ export default function ManageSubscriptionExternal() {
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
+  const [refreshData, setRefreshData] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openThreeDots = Boolean(anchorEl);
@@ -68,7 +70,8 @@ export default function ManageSubscriptionExternal() {
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  const [startPlanModal, setStartPlanModal] = useState(false);
+  const [configurePlanModal, setConfigurePlanModal] = useState(false);
+  const [cancelPlanModal, setCancelPlanModal] = useState(false);
   useEffect(() => {
     console.log(authToken);
     const getData = async () => {
@@ -99,7 +102,7 @@ export default function ManageSubscriptionExternal() {
 
     // setDetails(sampleData);
     // setIsLoading(false);
-  }, []);
+  }, [refreshData]);
 
   const textBasedOnStatus = (
     active: string,
@@ -164,9 +167,17 @@ export default function ManageSubscriptionExternal() {
               {details!.status === "inactive" && (
                 <Button
                   variant="contained"
-                  onClick={() => setStartPlanModal(true)}
+                  onClick={() => setConfigurePlanModal(true)}
                 >
                   Start Plan
+                </Button>
+              )}
+              {details!.status === "active" && (
+                <Button
+                  variant="contained"
+                  onClick={() => setCancelPlanModal(true)}
+                >
+                  Cancel Plan
                 </Button>
               )}
             </Box>
@@ -242,7 +253,7 @@ export default function ManageSubscriptionExternal() {
                   {/* openThreeDots modal to metamask */}
                   <Button
                     variant="contained"
-                    onClick={() => setStartPlanModal(true)}
+                    onClick={() => setConfigurePlanModal(true)}
                   >
                     {" "}
                     Change Payment Method
@@ -281,8 +292,10 @@ export default function ManageSubscriptionExternal() {
                     <IconButton onClick={() => console.log(i.invoice)}>
                       <Receipt />
                     </IconButton>
-                    <IconButton onClick={() => console.log(i.hash)}>
-                      <TagRounded />
+                    <IconButton>
+                      <a href={i.hash} target="_blank" rel="noreferrer">
+                        <TagRounded />
+                      </a>
                     </IconButton>
                     {i.amount / 10 ** 6} {i.token} {i.status}
                   </Box>
@@ -291,10 +304,10 @@ export default function ManageSubscriptionExternal() {
             </Box>
           </Box>
         </Grid>
-        {startPlanModal && (
+        {configurePlanModal && (
           <ConfigurePlanModal
-            startPlanModal={startPlanModal}
-            closeStartPlanModal={() => setStartPlanModal(false)}
+            configurePlanModal={configurePlanModal}
+            closeConfigurePlanModal={() => setConfigurePlanModal(false)}
             tokenAddress={details!.tokenAddress}
             token={details!.token}
             amount={details!.amount}
@@ -302,6 +315,15 @@ export default function ManageSubscriptionExternal() {
             authToken={authToken}
             status={details!.status}
             currentWallet={details?.paymentMethod?.wallet}
+            refreshData={() => setRefreshData(!refreshData)}
+          />
+        )}
+        {cancelPlanModal && (
+          <CancelPlanModal
+            cancelPlanModal={cancelPlanModal}
+            closeCancelPlanModal={() => setCancelPlanModal(false)}
+            refreshData={() => setRefreshData(!refreshData)}
+            authToken={authToken}
           />
         )}
       </Grid>

@@ -31,14 +31,15 @@ const ConfigurePlanModal = (props: any) => {
     p: 4,
   };
   const {
-    startPlanModal,
-    closeStartPlanModal,
+    configurePlanModal,
+    closeConfigurePlanModal,
     tokenAddress,
     amount,
     vendorContract,
     authToken,
     status,
     currentWallet,
+    refreshData,
   } = props;
   // status: active means user change plan
   // status: cancelled means user wants to start plan again on the current payment method
@@ -313,7 +314,7 @@ const ConfigurePlanModal = (props: any) => {
   };
 
   return (
-    <Modal open={startPlanModal} onClose={closeStartPlanModal}>
+    <Modal open={configurePlanModal} onClose={closeConfigurePlanModal}>
       <Box sx={style}>
         <Typography
           id="modal-modal-title"
@@ -359,8 +360,14 @@ const ConfigurePlanModal = (props: any) => {
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Box sx={{ flex: "1 1 auto" }} />
-              {/* Need to refresh data upon closing */}
-              <Button onClick={closeStartPlanModal}>Close</Button>
+              <Button
+                onClick={() => {
+                  refreshData();
+                  closeConfigurePlanModal();
+                }}
+              >
+                Close
+              </Button>
             </Box>
           </React.Fragment>
         ) : (

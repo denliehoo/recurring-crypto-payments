@@ -361,11 +361,60 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
   return res.send("all done");
 };
 
-export const cancelSubscription = async (req: Request, res: Response) => {
-  // cancel subscription details ....
-  // look for the given vendor id and client id in scheduledPayments
-  // delete that data
-  // send a webhook to let vendor know
+export const cancelSubscription = async (req: CustomRequest, res: Response) => {
+  const decoded = req.decoded;
+  const vendorId = decoded.vendor;
+  const clientId = decoded.vendorClient;
+  const v = await findVendorById(vendorId);
+  let c = await findVendorClientById(clientId);
+
+  
+  if (!v || !c)
+    return res.status(404).json({ error: "Vendor or client id not found" });
+
+    
+  const sp = await findScheduledPayment(vendorId, clientId);
+  if (!sp)
+    return res.status(404).json({ error: "Unable to find scheduled payment" });
+
+  const isScheduledPaymentDeleted = await deleteScheduledPayment(sp);
+
+  if(!isScheduledPaymentDeleted) return res
+      .status(500)
+      .json({ error: "An error occured in deleting the scheduled payment" });
+  
+  // "move" the data to completedPayment with status "failed"
+  const newCompletedPayment: ICompletedPayment = new CompletedPayment({
+    vendorContract: sp.vendorContract,
+    userAddress: sp.userAddress,
+    amount: sp.amount,
+    tokenAddress: sp.tokenAddress,
+    vendorId: sp.vendorClientId,
+    vendorClientId: sp.vendorClientId,
+    paymentDate: new Date(),
+    status: "cancelled",
+    remarks: "Cancelled Plan",
+  });
+  const isCompletedPaymentAdded = await addCompletedPayment(
+    newCompletedPayment
+  );
+  
+  if (!isCompletedPaymentAdded) return res.status(500).json({ error: "An error occured in adding the completed payment" });
+
+  c.status = 'cancelled';
+
+  try{
+    await c.save()
+  } catch{
+    return res
+      .status(500)
+      .json({ error: "An error occured in updating the vendor client entity" });
+  }     
+
+  // send a webhook to inform vendor that user cancelled...
+  // ...
+
+  return res.status(204).end()
 };
 
 export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
