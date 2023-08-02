@@ -15,19 +15,9 @@ import CustomButton from "../../../components/UI/CustomButton";
 import RecurringPaymentsVendor from "../../../truffle_abis/RecurringPaymentsVendor.json";
 import axios from "axios";
 import { apiCallAuth } from "../../../utils/apiRequest";
+import CustomModal from "../../../components/UI/CustomModal";
 
 const RequestPayoutModal = (props: any) => {
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "90%",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
   const {
     requestPayoutModal,
     closeRequestPayoutModal,
@@ -159,78 +149,73 @@ const RequestPayoutModal = (props: any) => {
   }, []);
 
   return (
-    <Modal open={requestPayoutModal} onClose={closeRequestPayoutModal}>
-      <Box sx={style}>
-        <Typography
-          id="modal-modal-title"
-          variant="h6"
-          component="h2"
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            "& > :first-of-type": {
-              marginRight: "auto",
-            },
-          }}
-        >
-          <span>Start plan</span>
-          <span>{`${address.substring(0, 4)}...${address.substring(
-            address.length - 4
-          )}`}</span>
-        </Typography>
-        {/* Steps for start plan */}
-        <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            const labelProps: {
-              optional?: React.ReactNode;
-            } = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+    <CustomModal open={requestPayoutModal} onClose={closeRequestPayoutModal}>
+      <Typography
+        id="modal-modal-title"
+        variant="h6"
+        component="h2"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          "& > :first-of-type": {
+            marginRight: "auto",
+          },
+        }}
+      >
+        <span>Start plan</span>
+        <span>{`${address.substring(0, 4)}...${address.substring(
+          address.length - 4
+        )}`}</span>
+      </Typography>
+      {/* Steps for start plan */}
+      <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
+        {steps.map((label, index) => {
+          const stepProps: { completed?: boolean } = {};
+          const labelProps: {
+            optional?: React.ReactNode;
+          } = {};
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
 
-        {/* Stepper info text */}
-        {activeStep === steps.length ? (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              Your payout has been processed
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              {/* refresh the data in Payout page too */}
-              <Button
-                onClick={() => {
-                  closeRequestPayoutModal();
-                  refreshData();
-                }}
-              >
-                Close
-              </Button>
-            </Box>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              {stepsText[activeStep]}
-            </Typography>
+      {/* Stepper info text */}
+      {activeStep === steps.length ? (
+        <React.Fragment>
+          <Typography sx={{ mt: 2, mb: 1 }}>
+            Your payout has been processed
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <Box sx={{ flex: "1 1 auto" }} />
+            {/* refresh the data in Payout page too */}
+            <Button
+              onClick={() => {
+                closeRequestPayoutModal();
+                refreshData();
+              }}
+            >
+              Close
+            </Button>
+          </Box>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
 
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <CustomButton
-                text={stepsButtonText[activeStep]}
-                onClick={handleNext}
-                loading={buttonLoading}
-                disabled={buttonDisabled}
-              />
-            </Box>
-          </React.Fragment>
-        )}
-        {/*  */}
-      </Box>
-    </Modal>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <CustomButton
+              text={stepsButtonText[activeStep]}
+              onClick={handleNext}
+              loading={buttonLoading}
+              disabled={buttonDisabled}
+            />
+          </Box>
+        </React.Fragment>
+      )}
+    </CustomModal>
   );
 };
 

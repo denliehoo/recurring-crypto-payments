@@ -4,6 +4,7 @@ import { Box, Button, Modal, Typography } from "@mui/material";
 import CustomButton from "../../components/UI/CustomButton";
 import { useState } from "react";
 import axios from "axios";
+import CustomModal from "../../components/UI/CustomModal";
 
 const CancelPlanModal = (props: any) => {
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -37,34 +38,20 @@ const CancelPlanModal = (props: any) => {
     }
   };
   return (
-    <Modal open={cancelPlanModal} onClose={closeCancelPlanModal}>
-      <Box
-        sx={{
-          position: "absolute" as "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "90%",
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Cancel Plan
-        </Typography>
-        <Typography>Are you sure you want to cancel your plan?</Typography>
-        <CustomButton
-          text="confirm"
-          loading={buttonLoading}
-          onClick={handleCancelPlan}
-        />
-        <Button variant="outlined" onClick={closeCancelPlanModal}>
-          No
-        </Button>
-      </Box>
-    </Modal>
+    <CustomModal open={cancelPlanModal} onClose={closeCancelPlanModal}>
+      <Typography id="modal-modal-title" variant="h6" component="h2">
+        Cancel Plan
+      </Typography>
+      <Typography>Are you sure you want to cancel your plan?</Typography>
+      <CustomButton
+        text="confirm"
+        loading={buttonLoading}
+        onClick={handleCancelPlan}
+      />
+      <Button variant="outlined" onClick={closeCancelPlanModal}>
+        No
+      </Button>
+    </CustomModal>
   );
 };
 

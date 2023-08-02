@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Grid,
-  Modal,
   Step,
   StepLabel,
   Stepper,
@@ -16,20 +15,10 @@ import { connectWallet } from "../../utils/connectWallet";
 import CustomButton from "../../components/UI/CustomButton";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
 import axios from "axios";
+import CustomModal from "../../components/UI/CustomModal";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
 const ConfigurePlanModal = (props: any) => {
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "90%",
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
   const {
     configurePlanModal,
     closeConfigurePlanModal,
@@ -327,117 +316,112 @@ const ConfigurePlanModal = (props: any) => {
   };
 
   return (
-    <Modal open={configurePlanModal} onClose={closeConfigurePlanModal}>
-      <Box sx={style}>
-        <Typography
-          id="modal-modal-title"
-          variant="h6"
-          component="h2"
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            "& > :first-of-type": {
-              marginRight: "auto",
-            },
-          }}
-        >
-          <span>
-            {status === "active" ? "Change Payment Method" : "Start Plan"}
-          </span>
-          <span>{`${address.substring(0, 4)}...${address.substring(
-            address.length - 4
-          )}`}</span>
-        </Typography>
-        {/* Steps for start plan */}
-        <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-          {steps.map((label, index) => {
-            const stepProps: { completed?: boolean } = {};
-            const labelProps: {
-              optional?: React.ReactNode;
-            } = {};
-            return (
-              <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+    <CustomModal open={configurePlanModal} onClose={closeConfigurePlanModal}>
+      <Typography
+        id="modal-modal-title"
+        variant="h6"
+        component="h2"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          "& > :first-of-type": {
+            marginRight: "auto",
+          },
+        }}
+      >
+        <span>
+          {status === "active" ? "Change Payment Method" : "Start Plan"}
+        </span>
+        <span>{`${address.substring(0, 4)}...${address.substring(
+          address.length - 4
+        )}`}</span>
+      </Typography>
+      {/* Steps for start plan */}
+      <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
+        {steps.map((label, index) => {
+          const stepProps: { completed?: boolean } = {};
+          const labelProps: {
+            optional?: React.ReactNode;
+          } = {};
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
 
-        {/* Stepper info text */}
-        {activeStep === steps.length ? (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              {status === "inactive"
-                ? "You have successfully subscribed!"
-                : "You have successfully changed your payment wallet!"}
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              <Button
-                onClick={() => {
-                  refreshData();
-                  closeConfigurePlanModal();
-                }}
-              >
-                Close
-              </Button>
-            </Box>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              {stepsText[activeStep]}
-            </Typography>
-            {activeStep === 3 && status === "inactive" && (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    type="text"
-                    label="Name"
-                    variant="outlined"
-                    fullWidth
-                    value={nameInput}
-                    onChange={handleNameChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    type="text"
-                    label="Email"
-                    variant="outlined"
-                    fullWidth
-                    value={emailInput}
-                    onChange={handleEmailChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    type="text"
-                    label="Address"
-                    variant="outlined"
-                    fullWidth
-                    value={addressInput}
-                    onChange={handleAddressChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  {inputError && <span>{inputError}</span>}
-                </Grid>
+      {/* Stepper info text */}
+      {activeStep === steps.length ? (
+        <React.Fragment>
+          <Typography sx={{ mt: 2, mb: 1 }}>
+            {status === "inactive"
+              ? "You have successfully subscribed!"
+              : "You have successfully changed your payment wallet!"}
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <Box sx={{ flex: "1 1 auto" }} />
+            <Button
+              onClick={() => {
+                refreshData();
+                closeConfigurePlanModal();
+              }}
+            >
+              Close
+            </Button>
+          </Box>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
+          {activeStep === 3 && status === "inactive" && (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  value={nameInput}
+                  onChange={handleNameChange}
+                />
               </Grid>
-            )}
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <CustomButton
-                text={stepsButtonText[activeStep]}
-                onClick={handleNext}
-                loading={buttonLoading}
-                disabled={buttonDisabled}
-              />
-            </Box>
-          </React.Fragment>
-        )}
-        {/*  */}
-      </Box>
-    </Modal>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  value={emailInput}
+                  onChange={handleEmailChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  label="Address"
+                  variant="outlined"
+                  fullWidth
+                  value={addressInput}
+                  onChange={handleAddressChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                {inputError && <span>{inputError}</span>}
+              </Grid>
+            </Grid>
+          )}
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+            <CustomButton
+              text={stepsButtonText[activeStep]}
+              onClick={handleNext}
+              loading={buttonLoading}
+              disabled={buttonDisabled}
+            />
+          </Box>
+        </React.Fragment>
+      )}
+    </CustomModal>
   );
 };
 

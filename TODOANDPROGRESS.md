@@ -5,7 +5,6 @@
 - Dashboard
 - Logout functionality
 - Simulate sending webhook to the vendor upon successful XXX
-- Refactor modal component
 
 # Future Task
 
@@ -97,3 +96,4 @@
   - Should update the schedule payment to deduct the new address
 - 01/08/23: Cancel Plan; added cancelled status to completed payment; added API for cancel plan; connected to frontend
 - 01/08/23: Renew Plan feature
+- 02/08/23: Refactored Modal into a custom component - CustomModal

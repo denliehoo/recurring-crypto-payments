@@ -4,6 +4,7 @@ import IntegrationFormFields from "./IntegrationFormFields";
 import { apiCallAuth } from "../../../utils/apiRequest";
 import CustomButton from "../../../components/UI/CustomButton";
 import { validateForm } from "../../../utils/validateForm";
+import CustomModal from "../../../components/UI/CustomModal";
 
 const EditConfigurationsModal = (props: any) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;
@@ -75,42 +76,28 @@ const EditConfigurationsModal = (props: any) => {
     }
   }, [vendorDetails]);
   return (
-    <Modal open={editModalOpen} onClose={closeModal}>
-      <Box
-        sx={{
-          position: "absolute" as "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "90%",
-          bgcolor: "background.paper",
-          border: "2px solid #000",
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Edit Configurations
-        </Typography>
-        <IntegrationFormFields
-          vendorDetails={vendorDetails}
-          setVendorDetails={setVendorDetails}
-          validationErrors={validationErrors}
-          setValidationErrors={setValidationErrors}
-          fieldsTypes={fieldsTypes}
-          addressError={addressError}
-          setAddressError={setAddressError}
-        />
-        <CustomButton
-          onClick={handleEdit}
-          loading={buttonLoading}
-          text="Edit"
-          fullWidth
-          sx={{ mt: 2 }}
-          disabled={!formChanged}
-        />
-      </Box>
-    </Modal>
+    <CustomModal open={editModalOpen} onClose={closeModal}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Edit Configurations
+      </Typography>
+      <IntegrationFormFields
+        vendorDetails={vendorDetails}
+        setVendorDetails={setVendorDetails}
+        validationErrors={validationErrors}
+        setValidationErrors={setValidationErrors}
+        fieldsTypes={fieldsTypes}
+        addressError={addressError}
+        setAddressError={setAddressError}
+      />
+      <CustomButton
+        onClick={handleEdit}
+        loading={buttonLoading}
+        text="Edit"
+        fullWidth
+        sx={{ mt: 2 }}
+        disabled={!formChanged}
+      />
+    </CustomModal>
   );
 };
 
