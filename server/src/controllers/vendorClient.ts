@@ -65,6 +65,30 @@ export const getAllVendorClients = async (req: Request, res: Response) => {
   }
 };
 
+export const updateVendorClientPaymentMethod = async (
+  req: CustomRequest,
+  res: Response
+) => {
+  try {
+    const clientId = req.decoded.vendorClient;
+
+    const billingInfo = req.body;
+    console.log(billingInfo);
+    let vendorClient = await VendorClient.findById(clientId);
+    if (!vendorClient)
+      return res.status(404).json({ error: "Vendor Client not found" });
+    if (!billingInfo.name || !billingInfo.address || !billingInfo.email)
+      return res.status(400).json({ error: "Cannot be empty" });
+
+    vendorClient.billingInfo = billingInfo;
+
+    vendorClient = await vendorClient.save();
+
+    return res.send(vendorClient);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to update VendorClient" });
+  }
+};
 // Update a VendorClient
 export const updateVendorClient = async (req: Request, res: Response) => {
   try {

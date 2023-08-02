@@ -2,18 +2,22 @@ import { Grid, TextField } from "@mui/material";
 // import classes from './CustomFormFields.module.css'
 // import { splitTextByCaps } from '../../utils/transformText'
 import { splitTextByCaps } from "../../utils/transformText";
+import { ChangeEvent } from "react";
 /* 
     required from parent component:
+
     const [ detailsToSubmit, setDetailsToSubmit] = useState({})
     const [validationErrors, setValidationErrors] = useState({})
     const fieldsTypes={ 
         fieldName: fieldType // e.g. itemToSell: "text", amountToBuy: 10
     }
+    
+    should add this in the submit form handle to ensure form is validated:
+    if (!validateForm(addTaskDetails, fieldsTypes, setValidationErrors)) return
+
 
     This component only handles the form fields changes and the validation of it.
     It doesnt handle submitting the form
-
-    Refer to AddTaskModal for details
 
     <CustomFormFields
         detailsToSubmit={}
@@ -24,7 +28,27 @@ import { splitTextByCaps } from "../../utils/transformText";
       />
 
 */
-const CustomFormFields = (props: any) => {
+interface DetailsToSubmit {
+  [key: string]: any;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
+}
+
+interface FieldTypes {
+  [key: string]: string;
+}
+
+interface CustomFormFieldsProps {
+  detailsToSubmit: DetailsToSubmit;
+  setDetailsToSubmit: (details: DetailsToSubmit) => void;
+  validationErrors: ValidationErrors;
+  setValidationErrors: (errors: ValidationErrors) => void;
+  fieldsTypes: FieldTypes;
+}
+
+const CustomFormFields: React.FC<CustomFormFieldsProps> = (props) => {
   const {
     detailsToSubmit,
     setDetailsToSubmit,
@@ -33,7 +57,7 @@ const CustomFormFields = (props: any) => {
     fieldsTypes,
   } = props;
 
-  const onFieldChangeHandler = (event: any) => {
+  const onFieldChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
     setDetailsToSubmit({

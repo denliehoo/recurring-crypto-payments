@@ -1,9 +1,8 @@
 # Todo:
 
 - Add allowance button on frontend (external page)
-- Update billingInfo Modal
-- Dashboard
 - Logout functionality
+- Dashboard
 - Simulate sending webhook to the vendor upon successful XXX
 
 # Future Task
@@ -97,3 +96,4 @@
 - 01/08/23: Cancel Plan; added cancelled status to completed payment; added API for cancel plan; connected to frontend
 - 01/08/23: Renew Plan feature
 - 02/08/23: Refactored Modal into a custom component - CustomModal
+- 02/08/23: Update billingInfo Modal

@@ -29,6 +29,7 @@ import ConfigurePlanModal from "./ConfigurePlanModal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
+import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
@@ -72,6 +73,7 @@ export default function ManageSubscriptionExternal() {
 
   const [configurePlanModal, setConfigurePlanModal] = useState(false);
   const [cancelPlanModal, setCancelPlanModal] = useState(false);
+  const [updateBillingInfoModal, setUpdateBillingInfoModal] = useState(false);
   useEffect(() => {
     console.log(authToken);
     const getData = async () => {
@@ -281,7 +283,12 @@ export default function ManageSubscriptionExternal() {
                 <Box>
                   <Box>Name: {details!.billingInfo!.name}</Box>
                   <Box>Billing Address: {details!.billingInfo!.address}</Box>
-                  <Button variant="contained">Update information</Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => setUpdateBillingInfoModal(true)}
+                  >
+                    Update information
+                  </Button>
                 </Box>
               ) : (
                 <Box>You have no billing details</Box>
@@ -335,6 +342,15 @@ export default function ManageSubscriptionExternal() {
             closeCancelPlanModal={() => setCancelPlanModal(false)}
             refreshData={() => setRefreshData(!refreshData)}
             authToken={authToken}
+          />
+        )}
+        {updateBillingInfoModal && (
+          <UpdateBillingInfoModal
+            modalIsOpen={updateBillingInfoModal}
+            closeModal={() => setUpdateBillingInfoModal(false)}
+            billingInfo={details?.billingInfo}
+            authToken={authToken}
+            refreshData={() => setRefreshData(!refreshData)}
           />
         )}
       </Grid>
