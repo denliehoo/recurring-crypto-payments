@@ -30,6 +30,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
 import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
+import AddAllowanceModal from "./AddAllowanceModal";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
@@ -65,7 +66,7 @@ export default function ManageSubscriptionExternal() {
   };
   const handleAddAllowance = () => {
     handleCloseThreeDots();
-    console.log("Add allowance...");
+    setAddAllowanceModal(true);
     // other stuff here...
   };
 
@@ -74,6 +75,7 @@ export default function ManageSubscriptionExternal() {
   const [configurePlanModal, setConfigurePlanModal] = useState(false);
   const [cancelPlanModal, setCancelPlanModal] = useState(false);
   const [updateBillingInfoModal, setUpdateBillingInfoModal] = useState(false);
+  const [addAllowanceModal, setAddAllowanceModal] = useState(false);
   useEffect(() => {
     console.log(authToken);
     const getData = async () => {
@@ -177,11 +179,7 @@ export default function ManageSubscriptionExternal() {
                     : setConfigurePlanModal(true)
                 }
               >
-                {details!.status === "inactive"
-                  ? "Start "
-                  : details!.status === "active"
-                  ? "Cancel "
-                  : "Renew "}
+                {textBasedOnStatus("Cancel ", "Start ", "Renew ")}
                 Plan
               </Button>
               {details!.status === "inactive" && (
@@ -262,7 +260,6 @@ export default function ManageSubscriptionExternal() {
               )}
               {details!.status !== "inactive" && (
                 <Box>
-                  {/* openThreeDots modal to metamask */}
                   <Button
                     variant="contained"
                     onClick={() => setConfigurePlanModal(true)}
@@ -334,6 +331,19 @@ export default function ManageSubscriptionExternal() {
             currentWallet={details?.paymentMethod?.wallet}
             refreshData={() => setRefreshData(!refreshData)}
             nextDate={details?.nextDate}
+          />
+        )}
+        {addAllowanceModal && (
+          <AddAllowanceModal
+            modalIsOpen={addAllowanceModal}
+            closeModal={() => setAddAllowanceModal(false)}
+            tokenAddress={details!.tokenAddress}
+            token={details!.token}
+            amount={details!.amount}
+            vendorContract={details!.vendorContract}
+            authToken={authToken}
+            currentWallet={details?.paymentMethod?.wallet}
+            refreshData={() => setRefreshData(!refreshData)}
           />
         )}
         {cancelPlanModal && (

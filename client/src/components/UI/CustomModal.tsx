@@ -1,16 +1,31 @@
 import { Box, Modal, SxProps } from "@mui/material";
+import { ChangeEvent } from "react";
 
 interface CustomModalProps {
   open: boolean;
   onClose: () => void;
   sx?: SxProps;
   children: React.ReactNode;
+  disableCloseUponClickingOutside?: boolean;
 }
 
 const CustomModal: React.FC<CustomModalProps> = (props) => {
-  const { open, onClose, sx } = props;
+  const { open, onClose, sx, disableCloseUponClickingOutside } = props;
+  const handleClose = (e: ChangeEvent, reason: any) => {
+    if (
+      disableCloseUponClickingOutside &&
+      (reason === "backdropClick" || reason === "escapeKeyDown")
+    ) {
+      return;
+    }
+    onClose();
+  };
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      BackdropProps={{ invisible: true }}
+    >
       <Box
         sx={{
           position: "absolute" as "absolute",

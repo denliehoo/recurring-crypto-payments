@@ -2,7 +2,7 @@ import { useState } from "react";
 import CustomButton from "../../components/UI/CustomButton";
 import CustomFormFields from "../../components/UI/CustomFormFields";
 import CustomModal from "../../components/UI/CustomModal";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { validateForm } from "../../utils/validateForm";
 import axios from "axios";
 
@@ -50,6 +50,10 @@ const UpdateBillingInfoModal = (props: any) => {
 
   return (
     <CustomModal open={modalIsOpen} onClose={closeModal}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        Update Billing Information
+      </Typography>
+
       <CustomFormFields
         detailsToSubmit={detailsToSubmit}
         setDetailsToSubmit={setDetailsToSubmit}
