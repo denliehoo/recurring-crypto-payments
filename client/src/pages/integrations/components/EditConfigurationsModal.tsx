@@ -13,6 +13,7 @@ const EditConfigurationsModal = (props: any) => {
     monthlySubscriptionPrice: vendor.amount / 10 ** 6,
     businessName: vendor.name,
     webhookUrl: vendor.webhookUrl,
+    returnUrl: vendor.returnUrl,
     planName: vendor.plan,
   });
   const [validationErrors, setValidationErrors] = useState({});
@@ -24,6 +25,7 @@ const EditConfigurationsModal = (props: any) => {
     monthlySubscriptionPrice: "number",
     businessName: "text",
     webhookUrl: "text",
+    returnUrl: "text",
     planName: "text",
   };
 
@@ -42,6 +44,7 @@ const EditConfigurationsModal = (props: any) => {
     const bodyData = {
       name: vendorDetails.businessName,
       webhookUrl: vendorDetails.webhookUrl,
+      returnUrl: vendorDetails.returnUrl,
       tokenAddress: vendorDetails.tokenAddress,
       amount: Math.ceil(
         parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6
@@ -65,6 +68,7 @@ const EditConfigurationsModal = (props: any) => {
     if (
       vendorDetails.businessName === vendor.name &&
       vendorDetails.webhookUrl === vendor.webhookUrl &&
+      vendorDetails.returnUrl === vendor.returnUrl &&
       vendorDetails.tokenAddress === vendor.tokenAddress &&
       vendorDetails.monthlySubscriptionPrice.toString() ===
         (vendor.amount / 10 ** 6).toString() &&

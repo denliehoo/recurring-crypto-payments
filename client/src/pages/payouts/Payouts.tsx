@@ -13,7 +13,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
 import ConfigureIntegrationsFirst from "../../components/others/ConfigureIntegrationsFirst";
 import { useEffect, useState } from "react";
 import CustomButton from "../../components/UI/CustomButton";
@@ -113,48 +112,41 @@ const Payouts = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.length ? (
-                        rows.map((row) => (
-                          <TableRow
-                            key={row.payoutDate.toString()}
-                            sx={{
-                              "&:last-child td, &:last-child th": { border: 0 },
-                            }}
-                          >
-                            <TableCell component="th" scope="row">
-                              {new Date(row.payoutDate).toLocaleString(
-                                "en-US",
-                                {
-                                  day: "numeric",
-                                  month: "long",
-                                  year: "numeric",
-                                  hour: "numeric",
-                                  minute: "numeric",
-                                  second: "numeric",
-                                  hour12: true,
-                                }
-                              )}
-                            </TableCell>
-                            <TableCell align="right">
-                              {row.amount / 10 ** 6}
-                            </TableCell>
-                            <TableCell align="right">{row.token}</TableCell>
-                            <TableCell align="right">
-                              <IconButton>
-                                <a
-                                  href={`https://goerli.etherscan.io/tx/${row.hash}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  <TagIcon />{" "}
-                                </a>
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      ) : (
-                        <Box>You have no payouts</Box>
-                      )}
+                      {rows.map((row) => (
+                        <TableRow
+                          key={row.payoutDate.toString()}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {new Date(row.payoutDate).toLocaleString("en-US", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                              hour12: true,
+                            })}
+                          </TableCell>
+                          <TableCell align="right">
+                            {row.amount / 10 ** 6}
+                          </TableCell>
+                          <TableCell align="right">{row.token}</TableCell>
+                          <TableCell align="right">
+                            <IconButton>
+                              <a
+                                href={`https://goerli.etherscan.io/tx/${row.hash}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <TagIcon />{" "}
+                              </a>
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </TableContainer>

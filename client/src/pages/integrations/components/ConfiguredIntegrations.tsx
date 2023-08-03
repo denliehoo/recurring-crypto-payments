@@ -50,6 +50,11 @@ const ConfiguredIntergrations = (props: any) => {
         hideOption={false}
         label={"Webhook Url"}
       />
+      <DisplayField
+        text={vendor.returnUrl}
+        hideOption={false}
+        label={"Return Url"}
+      />
       <DisplayField text={vendor.plan} hideOption={false} label={"Plan"} />
 
       {editModalOpen && (

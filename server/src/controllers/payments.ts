@@ -34,7 +34,7 @@ export const manageSubscription = async (req: Request, res: Response) => {
   };
 
   const token = generateJWT(data);
-  const baseUrl = "http://localhost:3001";
+  const baseUrl = "http://localhost:3031";
   return res.send({ url: `${baseUrl}/manage-subscription/${token}` });
 };
 

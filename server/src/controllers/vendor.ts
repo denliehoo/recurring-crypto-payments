@@ -84,8 +84,16 @@ export const getVendorById = async (req: Request, res: Response) => {
 export const updateVendor = async (req: Request, res: Response) => {
   //
   try {
-    const { name, webhookUrl, tokenAddress, amount, vendorContract, plan, id } =
-      req.body;
+    const {
+      name,
+      webhookUrl,
+      returnUrl,
+      tokenAddress,
+      amount,
+      vendorContract,
+      plan,
+      id,
+    } = req.body;
     let vendor = await findVendorById(id);
     if (!vendor) return res.status(404).json({ error: "Vendor not found" });
     if (
@@ -94,7 +102,8 @@ export const updateVendor = async (req: Request, res: Response) => {
       !amount ||
       !vendorContract ||
       !plan ||
-      !name
+      !name ||
+      !returnUrl
     )
       return res.status(400).json({ error: "Cannot be empty" });
 
@@ -104,6 +113,7 @@ export const updateVendor = async (req: Request, res: Response) => {
     vendor.amount = amount;
     vendor.vendorContract = vendorContract;
     vendor.plan = plan;
+    vendor.returnUrl = returnUrl;
 
     vendor = await vendor.save();
 

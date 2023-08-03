@@ -8,17 +8,14 @@ import {
   Stepper,
   Step,
   StepLabel,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormControl,
-  FormHelperText,
 } from "@mui/material";
 import React from "react";
 import CustomButton from "../../../components/UI/CustomButton";
 import { connectWallet } from "../../../utils/connectWallet";
 import RecurringPayments from "../../../truffle_abis/RecurringPayments.json";
 import IntegrationFormFields from "./IntegrationFormFields";
+import { useDispatch } from "react-redux";
+import { addVendorDetails } from "../../../slices/vendorDetailsSlice";
 
 interface ConfigureIntegrationsProps {
   vendorId: string;
@@ -36,10 +33,13 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
   const [walletAddress, setWalletAddress] = useState("");
   const [contract, setContract] = useState<any>(null);
   const [addressError, setAddressError] = useState(false);
+  const dispatch = useDispatch();
+
   const fieldsTypes = {
     monthlySubscriptionPrice: "number",
     businessName: "text",
     webhookUrl: "text",
+    returnUrl: "text",
     planName: "text",
   };
 
@@ -104,16 +104,28 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
         const bodyData = {
           name: vendorDetails.businessName,
           webhookUrl: vendorDetails.webhookUrl,
+          returnUrl: vendorDetails.returnUrl,
           tokenAddress: vendorDetails.tokenAddress,
           amount: Math.ceil(
             parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6
           ),
           plan: vendorDetails.planName,
-          vendorContract: vendorContractCreated, // replace later
+          vendorContract: vendorContractCreated,
           id: vendorId,
         };
         const res = await apiCallAuth("put", "/vendors", bodyData);
         console.log(res);
+        dispatch(
+          addVendorDetails({
+            name: vendorDetails.name,
+            email: vendorDetails.email,
+            apiKey: vendorDetails.apiKey,
+            plan: vendorDetails.plan,
+            vendorContract: vendorContractCreated,
+            tokenAddress: vendorDetails.tokenAddress,
+            id: vendorId,
+          })
+        );
         setButtonLoading(false);
       } catch {
         setButtonLoading(false);
@@ -136,9 +148,11 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
         }}
       >
         <span>Configure Integrations</span>
-        <span>{`${walletAddress.substring(0, 4)}...${walletAddress.substring(
-          walletAddress.length - 4
-        )}`}</span>
+        {walletAddress && (
+          <span>{`${walletAddress.substring(0, 4)}...${walletAddress.substring(
+            walletAddress.length - 4
+          )}`}</span>
+        )}
       </Typography>
 
       {/* Steps */}

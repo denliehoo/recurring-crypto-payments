@@ -31,7 +31,7 @@
     "web3": "^1.8.1"
   },
   "scripts": {
-    "start": "cross-env PORT=3001 react-scripts start",
+    "start": "cross-env PORT=3031 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

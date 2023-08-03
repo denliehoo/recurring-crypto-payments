@@ -4,6 +4,7 @@ export interface Vendor {
   password?: string;
   apiKey: string;
   webhookUrl?: string;
+  returnUrl?: string;
   tokenAddress?: string;
   amount?: number;
   vendorContract?: string;
