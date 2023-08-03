@@ -1,6 +1,5 @@
 # Todo:
 
-- Logout functionality
 - Dashboard
 - Simulate sending webhook to the vendor upon successful XXX
 
@@ -99,3 +98,4 @@
 - 02/08/23: Add allowance button on frontend (external page)
 - 03/08/23: Touch up frontend for external page
 - 03/08/23: Add return URL in vendor db entity and updated accordingly on frontend
+- 03/08/23: Logout functionality

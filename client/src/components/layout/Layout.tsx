@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
@@ -20,6 +21,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useLocation } from "react-router-dom";
 import SideBar from "./SideBar";
+import DropDownMenu from "../UI/DropDownMenu";
+import IconAndText from "../UI/IconAndText";
 
 const Layout = (props: any) => {
   const { pathname } = useLocation();
@@ -73,7 +76,7 @@ const Layout = (props: any) => {
             RecurCrypt
           </Typography>
 
-          <IconButton color="inherit">
+          {/* <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
@@ -81,11 +84,20 @@ const Layout = (props: any) => {
 
           <IconButton color="inherit">
             <SettingsIcon />
-          </IconButton>
+          </IconButton> */}
 
-          <IconButton color="inherit">
-            <AccountCircleIcon />
-          </IconButton>
+          <DropDownMenu
+            menuLabel={<AccountCircleIcon />}
+            menuItems={[
+              {
+                item: <IconAndText icon={<LogoutIcon />} text="Logout" />,
+                onClick: () => {
+                  localStorage.removeItem("JWT");
+                  window.location.href = "/login";
+                },
+              },
+            ]}
+          />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
