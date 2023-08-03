@@ -124,9 +124,11 @@ const AddAllowanceModal = (props: any) => {
         }}
       >
         <span>Add Allowance</span>
-        <span>{`${address.substring(0, 4)}...${address.substring(
-          address.length - 4
-        )}`}</span>
+        {address && (
+          <span>{`${address.substring(0, 4)}...${address.substring(
+            address.length - 4
+          )}`}</span>
+        )}
       </Typography>
       {/* Steps for start plan */}
       <Stepper activeStep={activeStep} sx={{ mt: 1 }}>

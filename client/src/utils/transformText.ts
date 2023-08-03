@@ -16,13 +16,16 @@ export const splitTextByCaps = (text: string) => {
   return transformedText;
 };
 
-
-export const formatDate = (dateString: Date)=> {
+export const formatDate = (dateString: Date) => {
   const date = new Date(dateString);
 
   const day = date.getDate();
-  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+    date
+  );
   const year = date.getFullYear();
 
   return `${day} ${month} ${year}`;
-}
+};
+export const capitalizeFirstLetter = (str: string) =>
+  `${str.charAt(0).toUpperCase()}${str.slice(1)}`;

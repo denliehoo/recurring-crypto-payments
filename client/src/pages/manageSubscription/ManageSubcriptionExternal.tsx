@@ -26,6 +26,8 @@ import {
   TagRounded,
   MoreVert,
   KeyboardBackspace,
+  CheckCircle,
+  Cancel,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import {
@@ -39,11 +41,10 @@ import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
 import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
 import AddAllowanceModal from "./AddAllowanceModal";
-import { formatDate } from "../../utils/transformText";
+import { capitalizeFirstLetter, formatDate } from "../../utils/transformText";
 import ETHLogo from "../../assets/images/ETHLogo.png";
 import USDTLogo from "../../assets/images/USDTLogo.png";
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
   components: {
     MuiTableCell: {
@@ -67,19 +68,6 @@ export default function ManageSubscriptionExternal() {
     useState<VendorClientSubscriptionDetails | null>(null);
   const [refreshData, setRefreshData] = useState(false);
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const openThreeDots = Boolean(anchorEl);
-  const handleThreeDotsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleCloseThreeDots = () => {
-    setAnchorEl(null);
-  };
-  const handleAddAllowance = () => {
-    handleCloseThreeDots();
-    setAddAllowanceModal(true);
-  };
-
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const [configurePlanModal, setConfigurePlanModal] = useState(false);
@@ -101,8 +89,7 @@ export default function ManageSubscriptionExternal() {
             headers,
           }
         );
-        console.log(res);
-        console.log(res.data.paymentMethod);
+
         setDetails(res.data);
         setIsLoading(false);
       } catch (err) {
@@ -138,7 +125,17 @@ export default function ManageSubscriptionExternal() {
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         {
-          <Grid item xs={false} sm={4} md={4} sx={{ width: "100%" }}>
+          <Grid
+            item
+            xs={false}
+            sm={4}
+            md={4}
+            sx={{
+              width: "100%",
+              position: "fixed",
+              height: isSmOrUp ? "100%" : "15%",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -166,7 +163,13 @@ export default function ManageSubscriptionExternal() {
                     Manage your {details!.vendor} Billing Settings
                   </Typography>
                 )}
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    "&:hover": { color: "lightgray", cursor: "pointer" },
+                  }}
+                >
                   <KeyboardBackspace />
                   <Typography>Return to {details!.vendor}</Typography>
                 </Box>
@@ -179,6 +182,7 @@ export default function ManageSubscriptionExternal() {
             </Box>
           </Grid>
         }
+        <Grid sm={4} md={4} />
         <Grid item xs={12} sm={8} md={8} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -186,6 +190,7 @@ export default function ManageSubscriptionExternal() {
               mx: 4,
               display: "flex",
               flexDirection: "column",
+              marginTop: isSmOrUp ? "30px" : "150px",
             }}
           >
             <Typography component="h1" variant="h5">
@@ -193,13 +198,26 @@ export default function ManageSubscriptionExternal() {
             </Typography>
             <Divider />
             <Box sx={{ mt: 1 }}>
+              <Box
+                sx={{
+                  backgroundColor:
+                    details!.status === "active" ? "#d7f7c2" : "#e3e8ed",
+                  display: "inline-block",
+                  padding: "3px 10px",
+                  borderRadius: "5px",
+                }}
+              >
+                {capitalizeFirstLetter(details!.status)}
+              </Box>
               <Box>{details!.plan}</Box>
               <Box>
                 {details!.amount / 10 ** 6} {details!.token} per month
               </Box>
               <Box>
                 {textBasedOnStatus(
-                  `Your plan will auto renew on ${details!.nextDate?.toString()}`,
+                  `Your plan will auto renew on ${formatDate(
+                    details!.nextDate!
+                  )}`,
                   "",
                   `Your plan has been cancelled and ${
                     details?.nextDate &&
@@ -245,7 +263,6 @@ export default function ManageSubscriptionExternal() {
                       <TableCell></TableCell>
                       <TableCell>Allowance</TableCell>
                       <TableCell>Balance</TableCell>
-                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -266,38 +283,18 @@ export default function ManageSubscriptionExternal() {
                         {details!.paymentMethod!.wallet.slice(-4)}{" "}
                       </TableCell>
                       <TableCell>
-                        {details!.paymentMethod!.sufficientAllowance
-                          ? "y"
-                          : "n"}
+                        {details!.paymentMethod!.sufficientAllowance ? (
+                          <CheckCircle />
+                        ) : (
+                          <Cancel />
+                        )}
                       </TableCell>
                       <TableCell>
-                        {details!.paymentMethod!.sufficientBalance ? "y" : "n"}
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          id="basic-button"
-                          aria-controls={
-                            openThreeDots ? "basic-menu" : undefined
-                          }
-                          aria-haspopup="true"
-                          aria-expanded={openThreeDots ? "true" : undefined}
-                          onClick={handleThreeDotsClick}
-                        >
-                          <MoreVert />
-                        </IconButton>
-                        <Menu
-                          id="basic-menu"
-                          anchorEl={anchorEl}
-                          open={openThreeDots}
-                          onClose={handleCloseThreeDots}
-                          MenuListProps={{
-                            "aria-labelledby": "basic-button",
-                          }}
-                        >
-                          <MenuItem onClick={handleAddAllowance}>
-                            Add Allowance
-                          </MenuItem>
-                        </Menu>
+                        {details!.paymentMethod!.sufficientBalance ? (
+                          <CheckCircle />
+                        ) : (
+                          <Cancel />
+                        )}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -311,7 +308,15 @@ export default function ManageSubscriptionExternal() {
                     variant="contained"
                     onClick={() => setConfigurePlanModal(true)}
                   >
-                    Change Payment Method
+                    Change Method
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 2 }}
+                    onClick={() => setAddAllowanceModal(true)}
+                  >
+                    Change Allowance
                   </Button>
                 </Box>
               )}
@@ -330,7 +335,7 @@ export default function ManageSubscriptionExternal() {
                     variant="contained"
                     onClick={() => setUpdateBillingInfoModal(true)}
                   >
-                    Update information
+                    Update
                   </Button>
                 </Box>
               ) : (

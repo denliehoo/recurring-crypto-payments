@@ -48,7 +48,7 @@ const CancelPlanModal = (props: any) => {
         loading={buttonLoading}
         onClick={handleCancelPlan}
       />
-      <Button variant="outlined" onClick={closeCancelPlanModal}>
+      <Button variant="outlined" onClick={closeCancelPlanModal} sx={{ ml: 2 }}>
         No
       </Button>
     </CustomModal>

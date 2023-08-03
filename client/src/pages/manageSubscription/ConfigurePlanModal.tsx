@@ -332,9 +332,11 @@ const ConfigurePlanModal = (props: any) => {
         <span>
           {status === "active" ? "Change Payment Method" : "Start Plan"}
         </span>
-        <span>{`${address.substring(0, 4)}...${address.substring(
-          address.length - 4
-        )}`}</span>
+        {address && (
+          <span>{`${address.substring(0, 4)}...${address.substring(
+            address.length - 4
+          )}`}</span>
+        )}
       </Typography>
       {/* Steps for start plan */}
       <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
