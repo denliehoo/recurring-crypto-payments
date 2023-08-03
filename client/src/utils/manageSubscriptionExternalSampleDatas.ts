@@ -12,6 +12,8 @@ export const activeSampleData: VendorClientSubscriptionDetails = {
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
   vendorContract: vendorContract,
+  webhookUrl: "www.test.com",
+  returnUrl: "www.test.com",
   paymentMethod: {
     token: "USDT",
     tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
@@ -22,7 +24,7 @@ export const activeSampleData: VendorClientSubscriptionDetails = {
   billingInfo: {
     name: "Test Customer",
     address: "123 Jurong Street 321 \n#12-30 \nSINGAPORE 123456 SG",
-    email:"testclient@test.com"
+    email: "testclient@test.com",
   },
   invoices: [
     {
@@ -61,18 +63,19 @@ export const cancelledSampleData: VendorClientSubscriptionDetails = {
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
   vendorContract: vendorContract,
+  webhookUrl: "www.test.com",
+  returnUrl: "www.test.com",
   paymentMethod: {
     token: "USDT",
     tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
     wallet: "0x12...user",
     sufficientAllowance: true,
     sufficientBalance: false,
-
   },
   billingInfo: {
     name: "Test Customer",
     address: "123 Jurong Street 321 \n#12-30 \nSINGAPORE 123456 SG",
-    email:"testclient@test.com"
+    email: "testclient@test.com",
   },
   invoices: [
     {
@@ -112,6 +115,8 @@ export const inactiveSampleData: VendorClientSubscriptionDetails = {
   nextDate: null, //do a timestamp instead
   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
   vendorContract: vendorContract,
+  webhookUrl: null,
+  returnUrl: null,
   paymentMethod: null,
   billingInfo: null,
   invoices: [],

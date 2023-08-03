@@ -29,6 +29,8 @@ export interface VendorClientSubscriptionDetails {
   token: string; // token name
   vendorContract: string;
   tokenAddress: string;
+  returnUrl: string | null;
+  webhookUrl: string | null;
   // from client
   status: "active" | "inactive" | "cancelled";
   nextDate: Date | null;

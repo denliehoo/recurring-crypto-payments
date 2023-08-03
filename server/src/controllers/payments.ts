@@ -101,6 +101,8 @@ export const getSubscriptionPageDetails = async (
     paymentMethod: paymentMethod,
     billingInfo: c?.billingInfo || null,
     invoices: c?.invoices || [],
+    webhookUrl: v!.webhookUrl || "",
+    returnUrl: v!.returnUrl || "",
   };
   return res.send(data);
 };

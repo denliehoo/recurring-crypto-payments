@@ -169,6 +169,7 @@ export default function ManageSubscriptionExternal() {
                     alignItems: "center",
                     "&:hover": { color: "lightgray", cursor: "pointer" },
                   }}
+                  onClick={() => (window.location.href = details!.returnUrl!)}
                 >
                   <KeyboardBackspace />
                   <Typography>Return to {details!.vendor}</Typography>
@@ -240,14 +241,6 @@ export default function ManageSubscriptionExternal() {
                 {textBasedOnStatus("Cancel ", "Start ", "Renew ")}
                 Plan
               </Button>
-              {details!.status === "inactive" && (
-                <Button
-                  variant="contained"
-                  onClick={() => setConfigurePlanModal(true)}
-                >
-                  Start Plan
-                </Button>
-              )}
             </Box>
 
             <Typography component="h1" variant="h5" sx={{ mt: 3 }}>
