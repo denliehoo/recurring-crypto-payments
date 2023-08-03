@@ -1,6 +1,7 @@
 # Todo:
 
 - Touch up frontend for external page
+- Add return URL in vendor db entity
 - Logout functionality
 - Dashboard
 - Simulate sending webhook to the vendor upon successful XXX

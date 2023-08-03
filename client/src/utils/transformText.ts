@@ -1,7 +1,7 @@
 // function splits the text by capitalized and then return the text as a combined text with each separated words capitalized
 // e.g. "help", "helpMe", "helpMeYou" => "Help", "Help Me", "Help Me You"
 
-const splitTextByCaps = (text: string) => {
+export const splitTextByCaps = (text: string) => {
   // Split the text into words based on uppercase letters
   const words = text.split(/(?=[A-Z])/);
 
@@ -16,4 +16,13 @@ const splitTextByCaps = (text: string) => {
   return transformedText;
 };
 
-export { splitTextByCaps };
+
+export const formatDate = (dateString: Date)=> {
+  const date = new Date(dateString);
+
+  const day = date.getDate();
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(date);
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}

@@ -8,6 +8,8 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
+  Avatar,
+  AvatarGroup,
   Divider,
   Menu,
   MenuItem,
@@ -16,9 +18,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  useMediaQuery,
 } from "@mui/material";
 import { VendorClientSubscriptionDetails } from "../../../../shared/types/VendorClientSubscriptionDetails";
-import { Receipt, TagRounded, MoreVert } from "@mui/icons-material";
+import {
+  Receipt,
+  TagRounded,
+  MoreVert,
+  KeyboardBackspace,
+} from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import {
   activeSampleData,
@@ -31,6 +39,9 @@ import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
 import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
 import AddAllowanceModal from "./AddAllowanceModal";
+import { formatDate } from "../../utils/transformText";
+import ETHLogo from "../../assets/images/ETHLogo.png";
+import USDTLogo from "../../assets/images/USDTLogo.png";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme({
@@ -67,7 +78,6 @@ export default function ManageSubscriptionExternal() {
   const handleAddAllowance = () => {
     handleCloseThreeDots();
     setAddAllowanceModal(true);
-    // other stuff here...
   };
 
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -76,6 +86,8 @@ export default function ManageSubscriptionExternal() {
   const [cancelPlanModal, setCancelPlanModal] = useState(false);
   const [updateBillingInfoModal, setUpdateBillingInfoModal] = useState(false);
   const [addAllowanceModal, setAddAllowanceModal] = useState(false);
+  const isSmOrUp = useMediaQuery("(min-width:600px)");
+
   useEffect(() => {
     console.log(authToken);
     const getData = async () => {
@@ -125,20 +137,48 @@ export default function ManageSubscriptionExternal() {
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        <Grid item xs={false} sm={4} md={4}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              padding: "10px",
-              alignItems: "center",
-            }}
-          >
-            <Box>Manage your {details!.vendor} Billing Settings</Box>
-            <Box>Return to {details!.vendor}</Box>
-            <Box>Powered by RecurCrypt</Box>
-          </Box>
-        </Grid>
+        {
+          <Grid item xs={false} sm={4} md={4} sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                padding: "30px",
+                alignItems: "flex-start",
+                backgroundColor: "black",
+                width: "100%",
+                height: "100%",
+                color: "white",
+              }}
+            >
+              <Box
+                sx={{
+                  marginTop: isSmOrUp ? "30%" : "none",
+                  height: "70%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                }}
+              >
+                {isSmOrUp && (
+                  <Typography variant="h5">
+                    Manage your {details!.vendor} Billing Settings
+                  </Typography>
+                )}
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <KeyboardBackspace />
+                  <Typography>Return to {details!.vendor}</Typography>
+                </Box>
+                {isSmOrUp && (
+                  <Typography sx={{ mt: "auto" }}>
+                    Powered by RecurCrypt
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          </Grid>
+        }
         <Grid item xs={12} sm={8} md={8} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -166,7 +206,7 @@ export default function ManageSubscriptionExternal() {
                     new Date(details.nextDate).getTime() > new Date().getTime()
                       ? "will stop on"
                       : "has stopped since"
-                  } ${details!.nextDate?.toString()}
+                  } ${formatDate(details!.nextDate!)}
                   `
                 )}
               </Box>
@@ -210,8 +250,16 @@ export default function ManageSubscriptionExternal() {
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell>
-                        [Logo]{details!.paymentMethod!.token}{" "}
+                      <TableCell
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <AvatarGroup>
+                          <Avatar src={USDTLogo} />
+                          <Avatar src={ETHLogo} />
+                        </AvatarGroup>
+                        <span style={{ marginLeft: "10px" }}>
+                          {details!.paymentMethod!.token} (ERC20)
+                        </span>
                       </TableCell>
                       <TableCell>
                         {details!.paymentMethod!.wallet.slice(0, 4)}...
@@ -225,7 +273,6 @@ export default function ManageSubscriptionExternal() {
                       <TableCell>
                         {details!.paymentMethod!.sufficientBalance ? "y" : "n"}
                       </TableCell>
-                      {/* do a popup upon clicking the... with the add allowance optoin */}
                       <TableCell>
                         <IconButton
                           id="basic-button"
@@ -264,7 +311,6 @@ export default function ManageSubscriptionExternal() {
                     variant="contained"
                     onClick={() => setConfigurePlanModal(true)}
                   >
-                    {" "}
                     Change Payment Method
                   </Button>
                 </Box>
@@ -302,7 +348,7 @@ export default function ManageSubscriptionExternal() {
               ) : (
                 details!.invoices.map((i) => (
                   <Box>
-                    {i.date.toString()}
+                    {formatDate(i.date)}
                     <IconButton onClick={() => console.log(i.invoice)}>
                       <Receipt />
                     </IconButton>
