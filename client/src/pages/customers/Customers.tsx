@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import { apiCallAuth } from "../../utils/apiRequest";
 import { useSelector } from "react-redux";
-import ConfigureIntegrationsFirst from "../../components/others/ConfigureIntegrationsFirst";
+import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 import { Tooltip } from "@mui/material";
 
 const Customers = () => {

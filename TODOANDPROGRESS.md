@@ -1,6 +1,13 @@
 # Todo:
 
+- Move transform chart data logic to server side. Create an API in payments controller called get-dashboard. It should accept 1 thing - the client UTC timezone; the API will return:
+  - list of 5 most recent payments
+  - Total daily payments (can be obtained from the transform data logic) AND pendingBalance on smart contract to withdraw
+  - The transformed data for the chart (of which we need to take into account the timezone; since for the server, we follow server the timezone, but we want to follow the client on the frontend's timezone); Note: the data to show for this is from 00:00 of the client's timezone to the current time on the clients timezone. We should see paymentsDate for this.
 - Dashboard
+- Fix this error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
+  at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
+  at http://localhost:3031/static/js/bundle.js:128080:7
 - Simulate sending webhook to the vendor upon successful XXX
 
 # Future Task
@@ -99,3 +106,4 @@
 - 03/08/23: Touch up frontend for external page
 - 03/08/23: Add return URL in vendor db entity and updated accordingly on frontend
 - 03/08/23: Logout functionality
+- 04/08/23: Chart logic on frontend

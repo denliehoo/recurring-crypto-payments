@@ -13,7 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import ConfigureIntegrationsFirst from "../../components/others/ConfigureIntegrationsFirst";
+import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 import { useEffect, useState } from "react";
 import CustomButton from "../../components/UI/CustomButton";
 import RequestPayoutModal from "./components/RequestPayoutModal";
