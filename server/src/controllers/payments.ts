@@ -17,7 +17,7 @@ import { ICompletedPayment } from "../models/completedPayment";
 import axios from "axios";
 import { IPayout } from "../models/payout";
 const jwt = require("jsonwebtoken");
-const moment = require("moment");
+import moment from "moment";
 
 const { Vendor, VendorClient, ScheduledPayment, CompletedPayment, Payout } =
   models;
@@ -597,12 +597,95 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
   return res.send(results);
 };
 
+export const getDashboard = async (req: CustomRequest, res: Response) => {
+  const { email, vendorId } = req.decoded;
+  const { utc } = req.query;
+  const timezone = parseInt(utc as string);
+
+  type PaymentData = {
+    paymentDate: string;
+    amount: number;
+  };
+
+  type Amounts = {
+    time: string;
+    amount: number | undefined;
+  };
+  const transformData = (data: PaymentData[], timezoneOffset: number) => {
+    let amounts: Amounts[] = [
+      { time: "00:00", amount: 0 },
+      { time: "03:00", amount: 0 },
+      { time: "06:00", amount: 0 },
+      { time: "09:00", amount: 0 },
+      { time: "12:00", amount: 0 },
+      { time: "15:00", amount: 0 },
+      { time: "18:00", amount: 0 },
+      { time: "21:00", amount: 0 },
+      { time: "24:00", amount: 0 },
+    ];
+
+    for (let d of data) {
+      let date = new Date(d.paymentDate);
+      date.setHours(date.getHours() + timezoneOffset); // Apply the timezone offset
+      let indx = Math.ceil(date.getHours() / 3);
+      if (indx === 0) indx = 1;
+      amounts[indx]!.amount! += d.amount! / 10 ** 6;
+    }
+
+    let currentHourIndex = Math.ceil(new Date().getHours() / 3);
+    currentHourIndex = (currentHourIndex + Math.floor(timezoneOffset / 3)) % 8;
+    if (currentHourIndex < 0) currentHourIndex += 8;
+
+    console.log(currentHourIndex);
+
+    for (let i = 1; i < currentHourIndex + 1; i++) {
+      amounts[i]!.amount! += amounts[i - 1]!.amount!;
+    }
+
+    if (currentHourIndex === 8) return amounts;
+    for (let i = currentHourIndex + 1; i < amounts.length; i++) {
+      amounts[i].amount = undefined;
+    }
+    return amounts;
+  };
+
+  const serverTimeZone = Math.abs(new Date().getTimezoneOffset() / 60);
+
+  // because UTC time received is in serverTimeZone.
+  // Hence, need to - it to be UTC0. Then + timezone (for the client)
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Midnight today
+  todayStart.setHours(todayStart.getHours() + timezone - serverTimeZone);
+
+  const completedPayments: ICompletedPayment[] = await CompletedPayment.find({
+    status: "paid",
+    paymentDate: {
+      $gte: todayStart,
+      $lte: new Date(), // curent time now
+    },
+  });
+
+  // const data = generateSampleData();
+  const data = completedPayments.map((d: any) => ({
+    paymentDate: d.paymentDate,
+    amount: d.amount,
+  }));
+  const transformed = transformData(data, timezone - serverTimeZone);
+
+  return res.send({
+    chartData: transformed,
+    recentPayments: "",
+    totalDaily: "",
+    pendingBalance: "",
+  });
+};
+
 // helpers
 const generateJWT = (data: any) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)
   // if want to change the time, change the 3600 (which is 60s * 60 min = 3600s = 1 hr)
   // const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour (in seconds)
-  const expirationTime = Math.floor(Date.now() / 1000) + 36000; // 10 hour (in seconds) temp put this as 10 hrs for testing
+  const expirationTime = Math.floor(Date.now() / 1000) + 360000; // 100 hour (in seconds) temp put this as 10 hrs for testing
 
   const token = jwt.sign({ ...data, exp: expirationTime }, process.env.JWT_KEY);
   return token;
@@ -814,6 +897,32 @@ const sendReduceUserBalanceTransactionasync = async (
     console.error("Error:", error);
     return null;
   }
+};
+
+const generateSampleData = () => {
+  let data = [];
+  const generateRandomDate = () => {
+    const now = new Date();
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    ); // Midnight today
+    const randomTime = Math.floor(
+      Math.random() * (now.getTime() - todayStart.getTime())
+    );
+    const randomDate = new Date(todayStart.getTime() + randomTime);
+    return randomDate.toISOString();
+  };
+
+  for (let i = 0; i < 10; i++) {
+    data.push({
+      paymentDate: generateRandomDate(),
+      amount: 15000000,
+    });
+  }
+  data.sort((a, b) => Date.parse(a.paymentDate) - Date.parse(b.paymentDate));
+  return data;
 };
 
 // for testing:
