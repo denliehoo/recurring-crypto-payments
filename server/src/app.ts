@@ -19,6 +19,7 @@ app.use(cors());
 app.use("/vendors", routes.vendor);
 app.use("/vendorclients", routes.vendorClient);
 app.use("/payments", routes.payments);
+app.use("/externalPage", routes.externalPage);
 
 const port = 3030;
 

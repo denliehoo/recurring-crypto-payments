@@ -1,5 +1,6 @@
 # Todo:
 
+- Authorization for vendors sending api (should be the api key that was assigned to them)
 - Simulate sending webhook to the vendor upon successful XXX
 
 # Future Task
@@ -103,3 +104,4 @@
 - 03/08/23: Logout functionality
 - 04/08/23: Chart logic on frontend
 - 07/08/23: Dashboard API and frontend
+- 07/08/23: Refactor out external frontend APIs routes and controllers from payments and vendorClient to a separate route and controller: externalPage; change endpoints on frontend too

@@ -26,13 +26,13 @@ const UpdateBillingInfoModal = (props: any) => {
       return;
     setButtonLoading(true);
     // rest of the api...
-    console.log(detailsToSubmit);
+
     try {
       const headers = {
         Authorization: authToken,
       };
       const res = await axios.put(
-        `${apiUrl}/vendorclients/update-vendor-client-billing-info`,
+        `${apiUrl}/externalPage/update-vendor-client-billing-info`,
         detailsToSubmit,
         {
           headers,

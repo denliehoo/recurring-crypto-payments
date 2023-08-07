@@ -78,14 +78,13 @@ export default function ManageSubscriptionExternal() {
   const isSmOrUp = useMediaQuery("(min-width:600px)");
 
   useEffect(() => {
-    console.log(authToken);
     const getData = async () => {
       try {
         const headers = {
           Authorization: authToken,
         };
         const res = await axios.get(
-          `${apiUrl}/payments/get-subscription-page-details`,
+          `${apiUrl}/externalPage/get-subscription-page-details`,
           {
             headers,
           }

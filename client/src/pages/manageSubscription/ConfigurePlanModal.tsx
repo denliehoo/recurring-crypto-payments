@@ -257,7 +257,7 @@ const ConfigurePlanModal = (props: any) => {
             userAddress: address,
           };
           const res = await axios.post(
-            `${apiUrl}/payments/initiate-subscription`,
+            `${apiUrl}/externalPage/initiate-subscription`,
             body,
             {
               headers,
@@ -277,7 +277,7 @@ const ConfigurePlanModal = (props: any) => {
             newAddress: address,
           };
           const res = await axios.post(
-            `${apiUrl}/payments/change-payment-method`,
+            `${apiUrl}/externalPage/change-payment-method`,
             body,
             {
               headers,
@@ -297,7 +297,7 @@ const ConfigurePlanModal = (props: any) => {
             wallet: address,
           };
           const res = await axios.post(
-            `${apiUrl}/payments/renew-subscription`,
+            `${apiUrl}/externalPage/renew-subscription`,
             body,
             {
               headers,

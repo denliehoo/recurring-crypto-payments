@@ -22,7 +22,7 @@ const CancelPlanModal = (props: any) => {
       console.log(authToken);
 
       const res = await axios.post(
-        `${apiUrl}/payments/cancel-subscription`,
+        `${apiUrl}/externalPage/cancel-subscription`,
         null,
         {
           headers,

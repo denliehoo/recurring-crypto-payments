@@ -59,7 +59,6 @@ export const login = async (req: Request, res: Response) => {
   let vendor = await findVendorByEmail(email);
   if (!vendor) return res.status(404).json({ error: "Vendor not found" });
 
-  console.log(vendor);
   const isCorrectPassword = await comparePasswords(password, vendor.password!); // true or false
   if (!isCorrectPassword)
     return res.status(400).json({ error: "Incorrect Password" });
