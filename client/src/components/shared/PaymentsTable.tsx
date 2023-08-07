@@ -7,9 +7,9 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tooltip,
 } from "@mui/material";
 import { formatDate } from "../../utils/transformText";
+import TextWithTooltip from "../UI/TextWithTooltip";
 
 interface Row {
   _id: string;
@@ -67,16 +67,11 @@ const PaymentsTable: React.FC<Props> = ({ rows }) => {
                 {row?.remarks ? row.remarks : ""}
               </TableCell>
               <TableCell align="right">
-                <Tooltip title={row?.paymentMethod?.wallet}>
-                  <span>
-                    {`${row.userAddress.substring(
-                      0,
-                      4
-                    )}...${row.userAddress.substring(
-                      row.userAddress.length - 4
-                    )}`}
-                  </span>
-                </Tooltip>
+                {row.userAddress ? (
+                  <TextWithTooltip text={row.userAddress} shortened={true} />
+                ) : (
+                  ""
+                )}
               </TableCell>
             </TableRow>
           ))}

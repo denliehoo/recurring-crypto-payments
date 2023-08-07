@@ -24,21 +24,7 @@ import {
 export default function DashboardLineChart(props: any) {
   const theme = useTheme();
   const { data } = props;
-  console.log(data);
-  const [render, setRender] = React.useState(false);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setRender(true);
-    }, 1000); // delay in ms, adjust as necessary
-
-    // cleanup function
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
-  return render ? (
+  return (
     <React.Fragment>
       <ResponsiveContainer>
         <LineChart
@@ -81,5 +67,5 @@ export default function DashboardLineChart(props: any) {
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>
-  ) : null;
+  );
 }

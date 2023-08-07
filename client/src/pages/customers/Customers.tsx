@@ -11,6 +11,7 @@ import { apiCallAuth } from "../../utils/apiRequest";
 import { useSelector } from "react-redux";
 import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 import { Tooltip } from "@mui/material";
+import TextWithTooltip from "../../components/UI/TextWithTooltip";
 
 const Customers = () => {
   const [rows, setRows] = useState<any[]>([]);
@@ -75,18 +76,14 @@ const Customers = () => {
                       {row?.billingInfo?.email}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title={row?.paymentMethod?.wallet}>
-                        <span>
-                          {row?.paymentMethod
-                            ? `${row?.paymentMethod?.wallet.substring(
-                                0,
-                                4
-                              )}...${row?.paymentMethod?.wallet.substring(
-                                row?.paymentMethod?.wallet.length - 4
-                              )}`
-                            : ""}
-                        </span>
-                      </Tooltip>
+                      {row?.paymentMethod?.wallet ? (
+                        <TextWithTooltip
+                          text={row?.paymentMethod?.wallet}
+                          shortened={true}
+                        />
+                      ) : (
+                        ""
+                      )}
                     </TableCell>
                     <TableCell align="right">
                       {row.status.charAt(0).toUpperCase() + row.status.slice(1)}

@@ -604,10 +604,9 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
 
   let totalDaily = 0;
 
-    const vendor = await findVendorById(vendorId)
+  const vendor = await findVendorById(vendorId);
 
-    if(!vendor?.vendorContract) return res.status(204).end()
-
+  if (!vendor?.vendorContract) return res.status(204).end();
 
   type PaymentData = {
     paymentDate: string;
@@ -643,7 +642,6 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     currentHourIndex = (currentHourIndex + Math.floor(timezoneOffset / 3)) % 8;
     if (currentHourIndex < 0) currentHourIndex += 8;
 
-
     for (let i = 1; i < currentHourIndex + 1; i++) {
       amounts[i]!.amount! += amounts[i - 1]!.amount!;
     }
@@ -653,7 +651,7 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       amounts[i].amount = undefined;
     }
 
-     totalDaily = amounts[currentHourIndex].amount || 0
+    totalDaily = amounts[currentHourIndex].amount || 0;
 
     return amounts;
   };
@@ -676,9 +674,10 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       },
     });
   } catch {
-    return res.status(500).json({error:"Error in fetching daily completed payments"})
+    return res
+      .status(500)
+      .json({ error: "Error in fetching daily completed payments" });
   }
-  
 
   // const data = generateSampleData();
   const data = dailyCompletedPayments!.map((d: any) => ({
@@ -688,28 +687,31 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
   const transformed = transformData(data, timezone - serverTimeZone);
 
   let recentCompletedPayments;
-  try{
-  recentCompletedPayments = await CompletedPayment.find({ vendorId })
+  try {
+    recentCompletedPayments = await CompletedPayment.find({ vendorId })
       .sort({ paymentDate: -1 }) // Sort by paymentDate in descending order (most recent first)
       .limit(5); // Limit the result to 5 documents
-  } catch{
-    return res.status(500).json({error:"Error in fetching recent completed payments"})
+  } catch {
+    return res
+      .status(500)
+      .json({ error: "Error in fetching recent completed payments" });
   }
 
-  let pendingBalance
-  try{
-  const web3 = new Web3(process.env.WEB3_PROVIDER!);
-  if (!vendor) return res.status(404).json({error:"Vendor not found"})
-  const contract = new web3.eth.Contract(
-    RecurringPaymentsVendor.abi,
-    vendor.vendorContract
-  );
+  let pendingBalance;
+  try {
+    const web3 = new Web3(process.env.WEB3_PROVIDER!);
+    if (!vendor) return res.status(404).json({ error: "Vendor not found" });
+    const contract = new web3.eth.Contract(
+      RecurringPaymentsVendor.abi,
+      vendor.vendorContract
+    );
 
-   pendingBalance = await contract.methods.balance().call();
-} catch{
-    return res.status(500).json({error:"Error in fetching pending balance from contract"})
-
-}
+    pendingBalance = await contract.methods.balance().call();
+  } catch {
+    return res
+      .status(500)
+      .json({ error: "Error in fetching pending balance from contract" });
+  }
   return res.send({
     chartData: transformed,
     recentPayments: recentCompletedPayments,

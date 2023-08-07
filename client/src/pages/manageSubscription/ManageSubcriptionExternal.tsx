@@ -44,6 +44,7 @@ import AddAllowanceModal from "./AddAllowanceModal";
 import { capitalizeFirstLetter, formatDate } from "../../utils/transformText";
 import ETHLogo from "../../assets/images/ETHLogo.png";
 import USDTLogo from "../../assets/images/USDTLogo.png";
+import TextWithTooltip from "../../components/UI/TextWithTooltip";
 
 const defaultTheme = createTheme({
   components: {
@@ -272,8 +273,10 @@ export default function ManageSubscriptionExternal() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        {details!.paymentMethod!.wallet.slice(0, 4)}...
-                        {details!.paymentMethod!.wallet.slice(-4)}{" "}
+                        <TextWithTooltip
+                          text={details!.paymentMethod!.wallet}
+                          shortened={true}
+                        />
                       </TableCell>
                       <TableCell>
                         {details!.paymentMethod!.sufficientAllowance ? (

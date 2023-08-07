@@ -8,7 +8,6 @@ import { Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { apiCallAuth } from "../../utils/apiRequest";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 
 // import classes from "./Dashboard.module.css";
@@ -16,40 +15,38 @@ import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegra
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isConfigured, setIsConfigured] = useState(false);
 
   const navigate = useNavigate();
-
-  const vendorDetails = useSelector((state: any) => state.vendorDetails);
-
-  // console.log(vendorDetails);
 
   useEffect(() => {
     const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
     const getDashboard = async () => {
-      const res: any = await apiCallAuth(
-        "get",
-        `/payments/get-dashboard?utc=${clientTimezone}`
-      );
-      console.log(res);
-
-      setDashboard({
-        chartData: res?.data?.chartData,
-        pendingBalance: res?.data?.pendingBalance,
-        recentPayments: res?.data?.recentPayments,
-        totalDaily: res?.data?.totalDaily,
-      });
-      // setDashboard({
-      //   chartData: [],
-      //   pendingBalance: 0,
-      //   recentPayments: [],
-      //   totalDaily: 0,
-      // });
+      try {
+        const res: any = await apiCallAuth(
+          "get",
+          `/payments/get-dashboard?utc=${clientTimezone}`
+        );
+        if (res.status === 200) {
+          setIsConfigured(true);
+          setDashboard({
+            chartData: res?.data?.chartData,
+            pendingBalance: res?.data?.pendingBalance,
+            recentPayments: res?.data?.recentPayments,
+            totalDaily: res?.data?.totalDaily,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
       setIsLoading(false);
     };
     getDashboard();
   }, []);
   return isLoading ? (
     <div>Loading...</div>
+  ) : !isConfigured ? (
+    <ConfigureIntegrationsFirst />
   ) : (
     <Box>
       <Grid container spacing={3}>
@@ -62,7 +59,7 @@ const Dashboard = () => {
               height: 240,
             }}
           >
-            <DashboardLineChart rows={dashboard.chartData} />
+            <DashboardLineChart data={dashboard.chartData} />
           </Paper>
         </Grid>
 
