@@ -4,19 +4,55 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import PaymentsTable from "../../components/shared/PaymentsTable";
 import DashboardLineChart from "./components/DashboardLineChart";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { apiCallAuth } from "../../utils/apiRequest";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 
 // import classes from "./Dashboard.module.css";
 
 const Dashboard = () => {
-  // const data = generateSampleData();
-  // console.log(data);
-  // const transformed = transformData(data);
-  // console.log(transformed);
-  return (
+  const [dashboard, setDashboard] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const vendorDetails = useSelector((state: any) => state.vendorDetails);
+
+  // console.log(vendorDetails);
+
+  useEffect(() => {
+    const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
+    const getDashboard = async () => {
+      const res: any = await apiCallAuth(
+        "get",
+        `/payments/get-dashboard?utc=${clientTimezone}`
+      );
+      console.log(res);
+
+      setDashboard({
+        chartData: res?.data?.chartData,
+        pendingBalance: res?.data?.pendingBalance,
+        recentPayments: res?.data?.recentPayments,
+        totalDaily: res?.data?.totalDaily,
+      });
+      // setDashboard({
+      //   chartData: [],
+      //   pendingBalance: 0,
+      //   recentPayments: [],
+      //   totalDaily: 0,
+      // });
+      setIsLoading(false);
+    };
+    getDashboard();
+  }, []);
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : (
     <Box>
       <Grid container spacing={3}>
-        {/* Chart on monthly payments */}
         <Grid item xs={12} md={8} lg={9}>
           <Paper
             sx={{
@@ -26,11 +62,10 @@ const Dashboard = () => {
               height: 240,
             }}
           >
-            <Typography variant="h5">Monthly Revenue</Typography>
-            <DashboardLineChart data={transformData(generateSampleData())} />
+            <DashboardLineChart rows={dashboard.chartData} />
           </Paper>
         </Grid>
-        {/* Total monthly deposits */}
+
         <Grid item xs={12} md={4} lg={3}>
           <Paper
             sx={{
@@ -40,13 +75,33 @@ const Dashboard = () => {
               height: 240,
             }}
           >
-            Total monthly payments
+            <Typography variant="h5">Daily Total</Typography>
+            <Box>
+              <Typography variant="h6">
+                {dashboard.totalDaily / 10 ** 6} USDT
+              </Typography>
+            </Box>
+            <Typography variant="h5">Pending</Typography>
+            <Box>
+              <Typography variant="h6">
+                {dashboard.pendingBalance / 10 ** 6} USDT
+              </Typography>
+            </Box>
+            <Button variant="contained" onClick={() => navigate("/payouts")}>
+              Claim
+            </Button>
           </Paper>
         </Grid>
         {/* Recent Payments */}
         <Grid item xs={12}>
           <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-            PaymentsTable here..
+            <PaymentsTable rows={dashboard.recentPayments} />
+
+            <Box sx={{ mt: 2 }}>
+              <Button variant="contained" onClick={() => navigate("/payments")}>
+                View All
+              </Button>
+            </Box>
           </Paper>
         </Grid>
       </Grid>
@@ -56,6 +111,7 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+/*
 const generateSampleData = () => {
   let data = [];
   const generateRandomDate = () => {
@@ -126,3 +182,4 @@ const transformData = (data: any) => {
   }
   return amounts;
 };
+*/

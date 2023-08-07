@@ -9,6 +9,7 @@ import {
   TableBody,
   Tooltip,
 } from "@mui/material";
+import { formatDate } from "../../utils/transformText";
 
 interface Row {
   _id: string;
@@ -51,7 +52,7 @@ const PaymentsTable: React.FC<Props> = ({ rows }) => {
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.updatedAt}
+                {formatDate(new Date(row.updatedAt))}
               </TableCell>
               <TableCell align="right">{row.vendorClientId}</TableCell>
               <TableCell align="right">{row.amount / 10 ** 6}</TableCell>
@@ -59,7 +60,9 @@ const PaymentsTable: React.FC<Props> = ({ rows }) => {
               <TableCell align="right">
                 {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
               </TableCell>
-              <TableCell align="right">{row.paymentDate}</TableCell>
+              <TableCell align="right">
+                {formatDate(new Date(row.paymentDate))}
+              </TableCell>
               <TableCell align="right">
                 {row?.remarks ? row.remarks : ""}
               </TableCell>

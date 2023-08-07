@@ -24,6 +24,7 @@ import {
 export default function DashboardLineChart(props: any) {
   const theme = useTheme();
   const { data } = props;
+  console.log(data);
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {

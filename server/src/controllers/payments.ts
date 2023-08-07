@@ -602,6 +602,13 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
   const { utc } = req.query;
   const timezone = parseInt(utc as string);
 
+  let totalDaily = 0;
+
+    const vendor = await findVendorById(vendorId)
+
+    if(!vendor?.vendorContract) return res.status(204).end()
+
+
   type PaymentData = {
     paymentDate: string;
     amount: number;
@@ -636,7 +643,6 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     currentHourIndex = (currentHourIndex + Math.floor(timezoneOffset / 3)) % 8;
     if (currentHourIndex < 0) currentHourIndex += 8;
 
-    console.log(currentHourIndex);
 
     for (let i = 1; i < currentHourIndex + 1; i++) {
       amounts[i]!.amount! += amounts[i - 1]!.amount!;
@@ -646,6 +652,9 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     for (let i = currentHourIndex + 1; i < amounts.length; i++) {
       amounts[i].amount = undefined;
     }
+
+     totalDaily = amounts[currentHourIndex].amount || 0
+
     return amounts;
   };
 
@@ -657,26 +666,55 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Midnight today
   todayStart.setHours(todayStart.getHours() + timezone - serverTimeZone);
 
-  const completedPayments: ICompletedPayment[] = await CompletedPayment.find({
-    status: "paid",
-    paymentDate: {
-      $gte: todayStart,
-      $lte: new Date(), // curent time now
-    },
-  });
+  let dailyCompletedPayments;
+  try {
+    dailyCompletedPayments = await CompletedPayment.find({
+      status: "paid",
+      paymentDate: {
+        $gte: todayStart,
+        $lte: new Date(), // curent time now
+      },
+    });
+  } catch {
+    return res.status(500).json({error:"Error in fetching daily completed payments"})
+  }
+  
 
   // const data = generateSampleData();
-  const data = completedPayments.map((d: any) => ({
+  const data = dailyCompletedPayments!.map((d: any) => ({
     paymentDate: d.paymentDate,
     amount: d.amount,
   }));
   const transformed = transformData(data, timezone - serverTimeZone);
 
+  let recentCompletedPayments;
+  try{
+  recentCompletedPayments = await CompletedPayment.find({ vendorId })
+      .sort({ paymentDate: -1 }) // Sort by paymentDate in descending order (most recent first)
+      .limit(5); // Limit the result to 5 documents
+  } catch{
+    return res.status(500).json({error:"Error in fetching recent completed payments"})
+  }
+
+  let pendingBalance
+  try{
+  const web3 = new Web3(process.env.WEB3_PROVIDER!);
+  if (!vendor) return res.status(404).json({error:"Vendor not found"})
+  const contract = new web3.eth.Contract(
+    RecurringPaymentsVendor.abi,
+    vendor.vendorContract
+  );
+
+   pendingBalance = await contract.methods.balance().call();
+} catch{
+    return res.status(500).json({error:"Error in fetching pending balance from contract"})
+
+}
   return res.send({
     chartData: transformed,
-    recentPayments: "",
-    totalDaily: "",
-    pendingBalance: "",
+    recentPayments: recentCompletedPayments,
+    totalDaily: totalDaily,
+    pendingBalance: parseInt(pendingBalance),
   });
 };
 
