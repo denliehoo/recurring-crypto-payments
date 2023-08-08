@@ -22,9 +22,9 @@ import {
   addScheduledPayment,
   deleteScheduledPayment,
 } from "../utility/payments";
+import { sendWebHook } from "../utility/sendWebhook";
 
-const { Vendor, VendorClient, ScheduledPayment, CompletedPayment, Payout } =
-  models;
+const { ScheduledPayment, CompletedPayment, Payout } = models;
 
 // change payment method of client
 
@@ -46,9 +46,14 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
       userAddress: p.userAddress,
       amount: p.amount,
       tokenAddress: p.tokenAddress!,
-      vendorId: p.vendorId,
-      vendorClientId: p.vendorClientId,
+      vendorId: p.vendorId.toString(),
+      vendorClientId: p.vendorClientId.toString(),
     };
+
+    const v = await findVendorById(p.vendorId.toString());
+    const c = await findVendorClientById(p.vendorClientId.toString());
+
+    if (!v || !c) continue;
 
     const [sufficientAllowance, sufficientBalance] =
       await isAllowanceAndBalanceSufficient(
@@ -70,9 +75,12 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
         isSuccessful = true;
         // need to work more on errorhandling here
         // "move" the data to completedPayments with status "paid"
+        const currentDate = new Date();
+        const nextDate = moment().add(1, "months").toDate();
+
         const newCompletedPayment: ICompletedPayment = new CompletedPayment({
           ...paymentDetails,
-          paymentDate: new Date(),
+          paymentDate: currentDate,
           status: "paid",
           hash: transactionHash,
         });
@@ -88,7 +96,7 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
         // Add a new scheduledPayment for next month
         const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
           ...paymentDetails,
-          paymentDate: moment().add(1, "months").toDate(),
+          paymentDate: nextDate,
         });
         const isNewScheduledPaymentAdded = await addScheduledPayment(
           newScheduledPayment
@@ -96,6 +104,26 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
         if (!isNewScheduledPaymentAdded) continue;
 
         // Send a webhook to vendor that it is paid
+        const subscriptionContinuedWebhook = await sendWebHook(
+          v.apiKey!,
+          v.webhookUrl!,
+          "SUBSCRIPTION_CONTINUED",
+          {
+            vendorId: v._id,
+            vendorClientId: c._id,
+            nextDate: nextDate,
+          }
+        );
+
+        const successfulPaymentWebhook = await sendWebHook(
+          v.apiKey!,
+          v.webhookUrl!,
+          "SUCCESSFUL_PAYMENT",
+          { ...paymentDetails, paymentDate: currentDate, hash: transactionHash }
+        );
+
+        if (!subscriptionContinuedWebhook || !successfulPaymentWebhook)
+          continue;
       }
     }
     if (!isSuccessful) {
@@ -133,7 +161,27 @@ export const cronReduceBalances = async (req: Request, res: Response) => {
         continue;
       }
 
-      // Send a webhook to vendor that payment failed;
+      // Send a webhook to vendor that payment failed and cancelled subscription;
+      // change to end subscription webhook
+      const subscriptionCancelledWebhook = await sendWebHook(
+        v.apiKey!,
+        v.webhookUrl!,
+        "SUBSCRIPTION_CANCELLED",
+        {
+          vendorId: v._id,
+          vendorClientId: c._id,
+          endDate: c.nextDate!,
+        }
+      );
+
+      const failedPaymentWebhook = await sendWebHook(
+        v.apiKey!,
+        v.webhookUrl!,
+        "FAILED_PAYMENT",
+        { vendorId: v._id, vendorClientId: c._id }
+      );
+
+      if (!subscriptionCancelledWebhook || !failedPaymentWebhook) continue;
     }
   }
   // return a successful response
@@ -338,31 +386,31 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
 
 // helpers
 
-const generateSampleData = () => {
-  let data = [];
-  const generateRandomDate = () => {
-    const now = new Date();
-    const todayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    ); // Midnight today
-    const randomTime = Math.floor(
-      Math.random() * (now.getTime() - todayStart.getTime())
-    );
-    const randomDate = new Date(todayStart.getTime() + randomTime);
-    return randomDate.toISOString();
-  };
+// const generateSampleData = () => {
+//   let data = [];
+//   const generateRandomDate = () => {
+//     const now = new Date();
+//     const todayStart = new Date(
+//       now.getFullYear(),
+//       now.getMonth(),
+//       now.getDate()
+//     ); // Midnight today
+//     const randomTime = Math.floor(
+//       Math.random() * (now.getTime() - todayStart.getTime())
+//     );
+//     const randomDate = new Date(todayStart.getTime() + randomTime);
+//     return randomDate.toISOString();
+//   };
 
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      paymentDate: generateRandomDate(),
-      amount: 15000000,
-    });
-  }
-  data.sort((a, b) => Date.parse(a.paymentDate) - Date.parse(b.paymentDate));
-  return data;
-};
+//   for (let i = 0; i < 10; i++) {
+//     data.push({
+//       paymentDate: generateRandomDate(),
+//       amount: 15000000,
+//     });
+//   }
+//   data.sort((a, b) => Date.parse(a.paymentDate) - Date.parse(b.paymentDate));
+//   return data;
+// };
 
 // for testing:
 export const getScheduledPayments = async (req: Request, res: Response) => {

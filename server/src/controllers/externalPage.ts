@@ -18,8 +18,31 @@ import {
 } from "../utility/payments";
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 import { generateJWT } from "../utility/generateJWT";
+import { sendWebHook } from "../utility/sendWebhook";
+// import sendWebHook from "../utility/sendWebhook";
 
 const { Vendor, VendorClient, ScheduledPayment, CompletedPayment } = models;
+
+export const testWebhok = async (req: Request, res: Response) => {
+  const auth =
+    "sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b";
+
+  const webhook: any = await sendWebHook(
+    auth,
+    "http://localhost:3001/payments/recurcrypt/webhook",
+    "SUBSCRIPTION_BEGUN",
+    {
+      vendorId: "vidhere",
+      vendorClientId: "vcidhere",
+      begun: new Date(),
+      nextDate: new Date(),
+    }
+  );
+
+  console.log(webhook);
+
+  res.send("ok");
+};
 
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
@@ -124,6 +147,28 @@ export const initiateSubscription = async (
     return res.status(500).json({ error: "Failed to update VendorClient" });
 
   // 5. send a webhook to vendor that subscription should begin and payment received
+
+  const subscriptionBegunWebHook = await sendWebHook(
+    vendor.apiKey,
+    vendor.webhookUrl!,
+    "SUBSCRIPTION_BEGUN",
+    {
+      vendorId: vendor._id,
+      vendorClientId: vendorClientId._id,
+      begun: currentDate,
+      nextDate: nextDate,
+    }
+  );
+
+  const successfulPaymentWebhook = await sendWebHook(
+    vendor.apiKey,
+    vendor.webhookUrl!,
+    "SUCCESSFUL_PAYMENT",
+    { ...paymentDetails, hash: transactionHash }
+  );
+
+  if (!subscriptionBegunWebHook || !successfulPaymentWebhook)
+    return res.status(401).json({ error: "Failed to send webhook" });
 
   // return at end
   return res.send(vendorClient);
@@ -298,7 +343,15 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
   }
 
   // send a webhook to inform vendor that user cancelled...
-  // ...
+  const cancelSubscriptionWebhook = await sendWebHook(
+    v.apiKey,
+    v.webhookUrl!,
+    "SUBSCRIPTION_CANCELLED",
+    { vendorId: v._id, vendorClientId: c._id, endDate: c.nextDate! }
+  );
+
+  if (!cancelSubscriptionWebhook)
+    return res.status(401).json({ error: "Failed to send webhook" });
 
   return res.status(204).end();
 };
@@ -314,20 +367,24 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
   const v = await findVendorById(vendorId);
   let c = await findVendorClientById(clientId);
 
+  let transactionHash;
+
   if (!v || !c)
     return res.status(404).json({ error: "Vendor or client id not found" });
 
   const paymentDetails = {
-    vendorContract: v.vendorContract,
-    userAddress: wallet,
-    amount: v.amount,
+    vendorContract: v.vendorContract!,
+    userAddress: wallet!,
+    amount: v.amount!,
     tokenAddress: v.tokenAddress!,
     vendorId: vendorId,
     vendorClientId: clientId,
   };
+  const currentDate = new Date();
+
   let schedluledPaymentDate;
 
-  if (c.nextDate! > new Date()) {
+  if (c.nextDate! > currentDate) {
     // means still have time in subscription
     schedluledPaymentDate = c.nextDate;
   } else {
@@ -345,7 +402,7 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
         error: "Unable to proceed because of insufficient allowance or balance",
       });
 
-    const transactionHash = await sendReduceUserBalanceTransactionasync(
+    transactionHash = await sendReduceUserBalanceTransactionasync(
       v.vendorContract!,
       wallet,
       v.amount!.toString()
@@ -358,7 +415,7 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
 
     c.nextDate = schedluledPaymentDate;
     c.invoices.push({
-      date: new Date(),
+      date: currentDate,
       amount: v.amount!, // replace this
       token: "USDT",
       status: "paid",
@@ -378,7 +435,7 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       return res.status(500).json({ error: "Failed to add completed payment" });
   }
 
-  // add the newe scheduled payment
+  // add the new scheduled payment
   const newScheduledPayment: IScheduledPayment = new ScheduledPayment({
     ...paymentDetails,
     paymentDate: schedluledPaymentDate,
@@ -402,7 +459,26 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       .json({ error: "An error occured while updating vendor client" });
   }
   // send webhook that user renew plan....
+  const subscriptionRenewalWebhook = await sendWebHook(
+    v.apiKey,
+    v.webhookUrl!,
+    "SUBSCRIPTION_RENEWED",
+    {
+      vendorId: v._id,
+      vendorClientId: c._id,
+      nextDate: c.nextDate!,
+    }
+  );
 
+  const successfulPaymentWebhook = await sendWebHook(
+    v.apiKey,
+    v.webhookUrl!,
+    "SUCCESSFUL_PAYMENT",
+    { ...paymentDetails, paymentDate: currentDate, hash: transactionHash! }
+  );
+
+  if (!subscriptionRenewalWebhook || !successfulPaymentWebhook)
+    return res.status(401).json({ error: "Failed to send webhook" });
   return res.send(c);
 };
 

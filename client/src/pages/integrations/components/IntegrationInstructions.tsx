@@ -51,8 +51,44 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
   if (auth !== YOUR_API_KEY)
       return res.status(401).json({ error: "Incorrect API Key" });
 
-  // do stuff based on body...
-  case event =...... switch... etc....     
+  // handle the webhook 
+  switch(event){
+    // when client first subscribes
+    case SUBSCRIPTION_BEGUN:
+        // handle accordingly
+        break;
+    
+    // when client cancels their subscription. Note: this doesn't mean their subscription term has ended
+    case SUBSCRIPTION_CANCELLED:
+        // handle accordingly
+        break;
+
+    // when a client who cancelled their subscription renews their subscription
+    case SUBSCRIPTION_RENEWED:
+        // handle accordingly
+        break;
+
+    // when a client's subscription term has come to an end
+    case SUBSCRIPTION_ENDED:
+        // handle accordingly
+        break;
+    
+    // when a client succesfully pays to continue their subscription
+    case SUBSCRIPTION_CONTINUED:
+        // handle accordingly
+        break;
+
+    case SUCCESSFUL_PAYMENT:
+        // handle accordingly
+        break;
+
+    case FAILED_PAYMENT:
+        // handle accordingly
+        break;
+
+    default:
+        console.log(unhandled event)
+  }   
   
   // send a response as a confirmation
   return res.status(204).end()
