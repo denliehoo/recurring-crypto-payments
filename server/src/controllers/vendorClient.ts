@@ -16,11 +16,12 @@ export const createVendorClient = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Incorrect API Key" });
 
     const newVendorClient: IVendorClient = new VendorClient({
-      id, // id of the vendor
+      vendor: id, // id of the vendor
     });
     const createdVendorClient: IVendorClient = await newVendorClient.save();
     return res.send(createdVendorClient);
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ error: "Failed to create VendorClient" });
   }
 };
