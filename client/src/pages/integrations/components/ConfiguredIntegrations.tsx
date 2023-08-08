@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import DisplayField from "../../../components/UI/DisplayField";
 import EditConfigurationsModal from "./EditConfigurationsModal";
+import IntegrationInstructions from "./IntegrationInstructions";
 
 const ConfiguredIntergrations = (props: any) => {
   const { vendor, vendorId, refreshData } = props;
@@ -67,7 +68,7 @@ const ConfiguredIntergrations = (props: any) => {
         />
       )}
 
-      <Typography>INSTRUCTIONS ON INTEGRATION HERE</Typography>
+      <IntegrationInstructions />
     </Box>
   );
 };
