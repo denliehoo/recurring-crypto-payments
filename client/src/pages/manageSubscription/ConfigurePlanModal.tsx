@@ -16,6 +16,7 @@ import CustomButton from "../../components/UI/CustomButton";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
 import axios from "axios";
 import CustomModal from "../../components/UI/CustomModal";
+import { formatDate } from "../../utils/transformText";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
 const ConfigurePlanModal = (props: any) => {
@@ -162,11 +163,11 @@ const ConfigurePlanModal = (props: any) => {
       } else if (status === "active") {
         tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
       } else if (status === "cancelled") {
-        tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly from your wallet ${
-          new Date(nextDate).getTime() > new Date().getTime()
-            ? `on ${nextDate}`
-            : ""
-        } if you confirm your renewal.`;
+        tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly from your wallet ${formatDate(
+          nextDate
+        )} if you confirm your renewal.`;
+      } else if (status === "ended") {
+        tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
       }
       setButtonLoading(false);
       setStepsText(tempStepsText);
@@ -289,7 +290,7 @@ const ConfigurePlanModal = (props: any) => {
           setButtonLoading(false);
           return;
         }
-      } else if (status === "cancelled") {
+      } else if (status === "cancelled" || status === "ended") {
         // means they want to continue subscription
         setButtonLoading(true);
         try {
@@ -357,7 +358,7 @@ const ConfigurePlanModal = (props: any) => {
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
-            {status === "inactive"
+            {status !== "active"
               ? "You have successfully subscribed!"
               : "You have successfully changed your payment wallet!"}
           </Typography>

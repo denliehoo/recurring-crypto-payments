@@ -11,8 +11,6 @@ import {
   Avatar,
   AvatarGroup,
   Divider,
-  Menu,
-  MenuItem,
   TableBody,
   TableCell,
   TableContainer,
@@ -24,7 +22,6 @@ import { VendorClientSubscriptionDetails } from "../../../../shared/types/Vendor
 import {
   Receipt,
   TagRounded,
-  MoreVert,
   KeyboardBackspace,
   CheckCircle,
   Cancel,
@@ -78,6 +75,7 @@ export default function ManageSubscriptionExternal() {
   const isSmOrUp = useMediaQuery("(min-width:600px)");
 
   useEffect(() => {
+    setIsLoading(true);
     const getData = async () => {
       try {
         const headers = {
@@ -110,12 +108,14 @@ export default function ManageSubscriptionExternal() {
   const textBasedOnStatus = (
     active: string,
     inactive: string,
-    cancelled: string
+    cancelled: string,
+    ended: string
   ) => {
     const status = details!.status;
     if (status === "active") return active;
     if (status === "inactive") return inactive;
-    return cancelled;
+    if (status === "cancelled") return cancelled;
+    return ended;
   };
 
   return isLoading ? (
@@ -220,12 +220,13 @@ export default function ManageSubscriptionExternal() {
                     details!.nextDate!
                   )}`,
                   "",
-                  `Your plan has been cancelled and ${
-                    details?.nextDate &&
-                    new Date(details.nextDate).getTime() > new Date().getTime()
-                      ? "will stop on"
-                      : "has stopped since"
-                  } ${formatDate(details!.nextDate!)}
+                  `Your plan has been cancelled and will stop on ${formatDate(
+                    details!.nextDate!
+                  )}
+                  `,
+                  `Your plan has been ended since ${formatDate(
+                    details!.nextDate!
+                  )}
                   `
                 )}
               </Box>
@@ -238,7 +239,7 @@ export default function ManageSubscriptionExternal() {
                     : setConfigurePlanModal(true)
                 }
               >
-                {textBasedOnStatus("Cancel ", "Start ", "Renew ")}
+                {textBasedOnStatus("Cancel ", "Start ", "Renew ", "Renew ")}
                 Plan
               </Button>
             </Box>

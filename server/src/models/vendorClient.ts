@@ -11,8 +11,15 @@ export interface IVendorClient extends Document {
   paymentMethod: PaymentMethod | null;
   nextDate: Date | null;
   invoices: Invoice[];
-  status: "inactive" | "active" | "cancelled";
+  status: "inactive" | "active" | "cancelled" | "ended";
 }
+/*
+  inactive: user has never subscribed before
+  active: user is currently subscribed
+  cancelled: user has cancelled subscription, but still has time left in their subscription
+  ended: user has cancelled subscription and have no time left in subscription
+  Note: if renew, satus will become active again
+*/
 
 const vendorClientSchema: Schema = new Schema(
   {
@@ -20,7 +27,7 @@ const vendorClientSchema: Schema = new Schema(
     billingInfo: {
       name: { type: String },
       address: { type: String },
-      email: {type: String}
+      email: { type: String },
     },
     paymentMethod: {
       token: { type: String },
@@ -42,7 +49,7 @@ const vendorClientSchema: Schema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["inactive", "active", "cancelled"],
+      enum: ["inactive", "active", "cancelled", "ended"],
       default: "inactive",
     },
   },

@@ -1,7 +1,11 @@
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {
+  atomOneDark,
+  tomorrowNight,
+  atomOneLight,
+} from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const IntegrationInstructions = () => {
   const createVendorClient = `
@@ -43,6 +47,9 @@ const urlToRedirect = await res.data.url
 `;
 
   const listenToWebHook = `
+const express = require('express')
+const app = express()
+
 app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
   const {event, timestamp, data} = req.body;
   const auth = req.headers.authorization
@@ -87,7 +94,7 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
         break;
 
     default:
-        console.log(unhandled event)
+        console.log("unhandled event", req.body)
   }   
   
   // send a response as a confirmation
@@ -107,7 +114,7 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
           apiUrl/vendorClients/create/:id where id refers to your RecurCrypt ID
           [Note to self, add ID field in integrations page]
         </Typography>
-        <SyntaxHighlighter language="javascript" style={tomorrowNight}>
+        <SyntaxHighlighter language="javascript" style={atomOneDark}>
           {createVendorClient}
         </SyntaxHighlighter>
       </Box>
@@ -122,7 +129,7 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
           which you should redirect your users to. At that redirected page,
           users can manage their subscription
         </Typography>
-        <SyntaxHighlighter language="javascript" style={tomorrowNight}>
+        <SyntaxHighlighter language="javascript" style={atomOneDark}>
           {subscriptionSession}
         </SyntaxHighlighter>
       </Box>
@@ -135,7 +142,7 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
           subscription, end of subscription, client failed payments, client
           successful payments, etc..
         </Typography>
-        <SyntaxHighlighter language="javascript" style={tomorrowNight}>
+        <SyntaxHighlighter language="javascript" style={atomOneDark}>
           {listenToWebHook}
         </SyntaxHighlighter>
       </Box>

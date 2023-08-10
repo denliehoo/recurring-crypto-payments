@@ -19,9 +19,21 @@ import {
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 import { generateJWT } from "../utility/generateJWT";
 import { sendWebHook } from "../utility/sendWebhook";
+import {
+  addPendingEndSubscription,
+  deletePendingEndSubscription,
+  findPendingEndSubscription,
+} from "../utility/pendingEndSubscription";
+import { IPendingEndSubscription } from "../models/pendingEndSubscription";
 // import sendWebHook from "../utility/sendWebhook";
 
-const { Vendor, VendorClient, ScheduledPayment, CompletedPayment } = models;
+const {
+  Vendor,
+  VendorClient,
+  ScheduledPayment,
+  CompletedPayment,
+  PendingEndSubscription,
+} = models;
 
 export const testWebhok = async (req: Request, res: Response) => {
   const auth =
@@ -311,7 +323,6 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
       .status(500)
       .json({ error: "An error occured in deleting the scheduled payment" });
 
-  // "move" the data to completedPayment with status "failed"
   const newCompletedPayment: ICompletedPayment = new CompletedPayment({
     vendorContract: sp.vendorContract,
     userAddress: sp.userAddress,
@@ -341,6 +352,21 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
       .status(500)
       .json({ error: "An error occured in updating the vendor client entity" });
   }
+
+  const newPendingEndSubscription: IPendingEndSubscription =
+    new PendingEndSubscription({
+      endDate: c.nextDate!,
+      vendorId: v._id.toString(),
+      vendorClientId: c._id.toString(),
+    });
+  const addedPendingEndSubscription = await addPendingEndSubscription(
+    newPendingEndSubscription
+  );
+
+  if (!addedPendingEndSubscription)
+    return res.status(500).json({
+      error: "An error occured in added the pending end subscription",
+    });
 
   // send a webhook to inform vendor that user cancelled...
   const cancelSubscriptionWebhook = await sendWebHook(
@@ -387,6 +413,21 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
   if (c.nextDate! > currentDate) {
     // means still have time in subscription
     schedluledPaymentDate = c.nextDate;
+    const pendingEndSubscriptionToDelete = await findPendingEndSubscription(
+      v._id.toString(),
+      c._id.toString()
+    );
+    if (!pendingEndSubscriptionToDelete)
+      return res
+        .status(404)
+        .json({ error: "Pending End Subscription not found" });
+    const isDeleted = await deletePendingEndSubscription(
+      pendingEndSubscriptionToDelete
+    );
+    if (!isDeleted)
+      return res
+        .status(500)
+        .json({ error: "Unable to delete Pending End Subscription" });
   } else {
     // means subscription has expired
     const [sufficientAllowance, sufficientBalance] =

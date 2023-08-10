@@ -12,7 +12,7 @@ export interface IPayout extends Document {
 
 export const payoutSchema: Schema = new Schema(
   {
-    payoutDate: { type: String, required: true },
+    payoutDate: { type: Date, required: true },
     amount: { type: Number, required: true },
     tokenAddress: { type: String, required: true },
     userAddress: { type: String, required: true },

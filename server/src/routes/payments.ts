@@ -1,17 +1,18 @@
 import { Router } from "express";
 import {
-  cronReduceBalances,
+  cronApi,
   getScheduledPayments,
   getCompletedPayments,
   createPayout,
   getPayoutsDetails,
   getAllPayments,
   getDashboard,
+  getPendingEndSubscriptions,
 } from "../controllers/payments";
 import { verifyToken } from "../middleware/verifyToken";
 const router = Router();
 
-router.post("/cron-reduce-balances", cronReduceBalances);
+router.post("/cron-api", cronApi);
 router.get("/get-all-payments", verifyToken, getAllPayments);
 
 router.get("/get-dashboard", verifyToken, getDashboard);
@@ -22,5 +23,6 @@ router.get("/get-payouts-details", verifyToken, getPayoutsDetails);
 // for testing
 router.get("/scheduled-payments", getScheduledPayments);
 router.get("/completed-payments", getCompletedPayments);
+router.get("/pending-end-subscriptions", getPendingEndSubscriptions);
 
 export default router;

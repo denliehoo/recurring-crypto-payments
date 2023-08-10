@@ -28,7 +28,6 @@ type WebHookEventData = {
     nextDate: Date;
   };
   SUBSCRIPTION_ENDED: {
-    // need to somehow do webhooks for subscription ended; meaning need to use a cron?
     vendorId: string;
     vendorClientId: string;
   };

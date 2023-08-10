@@ -32,7 +32,7 @@ export interface VendorClientSubscriptionDetails {
   returnUrl: string | null;
   webhookUrl: string | null;
   // from client
-  status: "active" | "inactive" | "cancelled";
+  status: "active" | "inactive" | "cancelled" | "ended";
   nextDate: Date | null;
   paymentMethod: PaymentMethod | null;
   billingInfo: BillingInfo | null;

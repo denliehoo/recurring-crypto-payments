@@ -4,6 +4,7 @@ import VendorClient from "./vendorClient";
 import ScheduledPayment from "./scheduledPayment";
 import CompletedPayment from "./completedPayment";
 import Payout from "./payout";
+import PendingEndSubscription from "./pendingEndSubscription";
 
 const dbUrl = process.env.DB_URL;
 
@@ -15,13 +16,15 @@ const connectDb = () => {
   return mongoose.connect(dbUrl); //refactor this eventually
 };
 
+// import more models here in the future
 const models = {
   Vendor,
   VendorClient,
   ScheduledPayment,
   CompletedPayment,
   Payout,
-}; // import more models here in the future
+  PendingEndSubscription,
+};
 
 export { connectDb };
 

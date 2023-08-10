@@ -1,7 +1,7 @@
 # Todo:
 
 - Authorization for vendors sending api (should be the api key that was assigned to them)
-- Add 1 more DB Entity - pendingEndSubscription of which the CRON api will utilise. For the db entity, it is only created when user cancels subscription and has time left on the subscription. Once it is time, change the user status to "ended" or something; Note that this will affect the external frontend page too and vendorClient entity; Maybe for vendorClient add an additional status: ended which makes subscription has ended. The difference between cancel and ended being that for cancelled, it is only cancelled but hasnt't ended yet; i.e. the user still has time left in the subscription. Whereas for ended, it means subscription has already ended. Thus upon failure to pay, for the cron api, status becomes ended and not cancelled
+- Test out new cron API
 - Add instructions on integrations page on how to integrate (once integrations configured)
 - Auth for api calls
 - Simulate sending webhook to the vendor upon successful XXX
@@ -108,3 +108,8 @@
 - 07/08/23: Dashboard API and frontend
 - 07/08/23: Refactor out external frontend APIs routes and controllers from payments and vendorClient to a separate route and controller: externalPage; change endpoints on frontend too
 - 08/08/23: Skeleton for webhooks
+- 10/08/23: Add 1 more DB Entity - pendingEndSubscription of which the CRON api will utilise.
+  - For the this new DB entity, it is only created when user cancels subscription and has time left on the subscription.
+  - Once subscription time is up, change the user status to "ended". Add this functionality into the CRON api
+  - For vendorClient add an additional status: ended, which makes subscription has ended. The difference between cancel and ended being that for cancelled, it is only cancelled but hasnt't ended yet; i.e. the user still has time left in the subscription. Whereas for ended, it means subscription has already ended. Thus upon failure to pay, for the cron api, status becomes ended and not cancelled
+  - Update the frontend in the respective places for the scenarios of the new status: ended
