@@ -60,16 +60,38 @@ export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
 
-  const vendor = await Vendor.find();
-  const vendorClient = await VendorClient.find();
-  // get these from req.body in the future
-  const data = {
-    vendor: vendor[0]._id.toString(),
-    vendorClient: vendorClient[0]._id.toString(),
-  };
+  // for testing
+  // const vendor = await Vendor.find();
+  // const vendorClient = await VendorClient.find();
+  // const data = {
+  //   vendor: vendor[0]._id.toString(),
+  //   vendorClient: vendorClient[0]._id.toString(),
+  // };
+
+  // for prod
+  const auth = req.headers.authorization;
+
+  const { vendor, vendorClient } = req.body;
+  if (!vendor || !vendorClient)
+    return res
+      .status(401)
+      .json({ error: "Please ensure to provide vendor and vendorClient" });
+
+  const v = await findVendorById(vendor);
+  const c = await findVendorClientById(vendorClient);
+  if (!v || !c)
+    return res
+      .status(404)
+      .json({ error: "Error, vendor or vendorClient not found" });
+
+  if (auth !== v.apiKey)
+    return res.status(401).json({ error: "Incorrect API Key" });
+
+  const data = { vendor: vendor, vendorClient: vendorClient };
+  // ----
 
   const token = generateJWT(data);
-  const baseUrl = "http://localhost:3031";
+  const baseUrl = "http://localhost:3031"; // change this to actual frontend in future
   return res.send({ url: `${baseUrl}/manage-subscription/${token}` });
 };
 
@@ -166,7 +188,7 @@ export const initiateSubscription = async (
     "SUBSCRIPTION_BEGUN",
     {
       vendorId: vendor._id,
-      vendorClientId: vendorClientId._id,
+      vendorClientId: vendorClientId,
       begun: currentDate,
       nextDate: nextDate,
     }
@@ -179,8 +201,8 @@ export const initiateSubscription = async (
     { ...paymentDetails, hash: transactionHash }
   );
 
-  if (!subscriptionBegunWebHook || !successfulPaymentWebhook)
-    return res.status(401).json({ error: "Failed to send webhook" });
+  // if (!subscriptionBegunWebHook || !successfulPaymentWebhook)
+  //   return res.status(401).json({ error: "Failed to send webhook" });
 
   // return at end
   return res.send(vendorClient);
@@ -376,8 +398,8 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
     { vendorId: v._id, vendorClientId: c._id, endDate: c.nextDate! }
   );
 
-  if (!cancelSubscriptionWebhook)
-    return res.status(401).json({ error: "Failed to send webhook" });
+  // if (!cancelSubscriptionWebhook)
+  //   return res.status(401).json({ error: "Failed to send webhook" });
 
   return res.status(204).end();
 };
@@ -518,8 +540,8 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
     { ...paymentDetails, paymentDate: currentDate, hash: transactionHash! }
   );
 
-  if (!subscriptionRenewalWebhook || !successfulPaymentWebhook)
-    return res.status(401).json({ error: "Failed to send webhook" });
+  // if (!subscriptionRenewalWebhook || !successfulPaymentWebhook)
+  //   return res.status(401).json({ error: "Failed to send webhook" });
   return res.send(c);
 };
 

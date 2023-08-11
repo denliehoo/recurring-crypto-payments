@@ -74,9 +74,7 @@ const Dashboard = () => {
           >
             <Typography variant="h5">Daily Total</Typography>
             <Box>
-              <Typography variant="h6">
-                {dashboard.totalDaily / 10 ** 6} USDT
-              </Typography>
+              <Typography variant="h6">{dashboard.totalDaily} USDT</Typography>
             </Box>
             <Typography variant="h5">Pending</Typography>
             <Box>

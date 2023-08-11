@@ -15,9 +15,11 @@ router.get(
   verifyToken,
   getVendorClientsByVendor
 );
+router.post("/create/:id", createVendorClient);
+
+// for testing (so far)
 router.get("/getAll", getAllVendorClients);
 router.get("/getById/:id", getVendorClientById);
-router.post("/create/:id", createVendorClient);
 router.put("/update/:id", updateVendorClient);
 router.delete("/delete/:id", deleteVendorClient);
 

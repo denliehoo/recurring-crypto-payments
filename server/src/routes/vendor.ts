@@ -10,12 +10,17 @@ import {
   updateVendor,
 } from "../controllers/vendor";
 import { verifyToken } from "../middleware/verifyToken";
-router.get("/", getVendors);
+
+router.put("/", verifyToken, updateVendor);
+router.get("/getVendorByToken", verifyToken, getVendorByToken);
+
+// auth not required for this
 router.post("/", createVendor);
 router.post("/login", login);
-router.put("/", verifyToken, updateVendor);
+
+// for testing
+router.get("/", getVendors);
 router.get("/getVendorByEmail", getVendorByEmail);
 router.get("/getVendorById", getVendorById);
-router.get("/getVendorByToken", verifyToken, getVendorByToken);
 
 export default router;

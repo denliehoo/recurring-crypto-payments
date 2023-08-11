@@ -1,10 +1,9 @@
 # Todo:
 
-- Authorization for vendors sending api (should be the api key that was assigned to them)
+- Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments
+- Enable table pagination filter etc...
 - Test out new cron API
-- Add instructions on integrations page on how to integrate (once integrations configured)
 - Auth for api calls
-- Simulate sending webhook to the vendor upon successful XXX
 
 # Future Task
 
@@ -22,7 +21,7 @@
   4. Continue with the array of ok payments, now call the multi reduce balance on the contract
   5. Look at the events (probably) emitted. And change the array accordingly
   6. For those that pass, do the move the scheduled payment to completed with completed status etc.
-  7. For those that fail, do same as 3.
+  7. For those that fail, means its likely a gas/congestion/etc... issue. Thus, just ignore it for now and let it be called again on the next api schedule (note: maybe change to call api every hour, but for ending within 4 hours. This is to ensure that e.g., if they dont get reduced because of e.g. gas issues, then at least still have 3 more attempts before the end subscription DB entity activates; )
   8. API finish
 - Allow vendors to delete vendorclients on dashboard (which will also delete their pending scheduled payment if any)
 
@@ -113,3 +112,5 @@
   - Once subscription time is up, change the user status to "ended". Add this functionality into the CRON api
   - For vendorClient add an additional status: ended, which makes subscription has ended. The difference between cancel and ended being that for cancelled, it is only cancelled but hasnt't ended yet; i.e. the user still has time left in the subscription. Whereas for ended, it means subscription has already ended. Thus upon failure to pay, for the cron api, status becomes ended and not cancelled
   - Update the frontend in the respective places for the scenarios of the new status: ended
+- 11/08/23: Add instructions on integrations page on how to integrate (once integrations configured)
+- 11/08/23: Simulate sending webhook to the vendor upon successful XXX

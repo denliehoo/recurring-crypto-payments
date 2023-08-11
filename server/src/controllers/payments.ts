@@ -33,6 +33,11 @@ const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } =
 
 // the cron job runs this every X minutes
 export const cronApi = async (req: Request, res: Response) => {
+  const auth = req.headers.authorization;
+  const cronApiKey = process.env.CRON_API_KEY;
+
+  if (auth !== cronApiKey)
+    return res.status(401).json({ error: "You are unauthorized" });
   // Get the date 60 minutes into the future
   const futureDate = new Date(new Date().getTime() + 60 * 60000);
   // filter to see all the scheduled payments that are due in less than 60 mins
