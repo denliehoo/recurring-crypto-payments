@@ -14,7 +14,7 @@ const TextWithTooltip: React.FC<TextWithTooltipProps> = (props) => {
           {`${text.substring(0, 4)}...${text.substring(text.length - 4)}`}
         </span>
       ) : (
-        <span>text</span>
+        <span>{text}</span>
       )}
     </Tooltip>
   );

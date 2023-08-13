@@ -1,7 +1,5 @@
 # Todo:
 
-- Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments
-- Enable table pagination filter etc...
 - Test out new cron API
 - Auth for api calls
 
@@ -10,6 +8,7 @@
 - Fix this non-critical error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
   at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
   at http://localhost:3031/static/js/bundle.js:128080:7
+- Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments; looks like an issue when in lower screen size and the table overflows. Temporarily showing full address instead in tables to prevent this issue
 - Use some AWS Lambda to set up a CRON job to call that api every X minute (e.g. 1 minute)
 - For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
 - Do edge case of handling this error when calling initiate subscription API. (Basically it ran to an error that it was sent but not mined and might be mined. But since it is an error, it stopped the API there and didnt add scheduled payments etc ) Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined! at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21) at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49 at processTicksAndRejections (node:internal/process/task_queues:96:5) {receipt: undefined}
@@ -114,3 +113,4 @@
   - Update the frontend in the respective places for the scenarios of the new status: ended
 - 11/08/23: Add instructions on integrations page on how to integrate (once integrations configured)
 - 11/08/23: Simulate sending webhook to the vendor upon successful XXX
+- 13/08/23: Replace tables with DataGrid which allows for filtering, sorting, pagination, etc..

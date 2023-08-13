@@ -90,7 +90,10 @@ const Dashboard = () => {
         {/* Recent Payments */}
         <Grid item xs={12}>
           <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-            <PaymentsTable rows={dashboard.recentPayments} />
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Recent Payments
+            </Typography>
+            <PaymentsTable rows={dashboard.recentPayments} hideFooter={true} />
 
             <Box sx={{ mt: 2 }}>
               <Button variant="contained" onClick={() => navigate("/payments")}>

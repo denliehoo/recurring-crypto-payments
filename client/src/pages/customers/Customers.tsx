@@ -1,17 +1,47 @@
 // import classes from "./Customers.module.css";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import { apiCallAuth } from "../../utils/apiRequest";
 import { useSelector } from "react-redux";
 import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
-import { Tooltip } from "@mui/material";
-import TextWithTooltip from "../../components/UI/TextWithTooltip";
+
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { renderStatus } from "../../utils/renderTableCell";
+import { Box } from "@mui/material";
+
+const columns: GridColDef[] = [
+  {
+    field: "_id",
+    headerName: "Unique ID",
+    width: 250,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    width: 200,
+    valueGetter: (params) => params.row?.billingInfo?.name || "",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 200,
+    valueGetter: (params) => params.row?.billingInfo?.email || "",
+  },
+
+  {
+    field: "wallet",
+    headerName: "Wallet",
+    width: 400,
+    valueGetter: (params) => params.row?.paymentMethod?.wallet || "",
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 100,
+    renderCell: renderStatus,
+  },
+];
 
 const Customers = () => {
   const [rows, setRows] = useState<any[]>([]);
@@ -28,7 +58,6 @@ const Customers = () => {
 
         setRows(res.data);
         setIsLoading(false);
-        console.log(res);
       } catch (err) {
         console.log(err);
         setIsLoading(false);
@@ -50,48 +79,19 @@ const Customers = () => {
       ) : (
         <div>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Unique ID</TableCell>
-                  <TableCell align="right">Name</TableCell>
-                  <TableCell align="right">Email</TableCell>
-                  <TableCell align="right">Wallet</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row._id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row._id}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row?.billingInfo?.name}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row?.billingInfo?.email}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row?.paymentMethod?.wallet ? (
-                        <TextWithTooltip
-                          text={row?.paymentMethod?.wallet}
-                          shortened={true}
-                        />
-                      ) : (
-                        ""
-                      )}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              getRowId={(row) => row._id}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 10 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+              disableRowSelectionOnClick
+              autoHeight
+            />
           </TableContainer>
         </div>
       )}

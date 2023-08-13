@@ -1,15 +1,11 @@
 import React from "react";
+import { Paper, TableContainer } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
-  Paper,
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { formatDate } from "../../utils/transformText";
-import TextWithTooltip from "../UI/TextWithTooltip";
+  renderAmount,
+  renderDate,
+  renderStatus,
+} from "../../utils/renderTableCell";
 
 interface Row {
   _id: string;
@@ -29,54 +25,82 @@ interface Props {
   rows: Row[];
 }
 
-const PaymentsTable: React.FC<Props> = ({ rows }) => {
+const columns: GridColDef[] = [
+  {
+    field: "updatedAt",
+    headerName: "Date",
+    width: 130,
+    renderCell: renderDate,
+  },
+  {
+    field: "vendorClientId",
+    headerName: "User Id",
+    width: 220,
+  },
+  {
+    field: "amount",
+    headerName: "Amount",
+    width: 80,
+    renderCell: renderAmount,
+  },
+  {
+    field: "token",
+    headerName: "Token",
+    width: 100,
+    renderCell: () => <span>USDT</span>,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 100,
+    renderCell: renderStatus,
+  },
+  {
+    field: "paymentDate",
+    headerName: "Payment Date",
+    width: 150,
+    renderCell: renderDate,
+    // sortComparator: (v1, v2) => {
+    //   const date1 = new Date(v1);
+    //   const date2 = new Date(v2);
+    //   return date2.getTime() - date1.getTime();
+    // },
+  },
+  {
+    field: "remarks",
+    headerName: "Remarks",
+    width: 180,
+  },
+  {
+    field: "userAddress",
+    headerName: "Wallet",
+    width: 400,
+  },
+];
+
+interface PaymentsTableProps {
+  rows: any[];
+  hideFooter?: boolean;
+}
+
+const PaymentsTable: React.FC<PaymentsTableProps> = ({ rows, hideFooter }) => {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell align="right">User Id</TableCell>
-            <TableCell align="right">Amount</TableCell>
-            <TableCell align="right">Token</TableCell>
-            <TableCell align="right">Status</TableCell>
-            <TableCell align="right">Payment Date</TableCell>
-            <TableCell align="right">Remarks</TableCell>
-            <TableCell align="right">Wallet</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row._id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {formatDate(new Date(row.updatedAt))}
-              </TableCell>
-              <TableCell align="right">{row.vendorClientId}</TableCell>
-              <TableCell align="right">{row.amount / 10 ** 6}</TableCell>
-              <TableCell align="right">USDT</TableCell>
-              <TableCell align="right">
-                {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-              </TableCell>
-              <TableCell align="right">
-                {formatDate(new Date(row.paymentDate))}
-              </TableCell>
-              <TableCell align="right">
-                {row?.remarks ? row.remarks : ""}
-              </TableCell>
-              <TableCell align="right">
-                {row.userAddress ? (
-                  <TextWithTooltip text={row.userAddress} shortened={true} />
-                ) : (
-                  ""
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        getRowId={(row) => row._id}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 10 },
+          },
+        }}
+        pageSizeOptions={[5, 10]}
+        disableRowSelectionOnClick
+        autoHeight
+        hideFooter={hideFooter}
+        // checkboxSelection
+      />
     </TableContainer>
   );
 };

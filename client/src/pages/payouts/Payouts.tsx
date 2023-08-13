@@ -1,16 +1,10 @@
 // import classes from "./Payouts.module.css";
 import {
   Box,
-  Button,
   Divider,
   IconButton,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
@@ -19,6 +13,46 @@ import CustomButton from "../../components/UI/CustomButton";
 import RequestPayoutModal from "./components/RequestPayoutModal";
 import { apiCallAuth } from "../../utils/apiRequest";
 import TagIcon from "@mui/icons-material/Tag";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { renderAmount, renderDate } from "../../utils/renderTableCell";
+
+const columns: GridColDef[] = [
+  {
+    field: "payoutDate",
+    headerName: "Date",
+    width: 250,
+    renderCell: renderDate,
+  },
+  {
+    field: "amount",
+    headerName: "Amount",
+    width: 150,
+    renderCell: renderAmount,
+  },
+  {
+    field: "token",
+    headerName: "Token",
+    width: 150,
+  },
+  {
+    field: "hash",
+    headerName: "Hash",
+    width: 150,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => (
+      <IconButton>
+        <a
+          href={`https://goerli.etherscan.io/tx/${params.value}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <TagIcon />
+        </a>
+      </IconButton>
+    ),
+  },
+];
 
 const Payouts = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -63,8 +97,6 @@ const Payouts = () => {
         );
         console.log(res);
         const { payouts, pendingBalance, owner, vendor } = await res!.data;
-        console.log(pendingBalance);
-        console.log(typeof pendingBalance);
         setOwner(owner);
         setRows(payouts);
         setPendingBalance(pendingBalance);
@@ -101,54 +133,19 @@ const Payouts = () => {
                 <Divider sx={{ mt: 2, mb: 2 }} />
                 <Typography variant="h5">Payout History</Typography>
                 <TableContainer sx={{ mt: 2 }} component={Paper}>
-                  <Table sx={{ minWidth: 650 }}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Date</TableCell>
-                        <TableCell align="right">Amount</TableCell>
-                        <TableCell align="right">Token</TableCell>
-
-                        <TableCell align="right">Hash</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.map((row) => (
-                        <TableRow
-                          key={row.payoutDate.toString()}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {new Date(row.payoutDate).toLocaleString("en-US", {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                              hour12: true,
-                            })}
-                          </TableCell>
-                          <TableCell align="right">
-                            {row.amount / 10 ** 6}
-                          </TableCell>
-                          <TableCell align="right">{row.token}</TableCell>
-                          <TableCell align="right">
-                            <IconButton>
-                              <a
-                                href={`https://goerli.etherscan.io/tx/${row.hash}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <TagIcon />{" "}
-                              </a>
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    getRowId={(row) => row.payoutDate.toString()}
+                    initialState={{
+                      pagination: {
+                        paginationModel: { page: 0, pageSize: 10 },
+                      },
+                    }}
+                    pageSizeOptions={[5, 10]}
+                    disableRowSelectionOnClick
+                    autoHeight
+                  />
                 </TableContainer>
               </Box>
               {requestPayoutModal && (
