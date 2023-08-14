@@ -1,5 +1,6 @@
 # Todo:
 
+- Email confirmation during registration
 - Test out new cron API
 - Auth for api calls
 
@@ -114,3 +115,5 @@
 - 11/08/23: Add instructions on integrations page on how to integrate (once integrations configured)
 - 11/08/23: Simulate sending webhook to the vendor upon successful XXX
 - 13/08/23: Replace tables with DataGrid which allows for filtering, sorting, pagination, etc..
+- 14/08/23: Enhanced registration/login process and page and moved certain variables to environmental variables
+- 14/08/23: Mailing service by sending gmail through Nodejs; reference: https://miracleio.me/snippets/use-gmail-with-nodemailer

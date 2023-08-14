@@ -35,27 +35,6 @@ const {
   PendingEndSubscription,
 } = models;
 
-export const testWebhok = async (req: Request, res: Response) => {
-  const auth =
-    "sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b";
-
-  const webhook: any = await sendWebHook(
-    auth,
-    "http://localhost:3001/payments/recurcrypt/webhook",
-    "SUBSCRIPTION_BEGUN",
-    {
-      vendorId: "vidhere",
-      vendorClientId: "vcidhere",
-      begun: new Date(),
-      nextDate: new Date(),
-    }
-  );
-
-  console.log(webhook);
-
-  res.send("ok");
-};
-
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
   // from the vendor
@@ -91,7 +70,7 @@ export const manageSubscription = async (req: Request, res: Response) => {
   // ----
 
   const token = generateJWT(data);
-  const baseUrl = "http://localhost:3031"; // change this to actual frontend in future
+  const baseUrl = process.env.FRONT_END_URL; // change this to actual frontend in future
   return res.send({ url: `${baseUrl}/manage-subscription/${token}` });
 };
 

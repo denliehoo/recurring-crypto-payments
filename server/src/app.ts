@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import express, { Request, Response } from "express";
+import express from "express";
 import routes from "./routes";
 import models, { connectDb } from "./models";
 import { hashPassword } from "./utility/credentials";
@@ -8,10 +8,6 @@ import mongoose from "mongoose";
 const cors = require("cors");
 
 const app = express();
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, Express :)");
-});
 
 app.use(express.json());
 app.use(cors());

@@ -39,7 +39,7 @@ export const apiCallAuth = async <T>(
       (err.response && err.response.status === 401)
     ) {
       // Token expired or unauthorized, redirect to login page
-      window.location.href = "http://localhost:3031/login";
+      window.location.href = "/login";
     } else {
       throw err;
     }

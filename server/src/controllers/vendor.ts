@@ -8,6 +8,7 @@ import {
 } from "../utility/credentials";
 import { findVendorByEmail, findVendorById } from "../utility/findFromDb";
 import { CustomRequest } from "../types/requests";
+import { sendEmail } from "../utility/sendEmail";
 const jwt = require("jsonwebtoken");
 
 export const createVendor = async (req: Request, res: Response) => {
@@ -15,8 +16,19 @@ export const createVendor = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
     const apiKey = "sk-" + uuidv4() + uuidv4() + uuidv4();
 
+    // const isEmailSent = await sendEmail({
+    //   to: "denliehoo.dev@gmail.com",
+    //   subject: "Hello from Nodemailer",
+    //   text: "Testing...",
+    //   html: "<p>This is a <b>test</b> email sent through Nodemailer using Gmail.</p>",
+    // });
+
     if (!email || !password)
       return res.status(400).json({ error: "Cannot be empty" });
+
+    const isExistingEmail = await findVendorByEmail(email);
+    if (isExistingEmail)
+      return res.status(401).json({ error: "Vendor already exists" });
 
     const isValidPassword = validatePasswordStrength(password);
     if (!isValidPassword)

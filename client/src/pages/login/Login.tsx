@@ -10,6 +10,8 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
+
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -18,11 +20,19 @@ function Login() {
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
     setError("");
+    setFieldErrors({ ...fieldErrors, email: "" });
   };
 
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
     setError("");
+    setFieldErrors({ ...fieldErrors, password: "" });
+  };
+
+  const toggleLoginRegister = () => {
+    setIsLogin(!isLogin);
+    setError("");
+    setFieldErrors({ password: "", email: "" });
   };
 
   const setVendorDetails = async () => {
@@ -68,6 +78,33 @@ function Login() {
       }
     } else {
       // register and login
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      const validPassword = passwordRegex.test(password);
+      const validEmail = emailRegex.test(username);
+
+      if (!validPassword)
+        setFieldErrors({
+          ...fieldErrors,
+          password:
+            "Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character",
+        });
+
+      if (!validEmail)
+        setFieldErrors({ ...fieldErrors, email: "Enter a valid email" });
+
+      if (!validEmail || !validPassword) {
+        setFieldErrors({
+          email: validEmail ? "" : "Enter a valid email",
+          password: validPassword
+            ? ""
+            : "Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character",
+        });
+        return;
+      }
+
       try {
         let res = await axios.post(`${apiUrl}/vendors`, {
           email: username,
@@ -110,9 +147,11 @@ function Login() {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                type="username"
+                type="text"
                 label="Email"
                 variant="outlined"
+                error={!!fieldErrors.email}
+                helperText={fieldErrors.email}
                 fullWidth
                 value={username}
                 onChange={handleUsernameChange}
@@ -123,6 +162,8 @@ function Login() {
                 type="password"
                 label="Password"
                 variant="outlined"
+                error={!!fieldErrors.password}
+                helperText={fieldErrors.password}
                 fullWidth
                 value={password}
                 onChange={handlePasswordChange}
@@ -130,7 +171,7 @@ function Login() {
             </Grid>
             {error && (
               <Grid item xs={12}>
-                <Typography>{error}</Typography>
+                <Typography sx={{ ml: 2, color: "red" }}>{error}</Typography>
               </Grid>
             )}
 
@@ -153,7 +194,7 @@ function Login() {
             variant="outlined"
             color="primary"
             fullWidth
-            onClick={() => (isLogin ? setIsLogin(false) : setIsLogin(true))}
+            onClick={toggleLoginRegister}
           >
             {isLogin ? "Change To Register" : "Change To Login"}
           </Button>

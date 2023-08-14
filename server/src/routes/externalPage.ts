@@ -8,12 +8,9 @@ import {
   initiateSubscription,
   manageSubscription,
   renewSubscription,
-  testWebhok,
   updateVendorClientPaymentMethod,
 } from "../controllers/externalPage";
 const router = Router();
-
-router.post("/test-webhook", testWebhok);
 
 router.post("/manage-subscription", manageSubscription);
 router.post("/initiate-subscription", verifyToken, initiateSubscription);
