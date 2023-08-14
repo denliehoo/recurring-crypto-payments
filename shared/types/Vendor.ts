@@ -9,4 +9,5 @@ export interface Vendor {
   amount?: number;
   vendorContract?: string;
   plan?: string; // plan name
+  isVerified?: boolean;
 }

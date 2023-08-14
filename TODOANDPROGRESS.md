@@ -1,6 +1,5 @@
 # Todo:
 
-- Email confirmation during registration
 - Test out new cron API
 - Auth for api calls
 
@@ -117,3 +116,4 @@
 - 13/08/23: Replace tables with DataGrid which allows for filtering, sorting, pagination, etc..
 - 14/08/23: Enhanced registration/login process and page and moved certain variables to environmental variables
 - 14/08/23: Mailing service by sending gmail through Nodejs; reference: https://miracleio.me/snippets/use-gmail-with-nodemailer
+- 14/08/23: Vendors now need to confirm email before being able to access account

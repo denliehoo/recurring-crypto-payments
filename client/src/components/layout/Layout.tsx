@@ -33,8 +33,14 @@ const Layout = (props: any) => {
     setOpen(!open);
   };
 
+  // NTS: add a page for if the link people go in doesnt exist in app.tsx
   const shouldUseLayout = () => {
-    if (pathname === "/login" || pathname.includes("/manage-subscription")) {
+    if (
+      pathname === "/login" ||
+      pathname.includes("/manage-subscription") ||
+      pathname.includes("/verify-email") ||
+      pathname === "/page-not-found"
+    ) {
       return false;
     } else {
       return true;

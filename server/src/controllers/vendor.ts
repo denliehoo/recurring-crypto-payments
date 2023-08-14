@@ -9,19 +9,14 @@ import {
 import { findVendorByEmail, findVendorById } from "../utility/findFromDb";
 import { CustomRequest } from "../types/requests";
 import { sendEmail } from "../utility/sendEmail";
+import { generateJWT } from "../utility/generateJWT";
 const jwt = require("jsonwebtoken");
 
+// aka register
 export const createVendor = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
     const apiKey = "sk-" + uuidv4() + uuidv4() + uuidv4();
-
-    // const isEmailSent = await sendEmail({
-    //   to: "denliehoo.dev@gmail.com",
-    //   subject: "Hello from Nodemailer",
-    //   text: "Testing...",
-    //   html: "<p>This is a <b>test</b> email sent through Nodemailer using Gmail.</p>",
-    // });
 
     if (!email || !password)
       return res.status(400).json({ error: "Cannot be empty" });
@@ -47,11 +42,44 @@ export const createVendor = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
-    res.status(201).json(vendor);
+    await sendVerificationEmailHelper(email, vendor._id.toString());
+
+    return res.status(201).json(vendor);
   } catch (error) {
     console.error("Error creating vendor:", error);
     res.status(500).json({ error: "Failed to create vendor" });
   }
+};
+
+export const verifyEmail = async (req: CustomRequest, res: Response) => {
+  const { email, vendorId } = req.decoded;
+  let v = await findVendorById(vendorId);
+  if (!v) return res.status(404).json({ error: "Vendor not found" });
+
+  if (v.isVerified)
+    return res.status(400).json({ error: "Vendor is already verified" });
+
+  v.isVerified = true;
+  try {
+    v = await v.save();
+  } catch {
+    return res
+      .status(500)
+      .json({ error: "Server error occured while saving vendor" });
+  }
+  return res.send(v);
+};
+
+export const resendEmailVerification = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const v = await findVendorByEmail(email);
+  if (!v) return res.status(404).json({ error: "Vendor not found" });
+  if (v.isVerified)
+    return res.status(400).json({ error: "Vendor is already verified" });
+
+  const isSent = await sendVerificationEmailHelper(email, v._id.toString());
+  if (!isSent) return res.status(500).json({ error: "Unable to send email" });
+  return res.status(204).end();
 };
 
 export const getVendors = async (req: Request, res: Response) => {
@@ -75,7 +103,13 @@ export const login = async (req: Request, res: Response) => {
   if (!isCorrectPassword)
     return res.status(400).json({ error: "Incorrect Password" });
 
-  const token = generateJWT(email, vendor._id.toString());
+  if (!vendor.isVerified)
+    return res.status(401).json({ error: "Email Unverified" });
+
+  const token = generateJWT(
+    { email: email, vendorId: vendor._id.toString() },
+    86400
+  );
   return res.send({ token: token });
 };
 
@@ -141,15 +175,19 @@ export const getVendorByToken = async (req: CustomRequest, res: Response) => {
   return res.send(vendor);
 };
 
-const generateJWT = (email: string, vendorId: string) => {
-  // Set the expiration time for the JWT token (e.g., 1 hour from now)
-  // if want to change the time, change the 3600 (which is 60s * 60 min = 3600s = 1 hr)
-  // const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour (in seconds)
-  const expirationTime = Math.floor(Date.now() / 1000) + 360000; // 100 hour (in seconds) temp for now
+// helpers
+const sendVerificationEmailHelper = async (email: string, vendorId: string) => {
+  const token = generateJWT({
+    email: email,
+    vendorId: vendorId,
+  });
+  const verificationUrl = `${process.env.FRONT_END_URL}/verify-email/${token}`;
+  const isEmailSent = await sendEmail({
+    to: email,
+    subject: "[RecurCrypt] Please Verify Your Email",
+    text: "Verify Email",
+    html: `<p>Hey there! <br /> Welcome to RecurCrypt! Before you get started, please verify your email by clicking on the this link: ${verificationUrl} </p>`,
+  });
 
-  const token = jwt.sign(
-    { email: email, vendorId: vendorId, exp: expirationTime },
-    process.env.JWT_KEY
-  );
-  return token;
+  return isEmailSent;
 };

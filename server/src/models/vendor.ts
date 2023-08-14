@@ -17,6 +17,7 @@ const VendorSchema: Schema = new Schema(
     amount: { type: Number },
     vendorContract: { type: String },
     plan: { type: String },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

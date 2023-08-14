@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Grid, Typography, Container } from "@mui/material";
+import { TextField, Button, Grid, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { apiCallAuth } from "../../utils/apiRequest";
 import { useDispatch } from "react-redux";
 import { addVendorDetails } from "../../slices/vendorDetailsSlice";
+import CentrePage from "../../components/UI/CentrePage";
+import CustomButton from "../../components/UI/CustomButton";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
+  const [regLogButtonLoading, setRegLogButtonLoading] = useState(false);
+  const [resendButtonLoading, setResendButtonLoading] = useState(false);
+
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
@@ -35,6 +41,23 @@ function Login() {
     setFieldErrors({ password: "", email: "" });
   };
 
+  const handleResendVerification = async () => {
+    // ...
+    setResendButtonLoading(true);
+    try {
+      const res = await axios.post(`${apiUrl}/vendors/resend-verification`, {
+        email: username,
+      });
+
+      setVerificationSent(true);
+      setError("");
+    } catch (err) {
+      //
+      console.log(err);
+    }
+    setResendButtonLoading(false);
+  };
+
   const setVendorDetails = async () => {
     const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
     // console.log(res);
@@ -57,14 +80,13 @@ function Login() {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
+    setRegLogButtonLoading(true);
     if (isLogin) {
       try {
         const res = await axios.post(`${apiUrl}/vendors/login`, {
           email: username,
           password: password,
         });
-        // Handle the response data or perform further actions
-        // console.log("Response:", res);
 
         // Redirect to dashboard upon successful login
         if (res.status === 200) {
@@ -110,97 +132,91 @@ function Login() {
           email: username,
           password: password,
         });
-        res = await axios.post(`${apiUrl}/vendors/login`, {
-          email: username,
-          password: password,
-        });
-
-        if (res.status === 200) {
-          localStorage.setItem("JWT", res.data.token);
-          navigate("/dashboard");
-        }
+        console.log(res);
+        setVerificationSent(true);
       } catch (error: any) {
         console.log(error);
         setError(error.response.data.error);
       }
     }
+    setRegLogButtonLoading(false);
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      style={{ height: "100vh", display: "flex", alignItems: "center" }}
-    >
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h4">RecurCrypt</Typography>
-        <Typography variant="h5">{isLogin ? "Login" : "Register"}</Typography>
+    <CentrePage>
+      <Typography variant="h4">RecurCrypt</Typography>
+      <Typography variant="h5">{isLogin ? "Login" : "Register"}</Typography>
 
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                type="text"
-                label="Email"
-                variant="outlined"
-                error={!!fieldErrors.email}
-                helperText={fieldErrors.email}
-                fullWidth
-                value={username}
-                onChange={handleUsernameChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                type="password"
-                label="Password"
-                variant="outlined"
-                error={!!fieldErrors.password}
-                helperText={fieldErrors.password}
-                fullWidth
-                value={password}
-                onChange={handlePasswordChange}
-              />
-            </Grid>
-            {error && (
-              <Grid item xs={12}>
-                <Typography sx={{ ml: 2, color: "red" }}>{error}</Typography>
-              </Grid>
-            )}
-
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                {isLogin ? "Login" : "Register"}
-              </Button>
-            </Grid>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              type="text"
+              label="Email"
+              variant="outlined"
+              error={!!fieldErrors.email}
+              helperText={fieldErrors.email}
+              fullWidth
+              value={username}
+              onChange={handleUsernameChange}
+            />
           </Grid>
-        </form>
-        {/*  */}
-        <div style={{ width: "100%" }}>
-          <br />
-          <Button
-            variant="outlined"
-            color="primary"
+          <Grid item xs={12}>
+            <TextField
+              type="password"
+              label="Password"
+              variant="outlined"
+              error={!!fieldErrors.password}
+              helperText={fieldErrors.password}
+              fullWidth
+              value={password}
+              onChange={handlePasswordChange}
+            />
+          </Grid>
+          {error && (
+            <Grid item xs={12}>
+              <Typography sx={{ ml: 2, color: "red" }}>{error}</Typography>
+            </Grid>
+          )}
+          {verificationSent && (
+            <Grid item xs={12}>
+              <Typography sx={{ ml: 2 }}>
+                A verification link has been sent to your email. Please click on
+                it to verify your email
+              </Typography>
+            </Grid>
+          )}
+
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              {isLogin ? "Login" : "Register"}
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+      {/*  */}
+      <Box sx={{ width: "100%", mt: 2 }}>
+        <CustomButton
+          variant="outlined"
+          color="primary"
+          fullWidth
+          onClick={toggleLoginRegister}
+          loading={regLogButtonLoading}
+          text={isLogin ? "Change To Register" : "Change To Login"}
+        />
+        {error === "Email Unverified" && (
+          <CustomButton
+            sx={{ mt: 2 }}
             fullWidth
-            onClick={toggleLoginRegister}
-          >
-            {isLogin ? "Change To Register" : "Change To Login"}
-          </Button>
-        </div>
-      </div>
-    </Container>
+            variant="outlined"
+            text="RESEND VERIFICATION EMAIL"
+            onClick={handleResendVerification}
+            loading={resendButtonLoading}
+            disabled={verificationSent}
+          />
+        )}
+      </Box>
+    </CentrePage>
   );
 }
 
