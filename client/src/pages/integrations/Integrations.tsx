@@ -15,7 +15,7 @@ const Integrations = () => {
   useEffect(() => {
     const getVendorDetails = async () => {
       const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
-      console.log(res);
+
       const {
         name,
         email,

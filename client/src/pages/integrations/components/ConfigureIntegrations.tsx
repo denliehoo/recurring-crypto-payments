@@ -69,7 +69,6 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
         "0x92971a37d9ea86ad18591A0f86A90E273439F19e"
       );
       setContract(master);
-      console.log(master);
       setButtonLoading(false);
     }
     // confirm fill details
@@ -114,7 +113,7 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
           id: vendorId,
         };
         const res = await apiCallAuth("put", "/vendors", bodyData);
-        console.log(res);
+
         dispatch(
           addVendorDetails({
             name: vendorDetails.name,

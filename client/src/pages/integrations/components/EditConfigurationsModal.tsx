@@ -55,7 +55,7 @@ const EditConfigurationsModal = (props: any) => {
     };
     try {
       const res = await apiCallAuth("put", "/vendors", bodyData);
-      console.log(res);
+
       setButtonLoading(false);
       refreshData();
       closeModal();

@@ -264,7 +264,6 @@ const ConfigurePlanModal = (props: any) => {
               headers,
             }
           );
-          console.log(res);
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
@@ -284,7 +283,6 @@ const ConfigurePlanModal = (props: any) => {
               headers,
             }
           );
-          console.log(res);
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
@@ -304,7 +302,6 @@ const ConfigurePlanModal = (props: any) => {
               headers,
             }
           );
-          console.log(res);
         } catch (err) {
           console.log(err);
           setButtonLoading(false);

@@ -350,9 +350,9 @@ export default function ManageSubscriptionExternal() {
                 details!.invoices.map((i) => (
                   <Box>
                     {formatDate(i.date)}
-                    <IconButton onClick={() => console.log(i.invoice)}>
+                    {/* <IconButton onClick={() => console.log(i.invoice)}>
                       <Receipt />
-                    </IconButton>
+                    </IconButton> */}
                     <IconButton>
                       <a href={i.hash} target="_blank" rel="noreferrer">
                         <TagRounded />

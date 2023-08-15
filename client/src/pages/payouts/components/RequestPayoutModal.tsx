@@ -103,7 +103,7 @@ const RequestPayoutModal = (props: any) => {
           `/payments/create-payout/${vendor._id.toString()}`,
           bodyData
         );
-        console.log(res);
+
         setButtonLoading(false);
       } catch (err) {
         console.log(err);
@@ -115,8 +115,6 @@ const RequestPayoutModal = (props: any) => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
   const handleAccountsChanged = async (accounts: string[]) => {
-    console.log(activeStepRef.current);
-
     if (activeStepRef.current === 0) return;
     setAddress(accounts[0]);
     if (accounts[0].toLowerCase() === owner.toLowerCase()) {

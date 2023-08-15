@@ -26,14 +26,12 @@ import IconAndText from "../UI/IconAndText";
 
 const Layout = (props: any) => {
   const { pathname } = useLocation();
-  // console.log(vendorDetails);
 
   const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  // NTS: add a page for if the link people go in doesnt exist in app.tsx
   const shouldUseLayout = () => {
     if (
       pathname === "/login" ||

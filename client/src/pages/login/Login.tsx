@@ -42,7 +42,6 @@ function Login() {
   };
 
   const handleResendVerification = async () => {
-    // ...
     setResendButtonLoading(true);
     try {
       const res = await axios.post(`${apiUrl}/vendors/resend-verification`, {
@@ -52,7 +51,6 @@ function Login() {
       setVerificationSent(true);
       setError("");
     } catch (err) {
-      //
       console.log(err);
     }
     setResendButtonLoading(false);
@@ -60,7 +58,6 @@ function Login() {
 
   const setVendorDetails = async () => {
     const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
-    // console.log(res);
 
     const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } =
       res.data;
@@ -132,7 +129,7 @@ function Login() {
           email: username,
           password: password,
         });
-        console.log(res);
+
         setVerificationSent(true);
       } catch (error: any) {
         console.log(error);

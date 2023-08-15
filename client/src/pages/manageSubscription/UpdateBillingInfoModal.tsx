@@ -38,7 +38,7 @@ const UpdateBillingInfoModal = (props: any) => {
           headers,
         }
       );
-      console.log(res);
+
       setButtonLoading(false);
       refreshData();
       closeModal();

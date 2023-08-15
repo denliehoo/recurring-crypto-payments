@@ -19,8 +19,6 @@ const CancelPlanModal = (props: any) => {
         Authorization: authToken,
       };
 
-      console.log(authToken);
-
       const res = await axios.post(
         `${apiUrl}/externalPage/cancel-subscription`,
         null,
@@ -28,7 +26,7 @@ const CancelPlanModal = (props: any) => {
           headers,
         }
       );
-      console.log(res);
+
       setButtonLoading(false);
       refreshData();
       closeCancelPlanModal();

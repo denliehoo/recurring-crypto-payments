@@ -21,12 +21,11 @@ const VerifyEmail = () => {
         Authorization: token,
       };
 
-      console.log(token);
       try {
         const res = await axios.post(`${apiUrl}/vendors/verify-email`, null, {
           headers,
         });
-        console.log(res);
+
         if (res.status === 200) {
           setIsVerified(true);
         }

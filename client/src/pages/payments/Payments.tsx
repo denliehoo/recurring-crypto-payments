@@ -13,7 +13,7 @@ const Payments = () => {
   const [rows, setRows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const vendorDetails = useSelector((state: any) => state.vendorDetails);
-  console.log(vendorDetails);
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -21,7 +21,6 @@ const Payments = () => {
 
         setRows(res.data);
         setIsLoading(false);
-        console.log(res);
       } catch (err) {
         console.log(err);
         setIsLoading(false);

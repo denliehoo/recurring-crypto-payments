@@ -95,7 +95,7 @@ const Payouts = () => {
           "get",
           "/payments/get-payouts-details"
         );
-        console.log(res);
+
         const { payouts, pendingBalance, owner, vendor } = await res!.data;
         setOwner(owner);
         setRows(payouts);

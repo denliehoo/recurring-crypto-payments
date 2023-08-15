@@ -47,7 +47,7 @@ const Customers = () => {
   const [rows, setRows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const vendorDetails = useSelector((state: any) => state.vendorDetails);
-  console.log(vendorDetails);
+
   useEffect(() => {
     const getData = async () => {
       try {
