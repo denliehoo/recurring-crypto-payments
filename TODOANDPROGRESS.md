@@ -1,10 +1,13 @@
 # Todo:
 
+- Server deployment
+- Frontend deployment
 - Test out new cron API
 - Auth for api calls
 
 # Future Task
 
+- Add invoices
 - Fix this non-critical error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
   at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
   at http://localhost:3031/static/js/bundle.js:128080:7

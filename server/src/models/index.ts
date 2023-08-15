@@ -6,8 +6,9 @@ import CompletedPayment from "./completedPayment";
 import Payout from "./payout";
 import PendingEndSubscription from "./pendingEndSubscription";
 
-const dbUrl = "mongodb://127.0.0.1:27017/recurring-crypto-payments";
-// const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/recurring-crypto-payments";
+// const dbUrl = "mongodb://127.0.0.1:27017/recurring-crypto-payments";
+const dbUrl =
+  process.env.DB_URL || "mongodb://127.0.0.1:27017/recurring-crypto-payments";
 
 const connectDb = () => {
   console.log(`connected through db: ${dbUrl}`);

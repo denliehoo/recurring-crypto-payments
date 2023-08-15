@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import express from "express";
+import express, { Request, Response } from "express";
 import routes from "./routes";
 import models, { connectDb } from "./models";
 import { hashPassword } from "./utility/credentials";
@@ -18,6 +18,10 @@ app.use("/payments", routes.payments);
 app.use("/externalPage", routes.externalPage);
 
 const port = 3030;
+
+app.get("/", async (req: Request, res: Response) => {
+  res.send("RecurCrypt Server");
+});
 
 connectDb().then(async () => {
   // change to true/false if want to reset and seed db
