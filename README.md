@@ -23,7 +23,7 @@ npm start
 # server
 
 cd server
-npm start
+npm run dev
 
 # contracts
 
