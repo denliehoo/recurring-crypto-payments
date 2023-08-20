@@ -36,6 +36,8 @@ export const cronApi = async (req: Request, res: Response) => {
   const auth = req.headers.authorization;
   const cronApiKey = process.env.CRON_API_KEY;
 
+  console.log("CRON API Called");
+
   if (auth !== cronApiKey)
     return res.status(401).json({ error: "You are unauthorized" });
   // Get the date 60 minutes into the future
@@ -237,6 +239,7 @@ export const cronApi = async (req: Request, res: Response) => {
     }
   }
 
+  console.log("CRON API Completed");
   // return a successful response
   return res.send("all done");
 };

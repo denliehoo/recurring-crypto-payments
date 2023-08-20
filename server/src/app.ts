@@ -17,7 +17,7 @@ app.use("/vendorclients", routes.vendorClient);
 app.use("/payments", routes.payments);
 app.use("/externalPage", routes.externalPage);
 
-const port = 3030;
+const port = process.env.PORT || 3030;
 
 app.get("/", async (req: Request, res: Response) => {
   res.send("RecurCrypt Server");
@@ -50,6 +50,7 @@ const seedDataBase = async () => {
   const testVendor = new models.Vendor({
     name: "Test Company",
     email: "test@test.com",
+    isVerified: true,
     password: testPassword,
     apiKey: testApiKeys,
     tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
