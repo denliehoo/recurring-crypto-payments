@@ -307,6 +307,7 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
       ...p.toObject(),
       status: "pending",
       remarks: null as string | null,
+      hash: null as string | null,
     }))
     .concat(completedPayments)
     .sort(

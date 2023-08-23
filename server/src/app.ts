@@ -58,7 +58,7 @@ const seedDataBase = async () => {
     amount: 15000000, // 15 USDT
     plan: "Testing Company Premium Plan",
     webhookUrl: "http://localhost:3001/payments/recurcrypt/webhook",
-    returnUrl: "http://localhost:3000/returnUrl",
+    returnUrl: "http://localhost:3000/billing",
   });
 
   await testVendor.save();

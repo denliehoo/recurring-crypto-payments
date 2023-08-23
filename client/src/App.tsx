@@ -30,6 +30,8 @@ function App() {
         <Route path="/payouts" element={<Payouts />} />
 
         <Route path="/page-not-found" element={<NotFound />} />
+        <Route path="/" element={<Navigate to="/login" />} />
+
         {/* Catch all route  */}
         <Route path="*" element={<Navigate to="/page-not-found" />} />
       </Routes>

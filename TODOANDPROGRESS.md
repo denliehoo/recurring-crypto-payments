@@ -1,9 +1,9 @@
 # Todo:
 
-- Server deployment
+- Split environments for server
 - Frontend deployment
-- Test out new cron API
-- Auth for api calls
+- Give options for network and tokens; tokens available should be based of network
+- Need get ABI data from API
 
 # Future Task
 
@@ -12,7 +12,6 @@
   at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
   at http://localhost:3031/static/js/bundle.js:128080:7
 - Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments; looks like an issue when in lower screen size and the table overflows. Temporarily showing full address instead in tables to prevent this issue
-- Use some AWS Lambda to set up a CRON job to call that api every X minute (e.g. 1 minute)
 - For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
 - Do edge case of handling this error when calling initiate subscription API. (Basically it ran to an error that it was sent but not mined and might be mined. But since it is an error, it stopped the API there and didnt add scheduled payments etc ) Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined! at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21) at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49 at processTicksAndRejections (node:internal/process/task_queues:96:5) {receipt: undefined}
 - Handle error on frontend for when fail to deduct balance
@@ -120,3 +119,6 @@
 - 14/08/23: Enhanced registration/login process and page and moved certain variables to environmental variables
 - 14/08/23: Mailing service by sending gmail through Nodejs; reference: https://miracleio.me/snippets/use-gmail-with-nodemailer
 - 14/08/23: Vendors now need to confirm email before being able to access account
+- 20/08/23: Server deployed, AWS CRON setup
+- 23/08/23: Add hash for Payments tab and split client environments into prod and dev
+- 23/08/23: Ensure user connects to correct network

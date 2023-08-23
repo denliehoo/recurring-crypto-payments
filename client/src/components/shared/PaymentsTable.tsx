@@ -16,6 +16,7 @@ interface Row {
   paymentDate: string;
   remarks?: string;
   userAddress: string;
+  hash?: string;
   paymentMethod?: {
     wallet: string;
   };
@@ -72,9 +73,14 @@ const columns: GridColDef[] = [
     width: 180,
   },
   {
+    field: "hash",
+    headerName: "Hash",
+    width: 300,
+  },
+  {
     field: "userAddress",
     headerName: "Wallet",
-    width: 400,
+    width: 370,
   },
 ];
 
