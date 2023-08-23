@@ -36,20 +36,39 @@ cd client
 
 # .env in server:
 
+- .env.dev
+
 ```Javascript
-DB_URL=DB_URL_HERE_INSTRUCTIONS_BELOW
-JWT_KEY=TEMPKEY
+DB_URL=mongodb://127.0.0.1:27017/recurring-crypto-payments
+JWT_KEY=YOUR_OWN_KEY_HERE
 WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_GOERLI
 OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
 OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
 CRON_API_KEY=RECUR_CRYPT_CRON_API_KEY_HERE
 FRONT_END_URL=http://localhost:3031
-MAILER_EMAIL=XXX
-MAILER_PASSWORD=XXX
-MAILER_APP_PASSWORD=XXX
+MAILER_EMAIL=YOUR_MAILER_EMAIL
+MAILER_PASSWORD=YOUR_MAILER_PASSWORD
+MAILER_APP_PASSWORD=YOUR_MAILER_APP_PASSWORD
+PORT=3030
+ENV=DEV
 ```
 
-- Note: ensure to change FRONT_END_URL after deployment
+- .env.prod
+
+```Javascript
+DB_URL=DB_URL_HERE_INSTRUCTIONS_BELOW
+JWT_KEY=YOUR_OWN_KEY_HERE
+WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_GOERLI
+OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
+OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
+CRON_API_KEY=RECUR_CRYPT_CRON_API_KEY_HERE
+FRONT_END_URL=DEPLOYED_FRONTEND_URL
+MAILER_EMAIL=YOUR_MAILER_EMAIL
+MAILER_PASSWORD=YOUR_MAILER_PASSWORD
+MAILER_APP_PASSWORD=YOUR_MAILER_APP_PASSWORD
+PORT=3030
+ENV=PROD
+```
 
 # .env in client:
 
@@ -112,3 +131,7 @@ Server deployment is done using Render
 # Note on testing external frontend:
 
 - Can test external frontend manually by calling the get subscription page api along with the vendor , vendorclient and apikeys. Simply reseed the database and call the get all vendor clients api to get the the details, then input into the subscription page api
+
+# Mailer documentation
+
+- refer to: https://miracleio.me/snippets/use-gmail-with-nodemailer

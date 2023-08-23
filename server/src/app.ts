@@ -23,21 +23,29 @@ app.get("/", async (req: Request, res: Response) => {
   res.send("RecurCrypt Server");
 });
 
+console.log("Running on Environment:", process.env.ENV);
+
 connectDb().then(async () => {
   // change to true/false if want to reset and seed db
   if (false) {
-    console.log("Re-seeding database!");
-    // drops all collection
-    // dropAllCollections()
+    if (process.env.ENV === "DEV") {
+      console.log("Re-seeding database!");
+      // drops all collection
+      // dropAllCollections()
 
-    // clear database
-    await Promise.all([
-      models.Vendor.deleteMany({}),
-      models.VendorClient.deleteMany({}),
-      models.CompletedPayment.deleteMany({}),
-      models.ScheduledPayment.deleteMany({}),
-    ]);
-    await seedDataBase();
+      // clear database
+      await Promise.all([
+        models.Vendor.deleteMany({}),
+        models.VendorClient.deleteMany({}),
+        models.CompletedPayment.deleteMany({}),
+        models.ScheduledPayment.deleteMany({}),
+      ]);
+      await seedDataBase();
+    } else if (process.env.ENV === "PROD") {
+      console.log(
+        "You're attempting to re-seed production database. If you are sure, you can change the if statement at the top to change from DEV to PROD"
+      );
+    }
   }
 
   app.listen(port, () => console.log(`Server listening on port ${port}!`));

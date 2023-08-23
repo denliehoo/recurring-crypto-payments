@@ -1,12 +1,12 @@
 # Todo:
 
-- Split environments for server
 - Frontend deployment
 - Give options for network and tokens; tokens available should be based of network
 - Need get ABI data from API
 
 # Future Task
 
+- swap out mailing to a more reliable service e.g. twillio...
 - Add invoices
 - Fix this non-critical error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
   at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
@@ -122,3 +122,4 @@
 - 20/08/23: Server deployed, AWS CRON setup
 - 23/08/23: Add hash for Payments tab and split client environments into prod and dev
 - 23/08/23: Ensure user connects to correct network
+- 23/08/23: Split environments for server into dev and prod
