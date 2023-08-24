@@ -56,7 +56,7 @@ ENV=DEV
 - .env.prod
 
 ```Javascript
-DB_URL=DB_URL_HERE_INSTRUCTIONS_BELOW
+DB_URL=DB_URL_INSTRUCTIONS_IN_DOCUMENTATION
 JWT_KEY=YOUR_OWN_KEY_HERE
 WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_GOERLI
 OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
@@ -91,47 +91,3 @@ REACT_APP_API_URL=URL_OF_DEPLOYED_SERVER
 - Master (0x92971a37d9ea86ad18591A0f86A90E273439F19e): https://goerli.etherscan.io/address/0x92971a37d9ea86ad18591a0f86a90e273439f19e#code
 - VendorContract (0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E): https://goerli.etherscan.io/address/0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E#code
 - FakeUSDT (0xC2CA4DFa527902c440d71F162403A3BB93045a24): https://goerli.etherscan.io/address/0xc2ca4dfa527902c440d71f162403a3bb93045a24#code
-
-# database
-
-- Go to mongodb atlas to create an account: https://cloud.mongodb.com/
-- Create a cluster
-- Create an admin account during cluster creation (if havent) and assign it to the account
-- In that cluster dashboard, click CONNECT -> choose MongoDB for VS Code -> you'll see what is the connection string there (e.g. mongodb+srv://usernamehere:password@yourclusterdetails.mongodb.net/)
-- copy that connection string and replace password with the password you created for the admin account and place it in your envrionment variabls
-- Go back to the atlas dashboard -> scroll down on the side bar to security -> choose network access
-- Add this IP Address: 0.0.0.0/0 ; this will allow access from any IP address. By default, only the IP address of which you created the admin account will be there and this is for a security reason. Without allowing access from all IP addresses, when your server is deployed, you'll run into errors.
-
-# server deployment
-
-Server deployment is done using Render
-
-- https://dashboard.render.com/
-- New > Web Service
-- Connect to github repository
-- Build & Deploy settings:
-  - Branch: main
-  - Root directory: server
-  - build command: npm install [ensure that it has server/ before it]
-  - start command: npm start [ensure server/ before it]
-  - auto-deploy: no [can be yes if want]
-- Add environmental values that are already in the server. In addition add this environmental value:
-  - NODE_VERSION=16.15.1
-  - Need to specify node version because the default version of 14.x.x doesn't have the CRYPTO module. Thus will face issue when running the server. This issue can be prevent by specifying the node version in env values; hence it will use that node version instead. Note: can use other versions as long as it has the crypto module. Using 16.x.x because that is the version used on my local machine
-- Deploy it and wait
-- To redeploy: push commit to github, click on manual deploy on the webserver > deploy latest commit > wait and done
-
-# AWS Cron:
-
-- Go to AWS Lambda > Functions > Create Function and call the API
-- In function > function overview > click add trigger > select EventBridge
-- Create new rule > Schedule Expression > Schedule Expression: rate(1 hour) [basically one every hour] > Done
-- If want to edit/end: go to the lambda function > click on the EventBridge > Select the Trigger (in Configurations tab) > click on the create schedule api > edit and save accordingly
-
-# Note on testing external frontend:
-
-- Can test external frontend manually by calling the get subscription page api along with the vendor , vendorclient and apikeys. Simply reseed the database and call the get all vendor clients api to get the the details, then input into the subscription page api
-
-# Mailer documentation
-
-- refer to: https://miracleio.me/snippets/use-gmail-with-nodemailer

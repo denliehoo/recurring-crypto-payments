@@ -185,9 +185,14 @@ function Login() {
           )}
 
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              {isLogin ? "Login" : "Register"}
-            </Button>
+            <CustomButton
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              loading={regLogButtonLoading}
+              text={isLogin ? "Login" : "Register"}
+            />
           </Grid>
         </Grid>
       </form>
@@ -198,7 +203,6 @@ function Login() {
           color="primary"
           fullWidth
           onClick={toggleLoginRegister}
-          loading={regLogButtonLoading}
           text={isLogin ? "Change To Register" : "Change To Login"}
         />
         {error === "Email Unverified" && (

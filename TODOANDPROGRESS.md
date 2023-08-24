@@ -1,6 +1,5 @@
 # Todo:
 
-- Frontend deployment
 - Give options for network and tokens; tokens available should be based of network
 - Need get ABI data from API
 
@@ -8,13 +7,6 @@
 
 - swap out mailing to a more reliable service e.g. twillio...
 - Add invoices
-- Fix this non-critical error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
-  at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
-  at http://localhost:3031/static/js/bundle.js:128080:7
-- Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments; looks like an issue when in lower screen size and the table overflows. Temporarily showing full address instead in tables to prevent this issue
-- For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
-- Do edge case of handling this error when calling initiate subscription API. (Basically it ran to an error that it was sent but not mined and might be mined. But since it is an error, it stopped the API there and didnt add scheduled payments etc ) Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined! at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21) at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49 at processTicksAndRejections (node:internal/process/task_queues:96:5) {receipt: undefined}
-- Handle error on frontend for when fail to deduct balance
 - Improve smart contracts to have a multiple deduction so that can improve efficiency (by calling multiple deductions in one transaction instead of one by one). Possible flow for the new CRON API:
   1. For each of the payments, check the balance and allowance
   2. If ok, push to an array
@@ -25,6 +17,16 @@
   7. For those that fail, means its likely a gas/congestion/etc... issue. Thus, just ignore it for now and let it be called again on the next api schedule (note: maybe change to call api every hour, but for ending within 4 hours. This is to ensure that e.g., if they dont get reduced because of e.g. gas issues, then at least still have 3 more attempts before the end subscription DB entity activates; )
   8. API finish
 - Allow vendors to delete vendorclients on dashboard (which will also delete their pending scheduled payment if any)
+
+# Non-critical bugs:
+
+- Fix this non-critical error for recharts (in DashboardLineChart.tsx): ResizeObserver loop completed with undelivered notifications.
+  at handleError (http://localhost:3031/static/js/bundle.js:128061:58)
+  at http://localhost:3031/static/js/bundle.js:128080:7
+- Bug fix for when hover over wallet address, cause things to move (TextWithTooltip.tsx); e.g. check in Payments; looks like an issue when in lower screen size and the table overflows. Temporarily showing full address instead in tables to prevent this issue
+- For the CRON API, extend it and the relevant entities to check if enough balance and allowance (e.g. 3 days before) and remind them. To prevent being spammed, can e.g. set more data on the payment entity such as isSentEmail which is a false by default. Upon sending the email, it becomes true and we don't send the email reminder
+- Do edge case of handling this error when calling initiate subscription API. (Basically it ran to an error that it was sent but not mined and might be mined. But since it is an error, it stopped the API there and didnt add scheduled payments etc ) Error: Error: Transaction was not mined within 50 blocks, please make sure your transaction was properly sent. Be aware that it might still be mined! at Object.TransactionError (/Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-helpers/lib/errors.js:90:21) at /Users/denlie/Desktop/Coding/recurring-crypto-payments/server/node_modules/web3-core-method/lib/index.js:426:49 at processTicksAndRejections (node:internal/process/task_queues:96:5) {receipt: undefined}
+- Handle error on frontend for when fail to deduct balance
 
 # Rough backlog
 
@@ -123,3 +125,4 @@
 - 23/08/23: Add hash for Payments tab and split client environments into prod and dev
 - 23/08/23: Ensure user connects to correct network
 - 23/08/23: Split environments for server into dev and prod
+- 24/08/23: Frontend deployment
