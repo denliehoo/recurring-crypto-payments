@@ -126,3 +126,4 @@
 - 23/08/23: Ensure user connects to correct network
 - 23/08/23: Split environments for server into dev and prod
 - 24/08/23: Frontend deployment
+- 27/09/23: Updated Integrations Instructions

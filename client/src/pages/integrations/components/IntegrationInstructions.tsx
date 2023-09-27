@@ -138,7 +138,6 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
           During, customer creation, create a vendor client and save it to your
           database. This can be done by making an API call to
           apiUrl/vendorClients/create/:id where id refers to your RecurCrypt ID
-          [Note to self, add ID field in integrations page]
         </Typography>
         <CodeBlock code={createVendorClient} />
       </Box>
@@ -147,22 +146,20 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
           2. Set Up Customer Subscription Session
         </Typography>
         <Typography>
-          [Note to self ensure API and API validation is correct].... Next, make
-          a post request to apiUrl/externalPage/manage-subscription along with
-          your RecurCrypt ID and the client's ID. The api will return a URL of
-          which you should redirect your users to. At that redirected page,
-          users can manage their subscription
+          Next, make a post request to apiUrl/externalPage/manage-subscription
+          along with your RecurCrypt ID and the client's ID. The api will return
+          a URL of which you should redirect your users to. At that redirected
+          page, users can manage their subscription
         </Typography>
         <CodeBlock code={subscriptionSession} />
       </Box>
       <Box>
         <Typography variant="h6">3. Listen to webhook events </Typography>
         <Typography>
-          [Note to self set up webhook]... Next, you will have to configure your
-          server to listen to webhook events. Such events includes: initiation
-          of subscription, cancellation of subscription, renewal of
-          subscription, end of subscription, client failed payments, client
-          successful payments, etc..
+          Next, you will have to configure your server to listen to webhook
+          events. Such events includes: initiation of subscription, cancellation
+          of subscription, renewal of subscription, end of subscription, client
+          failed payments, client successful payments, etc..
         </Typography>
         <CodeBlock code={listenToWebHook} />
       </Box>

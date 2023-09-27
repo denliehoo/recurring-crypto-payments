@@ -25,6 +25,7 @@ const ConfiguredIntergrations = (props: any) => {
         These are your configured integrations details
       </Typography>
       <DisplayField text={vendor.apiKey} hideOption={true} label={"API Keys"} />
+      <DisplayField text={vendorId} label="RecurCrypt ID" hideOption={false} />
       <DisplayField
         text={vendor.vendorContract}
         hideOption={false}
