@@ -45,12 +45,13 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
 
   const steps = ["Connect Wallet", "Fill Details", "Create Contract"];
   const stepsText = [
-    "To start, please connect your wallet on the Goerli Chain.",
+    "To start, please connect your wallet on the Sepolia Chain.",
     "Please fill in the relevant details below",
     `Please confirm by signing the smart contract. Subsequently, you may withdraw payments from the smart contract. Please ensure to keep your wallet safely because only your connected wallet address ${walletAddress} may withdraw profits`,
   ];
   const stepsButtonText = ["Connect", "Next", "Create"];
 
+  // TODO: Ensure user is on correct chain
   const handleNext = async () => {
     // connect wallet
     if (activeStep === 0) {
@@ -66,7 +67,7 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({
       const abi: any = RecurringPayments.abi;
       const master: any = new w3.eth.Contract(
         abi,
-        "0x92971a37d9ea86ad18591A0f86A90E273439F19e"
+        "0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7"
       );
       setContract(master);
       setButtonLoading(false);

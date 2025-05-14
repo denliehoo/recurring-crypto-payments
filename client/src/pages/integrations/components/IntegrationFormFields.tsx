@@ -43,8 +43,8 @@ const IntegrationFormFields: React.FC<IntegrationFormFieldsProps> = ({
             setAddressError(false);
           }}
         >
-          <MenuItem value={"0xC2CA4DFa527902c440d71F162403A3BB93045a24"}>
-            USDT (Goerli)
+          <MenuItem value={"0xc9606fea595ed3a94b4c8548ca0c2252c7856e89"}>
+            USDT (Sepolia)
           </MenuItem>
           {/*
           <MenuItem value={20}>Twenty</MenuItem>

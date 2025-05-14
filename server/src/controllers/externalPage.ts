@@ -117,7 +117,7 @@ export const initiateSubscription = async (
         amount: vendor.amount!, // replace this
         token: "USDT",
         status: "paid",
-        hash: `https://goerli.etherscan.io/tx/${transactionHash}`,
+        hash: `https://sepolia.etherscan.io/tx/${transactionHash}`,
         invoice: "https://www.google.com/", // eventually put the actual invoice link
       },
     ];
@@ -461,7 +461,7 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       amount: v.amount!, // replace this
       token: "USDT",
       status: "paid",
-      hash: `https://goerli.etherscan.io/tx/${transactionHash}`,
+      hash: `https://sepolia.etherscan.io/tx/${transactionHash}`,
       invoice: "https://www.google.com/", // eventually put the actual invoice link
     });
 

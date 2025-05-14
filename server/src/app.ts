@@ -31,16 +31,16 @@ connectDb().then(async () => {
     if (process.env.ENV === "DEV") {
       console.log("Re-seeding database!");
       // drops all collection
-      // dropAllCollections()
+      // dropAllCollections();
 
       // clear database
-      await Promise.all([
-        models.Vendor.deleteMany({}),
-        models.VendorClient.deleteMany({}),
-        models.CompletedPayment.deleteMany({}),
-        models.ScheduledPayment.deleteMany({}),
-      ]);
-      await seedDataBase();
+      // await Promise.all([
+      //   models.Vendor.deleteMany({}),
+      //   models.VendorClient.deleteMany({}),
+      //   models.CompletedPayment.deleteMany({}),
+      //   models.ScheduledPayment.deleteMany({}),
+      // ]);
+      // await seedDataBase();
     } else if (process.env.ENV === "PROD") {
       console.log(
         "You're attempting to re-seed production database. If you are sure, you can change the if statement at the top to change from DEV to PROD"
@@ -61,8 +61,8 @@ const seedDataBase = async () => {
     isVerified: true,
     password: testPassword,
     apiKey: testApiKeys,
-    tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
-    vendorContract: "0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E",
+    tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
+    vendorContract: "0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4",
     amount: 15000000, // 15 USDT
     plan: "Testing Company Premium Plan",
     webhookUrl: "http://localhost:3001/payments/recurcrypt/webhook",
@@ -78,7 +78,7 @@ const seedDataBase = async () => {
 
   // const scheduledPaymentDetails = {
   //   vendorContract: testVendor.vendorContract,
-  //   userAddress: "0x1B54FF756E2a04707826b95041C0e9123C6B4F23", // temp hard code
+  //   userAddress: "0x760E626813d005F7a418508135E6948D32dB333E", // temp hard code - client address who is paying to the vendor
   //   amount: testVendor.amount,
   //   tokenAddress: testVendor.tokenAddress,
   //   vendorId: testVendor._id.toString(),

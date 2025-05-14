@@ -1,7 +1,7 @@
 import { VendorClientSubscriptionDetails } from "../../../shared/types/VendorClientSubscriptionDetails";
 const today = new Date(); // Get today's date
 // CHANGE TO ACTUAL VENDOR CONTRACT IN THE FUTURE
-const vendorContract = "0xC2CA4DFa527902c440d71F162403A3BB93045a24";
+const vendorContract = "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89";
 
 export const activeSampleData: VendorClientSubscriptionDetails = {
   vendor: "Company Test Name",
@@ -10,13 +10,13 @@ export const activeSampleData: VendorClientSubscriptionDetails = {
   token: "USDT",
   status: "active", // enum: active, inactive, cancelled
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
-  tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+  tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
   vendorContract: vendorContract,
   webhookUrl: "www.test.com",
   returnUrl: "www.test.com",
   paymentMethod: {
     token: "USDT",
-    tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+    tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
     wallet: "0x12...user",
     sufficientAllowance: true,
     sufficientBalance: false,
@@ -61,13 +61,13 @@ export const cancelledSampleData: VendorClientSubscriptionDetails = {
   token: "USDT",
   status: "cancelled", // enum: active, inactive, cancelled
   nextDate: new Date(today.setDate(today.getDate() + 10)), //do a timestamp instead
-  tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+  tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
   vendorContract: vendorContract,
   webhookUrl: "www.test.com",
   returnUrl: "www.test.com",
   paymentMethod: {
     token: "USDT",
-    tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+    tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
     wallet: "0x12...user",
     sufficientAllowance: true,
     sufficientBalance: false,
@@ -113,7 +113,7 @@ export const inactiveSampleData: VendorClientSubscriptionDetails = {
   token: "USDT",
   status: "inactive", // enum: active, inactive, cancelled
   nextDate: null, //do a timestamp instead
-  tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+  tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
   vendorContract: vendorContract,
   webhookUrl: null,
   returnUrl: null,

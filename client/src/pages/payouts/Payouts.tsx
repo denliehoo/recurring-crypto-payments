@@ -43,7 +43,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => (
       <IconButton>
         <a
-          href={`https://goerli.etherscan.io/tx/${params.value}`}
+          href={`https://sepolia.etherscan.io/tx/${params.value}`}
           target="_blank"
           rel="noreferrer"
         >
@@ -79,9 +79,9 @@ const Payouts = () => {
     //   apiKey:
     //     "sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b",
     //   webhookUrl: "https://testing.com",
-    //   tokenAddress: "0xC2CA4DFa527902c440d71F162403A3BB93045a24",
+    //   tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
     //   amount: 15000000,
-    //   vendorContract: "0xEf8dfbCa537FEF7B71d0F37b404E8fc770Ac807E",
+    //   vendorContract: "0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4",
     //   plan: "Testing Company Premium Plan",
     // };
 
