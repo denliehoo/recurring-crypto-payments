@@ -33,8 +33,9 @@ This is the overall flow of the clients on the businesses' web application:
 # client
 
 - cd client
-- npm start
-- if running prod: npm run start:prod
+- pnpm install
+- pnpm start
+- if running prod: pnpm start:prod
 
 # server
 
