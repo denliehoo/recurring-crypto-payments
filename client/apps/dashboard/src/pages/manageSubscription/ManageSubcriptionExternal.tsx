@@ -18,7 +18,7 @@ import {
   TableRow,
   useMediaQuery,
 } from "@mui/material";
-import { VendorClientSubscriptionDetails } from "../../../../shared/types/VendorClientSubscriptionDetails";
+import { VendorClientSubscriptionDetails } from "../../../../../../shared/types/VendorClientSubscriptionDetails";
 import {
   Receipt,
   TagRounded,
@@ -33,7 +33,7 @@ import {
   inactiveSampleData,
 } from "../../utils/manageSubscriptionExternalSampleDatas";
 import ConfigurePlanModal from "./ConfigurePlanModal";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
 import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
@@ -60,7 +60,11 @@ const defaultTheme = createTheme({
 });
 
 export default function ManageSubscriptionExternal() {
-  const { authToken } = useParams();
+  const [searchParams] = useSearchParams();
+  const encodedAuthToken = searchParams.get("authToken");
+  console.log(encodedAuthToken);
+  const authToken = encodedAuthToken?.replace(/~/g, ".");
+
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] =
     useState<VendorClientSubscriptionDetails | null>(null);
@@ -414,3 +418,7 @@ export default function ManageSubscriptionExternal() {
     </ThemeProvider>
   );
 }
+
+// export default function ManageSubscriptionExternal() {
+//   return <div>Helloworld s</div>;
+// }

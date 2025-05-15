@@ -181,7 +181,8 @@ const sendVerificationEmailHelper = async (email: string, vendorId: string) => {
     email: email,
     vendorId: vendorId,
   });
-  const verificationUrl = `${process.env.FRONT_END_URL}/verify-email/${token}`;
+  const encodedToken = token.replace(/\./g, "~");
+  const verificationUrl = `${process.env.FRONT_END_URL}/verify-email?token=${encodedToken}`;
   const isEmailSent = await sendEmail({
     to: email,
     subject: "[RecurCrypt] Please Verify Your Email",

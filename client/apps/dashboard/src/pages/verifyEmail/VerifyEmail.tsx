@@ -1,13 +1,13 @@
-// import classes from "./VerifyEmail.module.css";
-
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import CentrePage from "../../components/UI/CentrePage";
 import { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 
 const VerifyEmail = () => {
-  const { token } = useParams();
+  const [searchParams] = useSearchParams();
+  const encodedAuthToken = searchParams.get("token");
+  const token = encodedAuthToken?.replace(/~/g, ".");
   const [isLoading, setIsLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState("");

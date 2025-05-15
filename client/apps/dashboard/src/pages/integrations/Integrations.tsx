@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiCallAuth } from "../../utils/apiRequest";
-import { Vendor } from "../../../../shared/types/Vendor";
+import { Vendor } from "../../../../../../shared/types/Vendor";
 import { Box } from "@mui/material";
 import ConfigureIntegrations from "./components/ConfigureIntegrations";
 import ConfiguredIntergrations from "./components/ConfiguredIntegrations";

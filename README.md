@@ -32,10 +32,14 @@ This is the overall flow of the clients on the businesses' web application:
 
 # client
 
+<!-- TODO: Proper documentation and explaination -->
+
+- client side uses pnpm. Please ensure to install pnpm first
 - cd client
 - pnpm install
-- pnpm start
-- if running prod: pnpm start:prod
+- to run dashboard:
+  - pnpm dev:dashboard
+- if running prod: TBC
 
 # server
 

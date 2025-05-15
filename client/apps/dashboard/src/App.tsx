@@ -19,10 +19,10 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route
-          path="/manage-subscription/:authToken"
+          path="/manage-subscription"
           element={<ManageSubscriptionExternal />}
         />
-        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         <Route path="/payments" element={<Payments />} />
         <Route path="/customers" element={<Customers />} />

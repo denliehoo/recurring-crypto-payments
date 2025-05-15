@@ -70,8 +70,11 @@ export const manageSubscription = async (req: Request, res: Response) => {
   // ----
 
   const token = generateJWT(data, 86400);
+  const encodedToken = token.replace(/\./g, "~");
   const baseUrl = process.env.FRONT_END_URL; // change this to actual frontend in future
-  return res.send({ url: `${baseUrl}/manage-subscription/${token}` });
+  return res.send({
+    url: `${baseUrl}/manage-subscription?authToken=${encodedToken}`,
+  });
 };
 
 export const initiateSubscription = async (
