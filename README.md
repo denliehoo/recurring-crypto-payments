@@ -32,6 +32,37 @@ This is the overall flow of the clients on the businesses' web application:
 
 <!-- TODO: Proper documentation and explaination -->
 
+# Project Structure
+
+This app follows a **monorepo** structure:
+
+```
+apps/
+  dashboard     # Client dashboard page
+  checkout      # Client checkout page
+  bff           # GraphQL layer for frontend to call server (certain APIs)
+  server        # Backend server
+
+packages/
+  components    # Frontend UI components
+  core          # Shared logic among all apps and packages
+  client-core   # Shared logic specifically for client only (e.g. client state, etc)
+```
+
+- **apps/**: Contains all application entry points (frontend and backend).
+
+  - **dashboard**: Main client dashboard.
+  - **checkout**: Payment/checkout flow for clients.
+  - **bff**: Backend-for-frontend GraphQL API layer.
+  - **server**: Main backend server.
+
+- **packages/**: Contains shared code and libraries.
+  - **components**: Reusable frontend UI components.
+  - **core**: Logic and utilities shared across all apps and packages.
+  - **client-core**: Logic shared only among client-facing apps.
+
+This structure helps organize code for scalability and code sharing across multiple applications.
+
 # Installation and running
 
 This project requires the following dependencies:
@@ -47,9 +78,13 @@ To install: `pnpm install`
 
 ### Client
 
-To run client dasboard:
+To run client dasboard page:
 
 - `pnpm dev:dashboard`
+
+To run client checkout page:
+
+- `pnpm dev:checkout`
 <!-- Prod TBC -->
 
 ### Server

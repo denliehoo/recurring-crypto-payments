@@ -8,6 +8,7 @@
     ],
     "scripts": {
         "dev:dashboard": "pnpm --filter dashboard start",
+        "dev:checkout": "pnpm --filter checkout start",
         "dev:server": "pnpm --filter server dev"
     }
   }
