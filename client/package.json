@@ -7,7 +7,8 @@
       "packages/*"
     ],
     "scripts": {
-        "dev:dashboard": "pnpm --filter dashboard start"
+        "dev:dashboard": "pnpm --filter dashboard start",
+        "dev:server": "pnpm --filter server dev"
     }
   }
   

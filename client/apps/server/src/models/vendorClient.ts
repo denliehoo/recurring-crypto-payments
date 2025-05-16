@@ -3,7 +3,7 @@ import {
   BillingInfo,
   Invoice,
   PaymentMethod,
-} from "../../../shared/types/VendorClientSubscriptionDetails";
+} from "../../../../../shared/types/VendorClientSubscriptionDetails";
 
 export interface IVendorClient extends Document {
   vendor: mongoose.Types.ObjectId; // Reference to the Vendor model
