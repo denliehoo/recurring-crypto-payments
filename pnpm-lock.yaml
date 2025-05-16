@@ -210,6 +210,8 @@ importers:
 
   packages/components: {}
 
+  packages/core: {}
+
 packages:
 
   '@adobe/css-tools@4.4.2':

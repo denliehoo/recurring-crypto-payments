@@ -30,32 +30,44 @@ This is the overall flow of the clients on the businesses' web application:
 
 ![Flow diagram](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-281EueFK_7Z3ifrSoBx2A.png)
 
-# client
-
 <!-- TODO: Proper documentation and explaination -->
 
-- client side uses pnpm. Please ensure to install pnpm first
-- cd client
-- pnpm install
-- to run dashboard:
-  - pnpm dev:dashboard
-- if running prod: TBC
+# Installation and running
 
-# server
+This project requires the following dependencies:
 
-- set up mongodb first (Instructions TBC)
-- in a separate terminal start up mongodb by running:
-  - mongod
-- cd server
-- npm run dev
+- pnpm: Project uses pnpm 10.11.0
+  - `npm install -g`
+- node: Project uses node 22.14.0
+- nodemon
+  - `npm install -g nodemon`
+- Mongodb (Instructions TBC)
 
-# contracts
+To install: `pnpm install`
 
-cd client
+### Client
+
+To run client dasboard:
+
+- `pnpm dev:dashboard`
+<!-- Prod TBC -->
+
+### Server
+
+To run development server:
+
+- First, Ensure mongodb is running first by running `mongod` in a separate terminal.
+- `pnpm dev:server`
+
+### contracts
+
+Contracts TBC
+
+<!-- cd client
 
 - in 1 terminal: ganache-cli
 - in another terminal: truffle migrate --reset
-- or to test contracts: truffle test
+- or to test contracts: truffle test -->
 
 # .env in server:
 

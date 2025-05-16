@@ -1,5 +1,5 @@
+import { Vendor } from "@core/types";
 import mongoose, { Schema, Document } from "mongoose";
-import { Vendor } from "../../../../../shared/types/Vendor";
 
 export interface IVendor extends Document, Vendor {}
 // for now we assume that it is a monthly basis

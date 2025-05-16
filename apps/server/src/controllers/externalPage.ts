@@ -16,7 +16,7 @@ import {
   findScheduledPayment,
   updateScheduledPayment,
 } from "../utility/payments";
-import { VendorClientSubscriptionDetails } from "../../../../../shared/types/VendorClientSubscriptionDetails";
+
 import { generateJWT } from "../utility/generateJWT";
 import { sendWebHook } from "../utility/sendWebhook";
 import {
@@ -25,6 +25,7 @@ import {
   findPendingEndSubscription,
 } from "../utility/pendingEndSubscription";
 import { IPendingEndSubscription } from "../models/pendingEndSubscription";
+import { VendorClientSubscriptionDetails } from "@core/types";
 // import sendWebHook from "../utility/sendWebhook";
 
 const {

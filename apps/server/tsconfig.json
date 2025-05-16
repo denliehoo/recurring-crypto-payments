@@ -6,8 +6,14 @@
     // "rootDir": "src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@core": ["../../packages/core"],
+      "@core/*": ["../../packages/core/*"]
+    }
   },
-  "include": ["src", "../shared/types/*"],
+  "include": ["src", "../../packages/core"],
   "exclude": ["node_modules", "dist"]
 }

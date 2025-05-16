@@ -18,7 +18,7 @@ import {
   TableRow,
   useMediaQuery,
 } from "@mui/material";
-import { VendorClientSubscriptionDetails } from "../../../../../../shared/types/VendorClientSubscriptionDetails";
+
 import {
   Receipt,
   TagRounded,
@@ -42,6 +42,7 @@ import { capitalizeFirstLetter, formatDate } from "../../utils/transformText";
 import ETHLogo from "../../assets/images/ETHLogo.png";
 import USDTLogo from "../../assets/images/USDTLogo.png";
 import TextWithTooltip from "../../components/UI/TextWithTooltip";
+import { VendorClientSubscriptionDetails } from "@core/types";
 
 const defaultTheme = createTheme({
   components: {

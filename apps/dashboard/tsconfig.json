@@ -19,8 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "@components": ["../../packages/components"],
-      "@components/*": ["../../packages/components/*"]
+      "@components/*": ["../../packages/components/*"],
+      "@core": ["../../packages/core"],
+      "@core/*": ["../../packages/core/*"]
     }
   },
-  "include": ["src", "../shared/types/*", "../../packages/components"]
+  "include": ["src", "../../packages/components", "../../packages/core"]
 }

@@ -1,6 +1,4 @@
-import { VendorClientSubscriptionDetails } from "../../../../../shared/types/VendorClientSubscriptionDetails";
-
-// TODO: Fix all instances of shared types which is in root (should be easier to access...)
+import { VendorClientSubscriptionDetails } from "@core/types";
 
 const today = new Date(); // Get today's date
 // CHANGE TO ACTUAL VENDOR CONTRACT IN THE FUTURE
