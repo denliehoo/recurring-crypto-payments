@@ -1,7 +1,7 @@
 import { useState } from "react";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "@components/src/button";
 import CustomFormFields from "../../components/UI/CustomFormFields";
-import CustomModal from "../../components/UI/CustomModal";
+import CustomModal from "@components/src/modal";
 import { Box, Typography } from "@mui/material";
 import { validateForm } from "../../utils/validateForm";
 import axios from "axios";

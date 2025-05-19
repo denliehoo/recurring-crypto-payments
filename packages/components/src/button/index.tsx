@@ -1,24 +1,44 @@
-import React from "react";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { Button, ButtonProps } from "@mui/material";
 
-type ButtonProps = {
-  label: string;
-  onClick?: () => void;
-};
+interface CustomButtonProps extends ButtonProps {
+  loading?: boolean;
+  text: string;
+  icon?: React.ReactNode;
+}
 
-export const TestButton = ({ label, onClick }: ButtonProps) => {
+const CustomButton = (props: CustomButtonProps) => {
+  const { loading, text, icon, disabled, onClick, ...rest } = props;
+
   return (
-    <button
+    <Button
       onClick={onClick}
-      style={{
-        padding: "8px 16px",
-        backgroundColor: "#007bff",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer",
-      }}
+      variant="contained"
+      startIcon={
+        loading ? (
+          <RefreshIcon
+            sx={{
+              animation: "spin 1s linear infinite",
+              "@keyframes spin": {
+                "0%": {
+                  transform: "rotate(0deg)",
+                },
+                "100%": {
+                  transform: "rotate(360deg)",
+                },
+              },
+            }}
+          />
+        ) : (
+          icon
+        )
+      }
+      disabled={loading || disabled}
+      {...rest}
     >
-      {label} Hello
-    </button>
+      {text}
+    </Button>
   );
 };
+
+export default CustomButton;

@@ -41,8 +41,9 @@ import AddAllowanceModal from "./AddAllowanceModal";
 import { capitalizeFirstLetter, formatDate } from "../../utils/transformText";
 import ETHLogo from "../../assets/images/ETHLogo.png";
 import USDTLogo from "../../assets/images/USDTLogo.png";
-import TextWithTooltip from "../../components/UI/TextWithTooltip";
+
 import { VendorClientSubscriptionDetails } from "@core/types";
+import TextWithTooltip from "@components/src/text-tooltip";
 
 const defaultTheme = createTheme({
   components: {

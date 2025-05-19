@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { connectWallet } from "../../../utils/connectWallet";
-import CustomButton from "../../../components/UI/CustomButton";
+import CustomButton from "@components/src/button";
 import RecurringPaymentsVendor from "../../../truffle_abis/RecurringPaymentsVendor.json";
 import axios from "axios";
 import { apiCallAuth } from "../../../utils/apiRequest";
-import CustomModal from "../../../components/UI/CustomModal";
+import CustomModal from "@components/src/modal";
 
 const RequestPayoutModal = (props: any) => {
   const {

@@ -1,10 +1,10 @@
 // import classes from "./CancelPlanModal.module.css";
 
 import { Box, Button, Modal, Typography } from "@mui/material";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "@components/src/button";
 import { useState } from "react";
 import axios from "axios";
-import CustomModal from "../../components/UI/CustomModal";
+import CustomModal from "@components/src/modal";
 
 const CancelPlanModal = (props: any) => {
   const [buttonLoading, setButtonLoading] = useState(false);

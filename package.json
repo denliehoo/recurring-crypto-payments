@@ -11,6 +11,16 @@
         "dev:checkout": "pnpm --filter checkout start",
         "dev:server": "pnpm --filter server dev"
     },
+    "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
+        "@mui/icons-material": "^5.14.0",
+        "@mui/material": "^5.14.0",
+        "@mui/styled-engine-sc": "^5.12.0",
+        "@mui/system": "^7.1.0",
+        "@mui/x-data-grid": "^6.11.1",
+        "styled-components": "^5.3.11"
+    },
     "devDependencies": {
         "@types/react": "^18.2.14",
         "@types/react-dom": "^18.2.7"

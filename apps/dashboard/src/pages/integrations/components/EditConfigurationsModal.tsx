@@ -2,9 +2,10 @@ import { Box, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import IntegrationFormFields from "./IntegrationFormFields";
 import { apiCallAuth } from "../../../utils/apiRequest";
-import CustomButton from "../../../components/UI/CustomButton";
+
 import { validateForm } from "../../../utils/validateForm";
-import CustomModal from "../../../components/UI/CustomModal";
+import CustomButton from "@components/src/button";
+import CustomModal from "@components/src/modal";
 
 const EditConfigurationsModal = (props: any) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;

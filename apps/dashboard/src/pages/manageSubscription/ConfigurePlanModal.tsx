@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
 import { connectWallet } from "../../utils/connectWallet";
-import CustomButton from "../../components/UI/CustomButton";
+import CustomButton from "@components/src/button";
 import USDTABI from "../../truffle_abis/FakeUSDT.json";
 import axios from "axios";
-import CustomModal from "../../components/UI/CustomModal";
+import CustomModal from "@components/src/modal";
 import { formatDate } from "../../utils/transformText";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
