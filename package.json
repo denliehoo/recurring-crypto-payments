@@ -19,7 +19,8 @@
         "@mui/styled-engine-sc": "^5.12.0",
         "@mui/system": "^7.1.0",
         "@mui/x-data-grid": "^6.11.1",
-        "styled-components": "^5.3.11"
+        "styled-components": "^5.3.11",
+        "web3": "^1.8.1"
     },
     "devDependencies": {
         "@types/react": "^18.2.14",

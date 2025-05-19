@@ -1,12 +1,8 @@
 import { testMonorepo } from "@components";
+import ManageSubscriptionExternal from "./components/ManageSubcriptionExternal";
 
 const App = () => {
-  return (
-    <div>
-      <button onClick={() => testMonorepo()}>Test</button>
-      Hello World!!
-    </div>
-  );
+  return <ManageSubscriptionExternal />;
 };
 
 export default App;

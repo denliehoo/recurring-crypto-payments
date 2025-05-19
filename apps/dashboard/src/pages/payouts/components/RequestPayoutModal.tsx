@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { connectWallet } from "../../../utils/connectWallet";
+import { connectWallet } from "@core/src/utils/wallet";
 import CustomButton from "@components/src/button";
 import RecurringPaymentsVendor from "../../../truffle_abis/RecurringPaymentsVendor.json";
 import axios from "axios";

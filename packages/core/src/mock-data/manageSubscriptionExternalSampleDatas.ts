@@ -1,4 +1,4 @@
-import { VendorClientSubscriptionDetails } from "@core/src/types";
+import { VendorClientSubscriptionDetails } from "../types";
 
 const today = new Date(); // Get today's date
 // CHANGE TO ACTUAL VENDOR CONTRACT IN THE FUTURE

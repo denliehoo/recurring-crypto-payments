@@ -1,4 +1,4 @@
-import { Vendor } from "@core/types";
+import { Vendor } from "@core/src/types/Vendor";
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IVendor extends Document, Vendor {}

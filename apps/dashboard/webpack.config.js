@@ -20,6 +20,7 @@ module.exports = {
         include: [
           path.resolve(__dirname, "src"),
           path.resolve(__dirname, "../../packages/components/src"),
+          path.resolve(__dirname, "../../packages/core/src"),
         ],
         options: {
           presets: [
@@ -54,6 +55,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".jsx"],
     alias: {
       "@components": path.resolve(__dirname, "../../packages/components"),
+      "@core": path.resolve(__dirname, "../../packages/core"),
     },
     modules: [path.resolve(__dirname, "node_modules"), "node_modules"],
   },

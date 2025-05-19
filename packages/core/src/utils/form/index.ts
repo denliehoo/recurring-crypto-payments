@@ -1,4 +1,5 @@
-import { splitTextByCaps } from "./transformText";
+import { splitTextByCaps } from "../text";
+
 const validateForm = (
   detailsToSubmit: any,
   fieldsTypes: any,

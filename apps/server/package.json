@@ -24,8 +24,7 @@
     "mongoose": "^7.3.4",
     "nodemailer": "^6.9.4",
     "typescript": "^5.1.6",
-    "uuid": "^9.0.0",
-    "web3": "^1.8.1"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/mongodb": "^4.0.7",

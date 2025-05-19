@@ -11,7 +11,12 @@
       "declarationMap": true,
       "composite": true,
       "jsx": "react-jsx",
+      "baseUrl": ".",
+      "paths": {
+        "@core": ["../../packages/core"],
+        "@core/*": ["../../packages/core/*"]
+      }
     },
-    "include": ["index.ts", "src/**/*", "src"]
+    "include": ["index.ts", "src/**/*", "src", "../core/src"]
   }
   

@@ -32,6 +32,9 @@ importers:
       styled-components:
         specifier: ^5.3.11
         version: 5.3.11(@babel/core@7.27.1)(react-dom@18.3.1(react@18.3.1))(react-is@19.1.0)(react@18.3.1)
+      web3:
+        specifier: ^1.8.1
+        version: 1.10.4(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@types/react':
         specifier: ^18.2.14
@@ -175,9 +178,6 @@ importers:
       web-vitals:
         specifier: ^2.1.4
         version: 2.1.4
-      web3:
-        specifier: ^1.8.1
-        version: 1.10.4(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@babel/core':
         specifier: ^7.27.1
@@ -266,9 +266,6 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
-      web3:
-        specifier: ^1.8.1
-        version: 1.10.4(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@types/mongodb':
         specifier: ^4.0.7

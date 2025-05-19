@@ -1,5 +1,5 @@
+import { formatDate } from "@core/src/utils/text";
 import { GridRenderCellParams } from "@mui/x-data-grid";
-import { formatDate } from "./transformText";
 
 // Separate function for rendering cell content
 export const renderAmount = (params: GridRenderCellParams): React.ReactNode => {

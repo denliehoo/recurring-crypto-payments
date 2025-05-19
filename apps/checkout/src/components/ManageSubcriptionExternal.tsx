@@ -31,19 +31,20 @@ import {
   activeSampleData,
   cancelledSampleData,
   inactiveSampleData,
-} from "../../utils/manageSubscriptionExternalSampleDatas";
+} from "@core/src/mock-data/manageSubscriptionExternalSampleDatas";
 import ConfigurePlanModal from "./ConfigurePlanModal";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import CancelPlanModal from "./CancelPlanModal";
 import UpdateBillingInfoModal from "./UpdateBillingInfoModal";
 import AddAllowanceModal from "./AddAllowanceModal";
-import { capitalizeFirstLetter, formatDate } from "../../utils/transformText";
-import ETHLogo from "../../assets/images/ETHLogo.png";
-import USDTLogo from "../../assets/images/USDTLogo.png";
 
-import { VendorClientSubscriptionDetails } from "@core/types";
+import ETHLogo from "../assets/images/ETHLogo.png";
+import USDTLogo from "../assets/images/USDTLogo.png";
+
+import { VendorClientSubscriptionDetails } from "@core/src/types";
 import TextWithTooltip from "@components/src/text-tooltip";
+import { capitalizeFirstLetter, formatDate } from "@core/src/utils/text";
 
 const defaultTheme = createTheme({
   components: {
@@ -62,9 +63,9 @@ const defaultTheme = createTheme({
 });
 
 export default function ManageSubscriptionExternal() {
-  const [searchParams] = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search);
   const encodedAuthToken = searchParams.get("authToken");
-  console.log(encodedAuthToken);
+
   const authToken = encodedAuthToken?.replace(/~/g, ".");
 
   const [isLoading, setIsLoading] = useState(true);
@@ -83,6 +84,7 @@ export default function ManageSubscriptionExternal() {
   useEffect(() => {
     setIsLoading(true);
     const getData = async () => {
+      console.log(`url: ${apiUrl}/externalPage/get-subscription-page-details`);
       try {
         const headers = {
           Authorization: authToken,

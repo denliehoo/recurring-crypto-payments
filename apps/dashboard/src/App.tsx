@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/dashboard/Dashboard";
-import ManageSubscriptionExternal from "./pages/manageSubscription/ManageSubcriptionExternal";
+
 import Login from "./pages/login/Login";
 import Layout from "./components/layout/Layout";
 import Payments from "./pages/payments/Payments";
@@ -18,10 +18,6 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/manage-subscription"
-          element={<ManageSubscriptionExternal />}
-        />
         <Route path="/verify-email" element={<VerifyEmail />} />
 
         <Route path="/payments" element={<Payments />} />

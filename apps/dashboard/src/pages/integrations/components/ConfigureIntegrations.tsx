@@ -1,6 +1,6 @@
 import { apiCallAuth } from "../../../utils/apiRequest";
 import { useState } from "react";
-import { validateForm } from "../../../utils/validateForm";
+
 import {
   Box,
   Button,
@@ -10,12 +10,13 @@ import {
   StepLabel,
 } from "@mui/material";
 import React from "react";
-import { connectWallet } from "../../../utils/connectWallet";
+import { connectWallet } from "@core/src/utils/wallet";
 import RecurringPayments from "../../../truffle_abis/RecurringPayments.json";
 import IntegrationFormFields from "./IntegrationFormFields";
 import { useDispatch } from "react-redux";
 import { addVendorDetails } from "../../../slices/vendorDetailsSlice";
 import CustomButton from "@components/src/button";
+import { validateForm } from "@core/src/utils/form";
 
 interface ConfigureIntegrationsProps {
   vendorId: string;

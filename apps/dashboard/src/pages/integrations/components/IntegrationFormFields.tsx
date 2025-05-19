@@ -6,7 +6,7 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import CustomFormFields from "../../../components/UI/CustomFormFields";
+import CustomFormFields from "@components/src/form-field";
 
 interface IntegrationFormFieldsProps {
   vendorDetails: any;

@@ -11,12 +11,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
-import { connectWallet } from "../../utils/connectWallet";
 import CustomButton from "@components/src/button";
-import USDTABI from "../../truffle_abis/FakeUSDT.json";
+import { FakeUSDT as USDTABI } from "@core/src/abi/FakeUSDT";
 import axios from "axios";
 import CustomModal from "@components/src/modal";
-import { formatDate } from "../../utils/transformText";
+import { formatDate } from "@core/src/utils/text";
+import { connectWallet } from "@core/src/utils/wallet";
 // import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
 
 const ConfigurePlanModal = (props: any) => {

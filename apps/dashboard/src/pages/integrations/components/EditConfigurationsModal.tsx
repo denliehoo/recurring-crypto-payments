@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import IntegrationFormFields from "./IntegrationFormFields";
 import { apiCallAuth } from "../../../utils/apiRequest";
 
-import { validateForm } from "../../../utils/validateForm";
 import CustomButton from "@components/src/button";
 import CustomModal from "@components/src/modal";
+import { validateForm } from "@core/src/utils/form";
 
 const EditConfigurationsModal = (props: any) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;

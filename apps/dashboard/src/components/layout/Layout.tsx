@@ -35,7 +35,6 @@ const Layout = (props: any) => {
   const shouldUseLayout = () => {
     if (
       pathname === "/login" ||
-      pathname.includes("/manage-subscription") ||
       pathname.includes("/verify-email") ||
       pathname === "/page-not-found"
     ) {

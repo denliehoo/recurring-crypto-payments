@@ -1,4 +1,4 @@
-import { BillingInfo, Invoice, PaymentMethod } from "@core/types";
+import { BillingInfo, Invoice, PaymentMethod } from "@core/src/types";
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IVendorClient extends Document {
