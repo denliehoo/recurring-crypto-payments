@@ -11,18 +11,23 @@ module.exports = {
     filename: "bundle.js",
     clean: true,
   },
-  resolve: {
-    extensions: [".tsx", ".ts", ".js"],
-    alias: {
-      "@components": path.resolve(__dirname, "../../packages/components"),
-    },
-  },
   module: {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        use: "babel-loader",
+        loader: "babel-loader",
         exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "../../packages/components/src"),
+        ],
+        options: {
+          presets: [
+            "@babel/preset-env",
+            ["@babel/preset-react", { runtime: "automatic" }],
+            "@babel/preset-typescript",
+          ],
+        },
       },
       {
         test: /\.css$/,
@@ -45,6 +50,13 @@ module.exports = {
       "process.env.REACT_APP_ENV": JSON.stringify(process.env.REACT_APP_ENV),
     }),
   ],
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".jsx"],
+    alias: {
+      "@components": path.resolve(__dirname, "../../packages/components"),
+    },
+    modules: [path.resolve(__dirname, "node_modules"), "node_modules"],
+  },
   devServer: {
     port: 3032,
     historyApiFallback: true,

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { addVendorDetails } from "../../slices/vendorDetailsSlice";
 import CentrePage from "../../components/UI/CentrePage";
 import CustomButton from "../../components/UI/CustomButton";
-import { testMonorepo } from "@components";
+import { TestButton, testMonorepo } from "@components";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -143,6 +143,7 @@ function Login() {
   return (
     <CentrePage>
       {/* TODO: Remove the test */}
+      <TestButton label="hello world" onClick={() => alert("pass")} />
       <button onClick={() => testMonorepo()}>test</button>
       <Typography variant="h4">RecurCrypt</Typography>
       <Typography variant="h5">{isLogin ? "Login" : "Register"}</Typography>

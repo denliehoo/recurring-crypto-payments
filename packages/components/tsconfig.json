@@ -9,8 +9,9 @@
       "forceConsistentCasingInFileNames": true,
       "declaration": true,
       "declarationMap": true,
-      "composite": true
+      "composite": true,
+      "jsx": "react-jsx",
     },
-    "include": ["index.ts"]
+    "include": ["index.ts", "src/**/*", "src"]
   }
   

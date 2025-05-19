@@ -3,13 +3,16 @@
     "private": true,
     "version": "1.0.0",
     "workspaces": [
-      "apps/*",
-      "packages/*"
+        "apps/*",
+        "packages/*"
     ],
     "scripts": {
         "dev:dashboard": "pnpm --filter dashboard start",
         "dev:checkout": "pnpm --filter checkout start",
         "dev:server": "pnpm --filter server dev"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.14",
+        "@types/react-dom": "^18.2.7"
     }
-  }
-  
+}
