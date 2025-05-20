@@ -18,10 +18,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "@components": ["../../packages/components"],
-      "@components/*": ["../../packages/components/*"],
-      "@core": ["../../packages/core"],
-      "@core/*": ["../../packages/core/*"]
+      "@components": ["../../packages/components/src"],
+      "@components/*": ["../../packages/components/src/*"],
+      "@core": ["../../packages/core/src"],
+      "@core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src", "../../packages/components", "../../packages/core"]

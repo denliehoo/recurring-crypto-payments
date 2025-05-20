@@ -6,7 +6,7 @@ import { apiCallAuth } from "../../utils/apiRequest";
 import { Box } from "@mui/material";
 import ConfigureIntegrations from "./components/ConfigureIntegrations";
 import ConfiguredIntergrations from "./components/ConfiguredIntegrations";
-import { Vendor } from "@core/src/types";
+import { Vendor } from "@core/types";
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);

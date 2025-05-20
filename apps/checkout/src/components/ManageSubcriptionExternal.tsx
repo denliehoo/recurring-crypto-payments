@@ -31,7 +31,7 @@ import {
   activeSampleData,
   cancelledSampleData,
   inactiveSampleData,
-} from "@core/src/mock-data/manageSubscriptionExternalSampleDatas";
+} from "@core/mock-data/manageSubscriptionExternalSampleDatas";
 import ConfigurePlanModal from "./ConfigurePlanModal";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -42,9 +42,9 @@ import AddAllowanceModal from "./AddAllowanceModal";
 import ETHLogo from "../assets/images/ETHLogo.png";
 import USDTLogo from "../assets/images/USDTLogo.png";
 
-import { VendorClientSubscriptionDetails } from "@core/src/types";
-import TextWithTooltip from "@components/src/text-tooltip";
-import { capitalizeFirstLetter, formatDate } from "@core/src/utils/text";
+import { VendorClientSubscriptionDetails } from "@core/types";
+import TextWithTooltip from "@components/text-tooltip";
+import { capitalizeFirstLetter, formatDate } from "@core/utils/text";
 
 const defaultTheme = createTheme({
   components: {

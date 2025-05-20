@@ -1,11 +1,11 @@
 import { useState } from "react";
-import CustomButton from "@components/src/button";
+import CustomButton from "@components/button";
 
-import CustomModal from "@components/src/modal";
+import CustomModal from "@components/modal";
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
-import CustomFormFields from "@components/src/form-field";
-import { validateForm } from "@core/src/utils/form";
+import CustomFormFields from "@components/form-field";
+import { validateForm } from "@core/utils/form";
 
 const UpdateBillingInfoModal = (props: any) => {
   const { modalIsOpen, closeModal, billingInfo, authToken, refreshData } =

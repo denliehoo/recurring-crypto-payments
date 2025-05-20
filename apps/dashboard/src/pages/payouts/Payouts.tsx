@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
 import { useEffect, useState } from "react";
-import CustomButton from "@components/src/button";
+import CustomButton from "@components/button";
 import RequestPayoutModal from "./components/RequestPayoutModal";
 import { apiCallAuth } from "../../utils/apiRequest";
 import TagIcon from "@mui/icons-material/Tag";

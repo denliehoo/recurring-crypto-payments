@@ -10,12 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { connectWallet } from "@core/src/utils/wallet";
-import CustomButton from "@components/src/button";
+import { connectWallet } from "@core/utils/wallet";
+import CustomButton from "@components/button";
 import RecurringPaymentsVendor from "../../../truffle_abis/RecurringPaymentsVendor.json";
 import axios from "axios";
 import { apiCallAuth } from "../../../utils/apiRequest";
-import CustomModal from "@components/src/modal";
+import CustomModal from "@components/modal";
 
 const RequestPayoutModal = (props: any) => {
   const {

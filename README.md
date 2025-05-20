@@ -68,7 +68,7 @@ This structure helps organize code for scalability and code sharing across multi
 This project requires the following dependencies:
 
 - pnpm: Project uses pnpm 10.11.0
-  - `npm install -g`
+  - `npm install -g pnpm`
 - node: Project uses node 22.14.0
 - nodemon
   - `npm install -g nodemon`

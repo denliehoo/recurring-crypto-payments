@@ -6,8 +6,7 @@ import { apiCallAuth } from "../../utils/apiRequest";
 import { useDispatch } from "react-redux";
 import { addVendorDetails } from "../../slices/vendorDetailsSlice";
 import CentrePage from "../../components/UI/CentrePage";
-import CustomButton from "@components/src/button";
-import { testMonorepo } from "@components";
+import CustomButton from "@components/button";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -143,7 +142,6 @@ function Login() {
   return (
     <CentrePage>
       {/* TODO: Remove the test */}
-      <button onClick={() => testMonorepo()}>test</button>
       <Typography variant="h4">RecurCrypt</Typography>
       <Typography variant="h5">{isLogin ? "Login" : "Register"}</Typography>
 

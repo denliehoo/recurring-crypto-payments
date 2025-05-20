@@ -25,7 +25,7 @@ import {
   findPendingEndSubscription,
 } from "../utility/pendingEndSubscription";
 import { IPendingEndSubscription } from "../models/pendingEndSubscription";
-import { VendorClientSubscriptionDetails } from "@core/src/types/VendorClientSubscriptionDetails";
+import { VendorClientSubscriptionDetails } from "@core/types/VendorClientSubscriptionDetails";
 
 // import sendWebHook from "../utility/sendWebhook";
 

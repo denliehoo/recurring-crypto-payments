@@ -1,7 +1,7 @@
+import { splitTextByCaps } from "@core/utils/text";
 import { Grid, TextField } from "@mui/material";
 // import classes from './CustomFormFields.module.css'
 // import { splitTextByCaps } from '../../utils/transformText'
-import { splitTextByCaps } from "@core/src/utils/text";
 
 import { ChangeEvent } from "react";
 /* 

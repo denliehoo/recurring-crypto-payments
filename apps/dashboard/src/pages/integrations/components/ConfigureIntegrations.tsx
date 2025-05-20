@@ -10,13 +10,13 @@ import {
   StepLabel,
 } from "@mui/material";
 import React from "react";
-import { connectWallet } from "@core/src/utils/wallet";
+import { connectWallet } from "@core/utils/wallet";
 import RecurringPayments from "../../../truffle_abis/RecurringPayments.json";
 import IntegrationFormFields from "./IntegrationFormFields";
 import { useDispatch } from "react-redux";
 import { addVendorDetails } from "../../../slices/vendorDetailsSlice";
-import CustomButton from "@components/src/button";
-import { validateForm } from "@core/src/utils/form";
+import CustomButton from "@components/button";
+import { validateForm } from "@core/utils/form";
 
 interface ConfigureIntegrationsProps {
   vendorId: string;

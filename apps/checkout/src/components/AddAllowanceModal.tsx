@@ -11,11 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
-import { FakeUSDT as USDTABI } from "@core/src/abi/FakeUSDT";
+import { FakeUSDT as USDTABI } from "@core/abi/FakeUSDT";
 import axios from "axios";
-import CustomModal from "@components/src/modal";
-import CustomButton from "@components/src/button";
-import { connectWallet } from "@core/src/utils/wallet";
+import CustomModal from "@components/modal";
+import CustomButton from "@components/button";
+import { connectWallet } from "@core/utils/wallet";
 
 const AddAllowanceModal = (props: any) => {
   const {

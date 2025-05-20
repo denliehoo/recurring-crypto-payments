@@ -13,8 +13,8 @@
       "jsx": "react-jsx",
       "baseUrl": ".",
       "paths": {
-        "@core": ["../../packages/core"],
-        "@core/*": ["../../packages/core/*"]
+        "@core": ["../../packages/core/src"],
+        "@core/*": ["../../packages/core/src/*"]
       }
     },
     "include": ["index.ts", "src/**/*", "src", "../core/src"]

@@ -10,8 +10,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@core": ["../../packages/core"],
-      "@core/*": ["../../packages/core/*"]
+      "@core": ["../../packages/core/src"],
+      "@core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src", "../../packages/core"],

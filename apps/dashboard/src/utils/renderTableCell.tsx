@@ -1,4 +1,4 @@
-import { formatDate } from "@core/src/utils/text";
+import { formatDate } from "@core/utils/text";
 import { GridRenderCellParams } from "@mui/x-data-grid";
 
 // Separate function for rendering cell content
