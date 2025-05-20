@@ -23,6 +23,7 @@ module.exports = ({ appDir, port }) => ({
           path.resolve(appDir, "../../packages/core/src"),
         ],
         options: {
+          cacheDirectory: true,
           presets: [
             "@babel/preset-env",
             ["@babel/preset-react", { runtime: "automatic" }],
@@ -59,7 +60,11 @@ module.exports = ({ appDir, port }) => ({
     },
     modules: [path.resolve(appDir, "node_modules"), "node_modules"],
   },
+  devtool: "eval-cheap-module-source-map",
+  target: "web",
+  stats: "minimal",
   devServer: {
+    hot: true,
     port,
     historyApiFallback: true,
     open: true,
