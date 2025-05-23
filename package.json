@@ -9,7 +9,11 @@
     "scripts": {
         "dev:dashboard": "pnpm --filter dashboard start",
         "dev:checkout": "pnpm --filter checkout start",
-        "dev:server": "pnpm --filter server dev"
+        "dev:server": "pnpm --filter server dev",
+        "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+        "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+        "format": "prettier --check .",
+        "format:fix": "prettier --write ."
     },
     "dependencies": {
         "@emotion/react": "^11.11.1",
@@ -24,6 +28,15 @@
     },
     "devDependencies": {
         "@types/react": "^18.2.14",
-        "@types/react-dom": "^18.2.7"
+        "@types/react-dom": "^18.2.7",
+        "@typescript-eslint/eslint-plugin": "^8.32.1",
+        "@typescript-eslint/parser": "^8.32.1",
+        "eslint": "^9.27.0",
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^5.4.0",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "prettier": "^3.5.3"
     }
 }
