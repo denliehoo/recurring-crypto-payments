@@ -1,10 +1,10 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const rspack = require('@rspack/core');
 require('dotenv').config();
+const { ProgressPlugin } = require('@rspack/core');
 
-module.exports = ({ appDir, port }) => ({
-  mode: 'development',
+module.exports = ({ appDir, port, mode = 'development' }) => ({
+  mode,
   entry: path.resolve(appDir, 'src/index.tsx'),
   output: {
     path: path.resolve(appDir, 'dist'),
@@ -28,7 +28,7 @@ module.exports = ({ appDir, port }) => ({
             transform: {
               react: {
                 runtime: 'automatic',
-                development: true,
+                development: mode === 'development',
               },
             },
           },
@@ -45,13 +45,14 @@ module.exports = ({ appDir, port }) => ({
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       template: path.resolve(appDir, 'public/index.html'),
     }),
     new rspack.DefinePlugin({
       'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL),
       'process.env.REACT_APP_ENV': JSON.stringify(process.env.REACT_APP_ENV),
     }),
+    new ProgressPlugin(),
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
@@ -63,7 +64,10 @@ module.exports = ({ appDir, port }) => ({
   },
   devtool: 'eval-cheap-module-source-map',
   target: 'web',
-  stats: 'minimal',
+  stats: {
+    colors: true,
+    children: true,
+  },
   devServer: {
     hot: true,
     port,

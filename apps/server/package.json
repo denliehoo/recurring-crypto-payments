@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f .env.prod npx ts-node src/app.ts",
+    "prod": "env-cmd -f .env.prod npx ts-node src/app.ts",
     "dev": "env-cmd -f .env.dev nodemon --exec npx ts-node src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

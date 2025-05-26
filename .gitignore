@@ -3,3 +3,4 @@ build
 .env
 .env.prod
 .env.dev
+dist

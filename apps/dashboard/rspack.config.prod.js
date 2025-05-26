@@ -1,0 +1,3 @@
+const baseConfig = require('../../packages/config/rspack.base');
+
+module.exports = baseConfig({ appDir: __dirname, port: 3031, mode: 'production' });
