@@ -1,46 +1,47 @@
-import { Box, Modal, SxProps } from "@mui/material";
-import { ChangeEvent } from "react";
+import { Box, Modal, ModalOwnProps, SxProps } from '@mui/material';
+import { FC, ReactNode } from 'react';
 
-interface CustomModalProps {
+interface ICustomModalProps {
   open: boolean;
   onClose: () => void;
   sx?: SxProps;
-  children: React.ReactNode;
+  children: ReactNode;
   disableCloseUponClickingOutside?: boolean;
 }
 
-const CustomModal: React.FC<CustomModalProps> = (props) => {
-  const { open, onClose, sx, disableCloseUponClickingOutside } = props;
-  const handleClose = (e: ChangeEvent, reason: any) => {
+const CustomModal: FC<ICustomModalProps> = ({
+  open,
+  onClose,
+  sx,
+  disableCloseUponClickingOutside,
+  children,
+}) => {
+  const handleClose: ModalOwnProps['onClose'] = (_e, reason) => {
     if (
       disableCloseUponClickingOutside &&
-      (reason === "backdropClick" || reason === "escapeKeyDown")
+      (reason === 'backdropClick' || reason === 'escapeKeyDown')
     ) {
       return;
     }
     onClose();
   };
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      BackdropProps={{ invisible: true }}
-    >
+    <Modal open={open} onClose={handleClose} BackdropProps={{ invisible: true }}>
       <Box
         sx={{
-          position: "absolute" as "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "90%",
-          bgcolor: "background.paper",
-          border: "2px solid #000",
+          position: 'absolute' as 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
           boxShadow: 24,
           p: 4,
           ...sx,
         }}
       >
-        {props.children}
+        {children}
       </Box>
     </Modal>
   );

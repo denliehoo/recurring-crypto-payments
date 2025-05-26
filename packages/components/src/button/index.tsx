@@ -1,13 +1,14 @@
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { Button, ButtonProps } from "@mui/material";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Button, ButtonProps } from '@mui/material';
+import { FC } from 'react';
 
-interface CustomButtonProps extends ButtonProps {
+interface ICustomButtonProps extends ButtonProps {
   loading?: boolean;
   text: string;
   icon?: React.ReactNode;
 }
 
-const CustomButton = (props: CustomButtonProps) => {
+const CustomButton: FC<ICustomButtonProps> = (props) => {
   const { loading, text, icon, disabled, onClick, ...rest } = props;
 
   return (
@@ -18,13 +19,13 @@ const CustomButton = (props: CustomButtonProps) => {
         loading ? (
           <RefreshIcon
             sx={{
-              animation: "spin 1s linear infinite",
-              "@keyframes spin": {
-                "0%": {
-                  transform: "rotate(0deg)",
+              animation: 'spin 1s linear infinite',
+              '@keyframes spin': {
+                '0%': {
+                  transform: 'rotate(0deg)',
                 },
-                "100%": {
-                  transform: "rotate(360deg)",
+                '100%': {
+                  transform: 'rotate(360deg)',
                 },
               },
             }}

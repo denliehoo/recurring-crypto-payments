@@ -1,9 +1,6 @@
-import { splitTextByCaps } from "@core/utils/text";
-import { Grid, TextField } from "@mui/material";
-// import classes from './CustomFormFields.module.css'
-// import { splitTextByCaps } from '../../utils/transformText'
-
-import { ChangeEvent } from "react";
+import { splitTextByCaps } from '@core/utils/text';
+import { Grid, TextField } from '@mui/material';
+import { ChangeEvent, FC } from 'react';
 /* 
     required from parent component:
 
@@ -29,27 +26,27 @@ import { ChangeEvent } from "react";
       />
 
 */
-interface DetailsToSubmit {
-  [key: string]: any;
+interface IDetailsToSubmit {
+  [key: string]: unknown;
 }
 
-interface ValidationErrors {
+interface IValidationErrors {
   [key: string]: string;
 }
 
-interface FieldTypes {
+interface IFieldTypes {
   [key: string]: string;
 }
 
-interface CustomFormFieldsProps {
-  detailsToSubmit: DetailsToSubmit;
-  setDetailsToSubmit: (details: DetailsToSubmit) => void;
-  validationErrors: ValidationErrors;
-  setValidationErrors: (errors: ValidationErrors) => void;
-  fieldsTypes: FieldTypes;
+interface ICustomFormFieldsProps {
+  detailsToSubmit: IDetailsToSubmit;
+  setDetailsToSubmit: (details: IDetailsToSubmit) => void;
+  validationErrors: IValidationErrors;
+  setValidationErrors: (errors: IValidationErrors) => void;
+  fieldsTypes: IFieldTypes;
 }
 
-const CustomFormFields: React.FC<CustomFormFieldsProps> = (props) => {
+const CustomFormFields: FC<ICustomFormFieldsProps> = (props) => {
   const {
     detailsToSubmit,
     setDetailsToSubmit,
@@ -65,22 +62,22 @@ const CustomFormFields: React.FC<CustomFormFieldsProps> = (props) => {
       ...detailsToSubmit,
       [name]: value,
     });
-    setValidationErrors({ ...validationErrors, [name]: "" });
+    setValidationErrors({ ...validationErrors, [name]: '' });
   };
 
   return (
     <Grid container spacing={2}>
-      {Object.keys(fieldsTypes).map((f) => (
-        <Grid item xs={12} key={f}>
+      {Object.keys(fieldsTypes).map((fieldName) => (
+        <Grid item xs={12} key={fieldName}>
           <TextField
-            error={!!validationErrors[f]}
-            helperText={validationErrors[f]}
-            type={fieldsTypes[f]}
-            name={f}
-            label={splitTextByCaps(f)}
+            error={!!validationErrors[fieldName]}
+            helperText={validationErrors[fieldName]}
+            type={fieldsTypes[fieldName]}
+            name={fieldName}
+            label={splitTextByCaps(fieldName)}
             variant="outlined"
             fullWidth
-            value={detailsToSubmit[f] || ""}
+            value={detailsToSubmit[fieldName] || ''}
             onChange={onFieldChangeHandler}
           />
         </Grid>
