@@ -14,8 +14,8 @@ import {
   Button,
 } from '@mui/material';
 import { VendorClientSubscriptionDetails } from 'core';
-import ETHLogo from '../../../assets/images/ETHLogo.png';
-import USDTLogo from '../../../assets/images/USDTLogo.png';
+import ETHLogo from '@checkout/assets/images/ETHLogo.png';
+import USDTLogo from '@checkout/assets/images/USDTLogo.png';
 import { FC } from 'react';
 
 interface IPaymentMethod {
