@@ -13,22 +13,14 @@ import {
   Avatar,
   Button,
 } from '@mui/material';
-import { VendorClientSubscriptionDetails } from 'core';
 import ETHLogo from '@checkout/assets/images/ETHLogo.png';
 import USDTLogo from '@checkout/assets/images/USDTLogo.png';
 import { FC } from 'react';
+import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 
-interface IPaymentMethod {
-  details: VendorClientSubscriptionDetails | null;
-  setConfigurePlanModal: (value: boolean) => void;
-  setAddAllowanceModal: (value: boolean) => void;
-}
-
-const PaymentMethod: FC<IPaymentMethod> = ({
-  details,
-  setAddAllowanceModal,
-  setConfigurePlanModal,
-}) => {
+const PaymentMethod: FC = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const setModal = useCheckoutModal((state) => state.setModal);
   return (
     <>
       <Typography component="h1" variant="h5" sx={{ mt: 3 }}>
@@ -74,11 +66,15 @@ const PaymentMethod: FC<IPaymentMethod> = ({
         )}
         {details!.status !== 'inactive' && (
           <Box>
-            <Button variant="contained" onClick={() => setConfigurePlanModal(true)}>
+            <Button variant="contained" onClick={() => setModal(ECheckoutModal.CONFIGURE_PLAN)}>
               Change Method
             </Button>
 
-            <Button variant="outlined" sx={{ ml: 2 }} onClick={() => setAddAllowanceModal(true)}>
+            <Button
+              variant="outlined"
+              sx={{ ml: 2 }}
+              onClick={() => setModal(ECheckoutModal.ADD_ALLOWANCE)}
+            >
               Change Allowance
             </Button>
           </Box>

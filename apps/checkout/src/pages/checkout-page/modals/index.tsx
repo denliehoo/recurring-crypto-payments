@@ -1,87 +1,37 @@
-import { FC, useState } from 'react';
-import AddAllowanceModal from './AddAllowanceModal';
-import CancelPlanModal from './CancelPlanModal';
-import ConfigurePlanModal from './ConfigurePlanModal';
-import UpdateBillingInfoModal from './UpdateBillingInfoModal';
-import { VendorClientSubscriptionDetails } from 'core';
+import { FC } from 'react';
+import AddAllowanceContent from './add-allowance-content';
+import CancelPlanContent from './cancel-plan-content';
+import ConfigurePlanContent from './configure-plan-content';
+import UpdateBillingInfoContent from './update-billing-info-content';
+import { ECheckoutModal, useCheckoutModal } from '@checkout/store';
+import CustomModal from '@components/modal';
 
-interface IModalsProps {
-  details: VendorClientSubscriptionDetails;
-  refreshData: boolean;
-  setRefreshData: (value: boolean) => void;
-  authToken: string;
-  configurePlanModal: boolean;
-  setConfigurePlanModal: (value: boolean) => void;
-  cancelPlanModal: boolean;
-  setCancelPlanModal: (value: boolean) => void;
-  updateBillingInfoModal: boolean;
-  setUpdateBillingInfoModal: (value: boolean) => void;
-  addAllowanceModal: boolean;
-  setAddAllowanceModal: (value: boolean) => void;
-}
+const Modals: FC = () => {
+  const modal = useCheckoutModal((state) => state.modal);
+  const setModal = useCheckoutModal((state) => state.setModal);
 
-const Modals: FC<IModalsProps> = ({
-  details,
-  refreshData,
-  setRefreshData,
-  authToken,
-  configurePlanModal,
-  setConfigurePlanModal,
-  cancelPlanModal,
-  setCancelPlanModal,
-  updateBillingInfoModal,
-  setUpdateBillingInfoModal,
-  addAllowanceModal,
-  setAddAllowanceModal,
-}) => {
+  const getModalContent = () => {
+    switch (modal) {
+      case ECheckoutModal.ADD_ALLOWANCE:
+        return <AddAllowanceContent />;
+      case ECheckoutModal.CANCEL_PLAN:
+        return <CancelPlanContent />;
+      case ECheckoutModal.CONFIGURE_PLAN:
+        return <ConfigurePlanContent />;
+      case ECheckoutModal.UPDATE_BILLING:
+        return <UpdateBillingInfoContent />;
+      default:
+        return;
+    }
+  };
+
+  if (!modal) {
+    return;
+  }
   return (
-    <>
-      {configurePlanModal && (
-        <ConfigurePlanModal
-          configurePlanModal={configurePlanModal}
-          closeConfigurePlanModal={() => setConfigurePlanModal(false)}
-          tokenAddress={details!.tokenAddress}
-          token={details!.token}
-          amount={details!.amount}
-          vendorContract={details!.vendorContract}
-          authToken={authToken}
-          status={details!.status}
-          currentWallet={details?.paymentMethod?.wallet}
-          refreshData={() => setRefreshData(!refreshData)}
-          nextDate={details?.nextDate}
-        />
-      )}
-      {addAllowanceModal && (
-        <AddAllowanceModal
-          modalIsOpen={addAllowanceModal}
-          closeModal={() => setAddAllowanceModal(false)}
-          tokenAddress={details!.tokenAddress}
-          token={details!.token}
-          amount={details!.amount}
-          vendorContract={details!.vendorContract}
-          authToken={authToken}
-          currentWallet={details?.paymentMethod?.wallet}
-          refreshData={() => setRefreshData(!refreshData)}
-        />
-      )}
-      {cancelPlanModal && (
-        <CancelPlanModal
-          cancelPlanModal={cancelPlanModal}
-          closeCancelPlanModal={() => setCancelPlanModal(false)}
-          refreshData={() => setRefreshData(!refreshData)}
-          authToken={authToken}
-        />
-      )}
-      {updateBillingInfoModal && (
-        <UpdateBillingInfoModal
-          modalIsOpen={updateBillingInfoModal}
-          closeModal={() => setUpdateBillingInfoModal(false)}
-          billingInfo={details?.billingInfo}
-          authToken={authToken}
-          refreshData={() => setRefreshData(!refreshData)}
-        />
-      )}
-    </>
+    <CustomModal open={!!modal} onClose={() => setModal(undefined)}>
+      {getModalContent()}
+    </CustomModal>
   );
 };
 

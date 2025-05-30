@@ -1,48 +1,43 @@
 // import classes from "./ConfigurePlanModal.module.css";
 
-import {
-  Box,
-  Button,
-  Grid,
-  Step,
-  StepLabel,
-  Stepper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
-import CustomButton from "@components/button";
-import { FakeUSDT as USDTABI } from "@core/abi/FakeUSDT";
-import axios from "axios";
-import CustomModal from "@components/modal";
-import { formatDate } from "@core/utils/text";
-import { connectWallet } from "@core/utils/wallet";
-// import USDTABI from "../../../../shared/truffle_abis/FakeUSDT.json";
+import { Box, Button, Grid, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import React, { ChangeEvent, FC, useState } from 'react';
+import CustomButton from '@components/button';
+import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
+import axios from 'axios';
+import { formatDate } from '@core/utils/text';
+import { connectWallet } from '@core/utils/wallet';
+import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 
-const ConfigurePlanModal = (props: any) => {
+const ConfigurePlanModal: FC = () => {
+  const authToken = useSubcriptionDetail((state) => state.authToken);
+  const details = useSubcriptionDetail((state) => state.details);
+
+  const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
+  const setModal = useCheckoutModal((state) => state.setModal);
+
   const {
-    configurePlanModal,
-    closeConfigurePlanModal,
     tokenAddress,
-    amount,
+    amount = 0,
     vendorContract,
-    authToken,
     status,
-    currentWallet,
-    refreshData,
+    paymentMethod,
     nextDate,
-  } = props;
+  } = details || {};
+
+  const { wallet: currentWallet = '' } = paymentMethod || {};
+
   // status: active means user want to change payment method
   // status: cancelled means user wants to start plan again / renew plan
   // status: inactive means user wants to start plan (for the first time)
 
   const apiUrl = process.env.REACT_APP_API_URL;
   const steps = [
-    "Connect Wallet",
-    "Check Balance",
-    "Check Allowance",
+    'Connect Wallet',
+    'Check Balance',
+    'Check Allowance',
     // if active, it is confirm change , if inactive/cancelled confirm subscription
-    `Confirm ${status === "active" ? "Change" : "Subscription"}`,
+    `Confirm ${status === 'active' ? 'Change' : 'Subscription'}`,
   ];
   const minAmountText = amount / 10 ** 6;
   // as we go through the steps, check for the necessary
@@ -50,50 +45,50 @@ const ConfigurePlanModal = (props: any) => {
   // if enough change text to "You have sufficient xxx" or something for that step
   // as leave it as that and proceed
   const [stepsText, setStepsText] = useState([
-    status === "active"
+    status === 'active'
       ? `Your current payment wallet is ${currentWallet}. To change payment wallet, please connect to a different wallet`
-      : "To start, please connect your wallet",
+      : 'To start, please connect your wallet',
 
-    "You have a sufficient balance of XXX USDT and may proceed",
-    "You have sufficient allowance and may proceed",
-    "Please confirm your subscription. Subsequently, we will be deducting XXX USDT monthly",
+    'You have a sufficient balance of XXX USDT and may proceed',
+    'You have sufficient allowance and may proceed',
+    'Please confirm your subscription. Subsequently, we will be deducting XXX USDT monthly',
   ]);
   const [stepsButtonText, setStepsButtonText] = useState([
-    "Connect Wallet",
-    "Next",
-    "Approve Allowance", // or NEXT
-    "Confirm",
+    'Connect Wallet',
+    'Next',
+    'Approve Allowance', // or NEXT
+    'Confirm',
   ]);
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const [userToken, setUserToken] = useState({
     balance: 0,
     allowance: 0,
     balanceSufficient: false,
     allowanceSufficient: false,
   });
-  const [nameInput, setNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [addressInput, setAddressInput] = useState("");
-  const [inputError, setInputError] = useState("");
+  const [nameInput, setNameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [addressInput, setAddressInput] = useState('');
+  const [inputError, setInputError] = useState('');
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value);
-    setInputError("");
+    setInputError('');
   };
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmailInput(e.target.value);
-    setInputError("");
+    setInputError('');
   };
 
   const handleAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAddressInput(e.target.value);
-    setInputError("");
+    setInputError('');
   };
 
   const handleNext = async () => {
@@ -109,10 +104,7 @@ const ConfigurePlanModal = (props: any) => {
       const accounts = await w3.eth.getAccounts();
       setAddress(accounts[0]);
 
-      if (
-        status === "active" &&
-        accounts[0].toLowerCase() === currentWallet.toLowerCase()
-      ) {
+      if (status === 'active' && accounts[0].toLowerCase() === currentWallet.toLowerCase()) {
         const temp = [...stepsText];
         temp[0] = `You are connected to the wallet address: ${accounts[0]}. To proceed with changing payment method
         please change to a different wallet address`;
@@ -126,9 +118,7 @@ const ConfigurePlanModal = (props: any) => {
       setContract(usdt);
       let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
       userBalance = parseInt(userBalance);
-      let userAllowance = await usdt.methods
-        .allowance(accounts[0], vendorContract)
-        .call();
+      let userAllowance = await usdt.methods.allowance(accounts[0], vendorContract).call();
       userAllowance = parseInt(userAllowance);
 
       const balanceIsSufficient = userBalance > amount;
@@ -155,18 +145,18 @@ const ConfigurePlanModal = (props: any) => {
         } to proceed to ensure a smooth subscription`;
       } else {
         const tempButtonText = [...stepsButtonText];
-        tempButtonText[2] = "Next";
+        tempButtonText[2] = 'Next';
         setStepsButtonText(tempButtonText);
       }
-      if (status === "inactive") {
+      if (status === 'inactive') {
         tempStepsText[3] = `Please confirm your subscription and billing information. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
-      } else if (status === "active") {
+      } else if (status === 'active') {
         tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
-      } else if (status === "cancelled") {
+      } else if (status === 'cancelled') {
         tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly from your wallet ${formatDate(
           nextDate
         )} if you confirm your renewal.`;
-      } else if (status === "ended") {
+      } else if (status === 'ended') {
         tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
       }
       setButtonLoading(false);
@@ -184,16 +174,14 @@ const ConfigurePlanModal = (props: any) => {
         let allowanceIsSufficient;
         try {
           const approveToken = await contract.methods
-            .approve(vendorContract, "1000000000000000")
+            .approve(vendorContract, '1000000000000000')
             .send({ from: address })
-            .on("transactionHash", (hash: any) => {
+            .on('transactionHash', (hash: any) => {
               console.log(hash);
             });
 
           let newAllowance = approveToken.events.Approval.returnValues.value;
-          const receipt = await web3.eth.getTransactionReceipt(
-            approveToken.transactionHash
-          );
+          const receipt = await web3.eth.getTransactionReceipt(approveToken.transactionHash);
 
           if (parseInt(newAllowance) > amount) {
             allowanceIsSufficient = true;
@@ -219,10 +207,10 @@ const ConfigurePlanModal = (props: any) => {
         if (allowanceIsSufficient) {
           setUserToken({ ...userToken, allowanceSufficient: true });
           let temp = [...stepsText];
-          temp[2] = "You have sufficient allowance and may proceed";
+          temp[2] = 'You have sufficient allowance and may proceed';
           setStepsText(temp);
           temp = [...stepsButtonText];
-          temp[2] = "Next";
+          temp[2] = 'Next';
           setStepsButtonText(temp);
         }
         setButtonLoading(false);
@@ -234,10 +222,10 @@ const ConfigurePlanModal = (props: any) => {
       const headers = {
         Authorization: authToken,
       };
-      if (status === "inactive") {
+      if (status === 'inactive') {
         // means they want to add payment method and begin subscription
         if (!nameInput || !emailInput || !addressInput) {
-          setInputError("Please ensure fields are not empty");
+          setInputError('Please ensure fields are not empty');
           return;
         }
         setButtonLoading(true);
@@ -249,7 +237,7 @@ const ConfigurePlanModal = (props: any) => {
               address: addressInput,
             },
             paymentMethod: {
-              token: "USDT",
+              token: 'USDT',
               tokenAddress: tokenAddress,
               wallet: address,
               sufficientAllowance: true,
@@ -257,51 +245,39 @@ const ConfigurePlanModal = (props: any) => {
             },
             userAddress: address,
           };
-          const res = await axios.post(
-            `${apiUrl}/externalPage/initiate-subscription`,
-            body,
-            {
-              headers,
-            }
-          );
+          const res = await axios.post(`${apiUrl}/externalPage/initiate-subscription`, body, {
+            headers,
+          });
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
           return;
         }
-      } else if (status === "active") {
+      } else if (status === 'active') {
         // means they want to change payment method
         setButtonLoading(true);
         try {
           const body = {
             newAddress: address,
           };
-          const res = await axios.post(
-            `${apiUrl}/externalPage/change-payment-method`,
-            body,
-            {
-              headers,
-            }
-          );
+          const res = await axios.post(`${apiUrl}/externalPage/change-payment-method`, body, {
+            headers,
+          });
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
           return;
         }
-      } else if (status === "cancelled" || status === "ended") {
+      } else if (status === 'cancelled' || status === 'ended') {
         // means they want to continue subscription
         setButtonLoading(true);
         try {
           const body = {
             wallet: address,
           };
-          const res = await axios.post(
-            `${apiUrl}/externalPage/renew-subscription`,
-            body,
-            {
-              headers,
-            }
-          );
+          const res = await axios.post(`${apiUrl}/externalPage/renew-subscription`, body, {
+            headers,
+          });
         } catch (err) {
           console.log(err);
           setButtonLoading(false);
@@ -314,26 +290,22 @@ const ConfigurePlanModal = (props: any) => {
   };
 
   return (
-    <CustomModal open={configurePlanModal} onClose={closeConfigurePlanModal}>
+    <>
       <Typography
         id="modal-modal-title"
         variant="h6"
         component="h2"
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          "& > :first-of-type": {
-            marginRight: "auto",
+          display: 'flex',
+          justifyContent: 'space-between',
+          '& > :first-of-type': {
+            marginRight: 'auto',
           },
         }}
       >
-        <span>
-          {status === "active" ? "Change Payment Method" : "Start Plan"}
-        </span>
+        <span>{status === 'active' ? 'Change Payment Method' : 'Start Plan'}</span>
         {address && (
-          <span>{`${address.substring(0, 4)}...${address.substring(
-            address.length - 4
-          )}`}</span>
+          <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
         )}
       </Typography>
       {/* Steps for start plan */}
@@ -355,16 +327,16 @@ const ConfigurePlanModal = (props: any) => {
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
-            {status !== "active"
-              ? "You have successfully subscribed!"
-              : "You have successfully changed your payment wallet!"}
+            {status !== 'active'
+              ? 'You have successfully subscribed!'
+              : 'You have successfully changed your payment wallet!'}
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Box sx={{ flex: "1 1 auto" }} />
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+            <Box sx={{ flex: '1 1 auto' }} />
             <Button
               onClick={() => {
-                refreshData();
-                closeConfigurePlanModal();
+                setRefreshData();
+                setModal(undefined);
               }}
             >
               Close
@@ -374,7 +346,7 @@ const ConfigurePlanModal = (props: any) => {
       ) : (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
-          {activeStep === 3 && status === "inactive" && (
+          {activeStep === 3 && status === 'inactive' && (
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -411,7 +383,7 @@ const ConfigurePlanModal = (props: any) => {
               </Grid>
             </Grid>
           )}
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <CustomButton
               text={stepsButtonText[activeStep]}
               onClick={handleNext}
@@ -421,7 +393,7 @@ const ConfigurePlanModal = (props: any) => {
           </Box>
         </React.Fragment>
       )}
-    </CustomModal>
+    </>
   );
 };
 

@@ -1,36 +1,21 @@
-// import classes from "./AddAllowanceModal.module.css";
+import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import React, { FC, useState } from 'react';
+import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
+import CustomButton from '@components/button';
+import { connectWallet } from '@core/utils/wallet';
+import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 
-import {
-  Box,
-  Button,
-  Grid,
-  Step,
-  StepLabel,
-  Stepper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
-import { FakeUSDT as USDTABI } from "@core/abi/FakeUSDT";
-import axios from "axios";
-import CustomModal from "@components/modal";
-import CustomButton from "@components/button";
-import { connectWallet } from "@core/utils/wallet";
+const AddAllowanceContent: FC = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const setModal = useCheckoutModal((state) => state.setModal);
 
-const AddAllowanceModal = (props: any) => {
-  const {
-    modalIsOpen,
-    closeModal,
-    tokenAddress,
-    amount,
-    vendorContract,
-    authToken,
-    currentWallet,
-    refreshData,
-  } = props;
+  const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
 
-  const apiUrl = process.env.REACT_APP_API_URL;
-  const steps = ["Connect Wallet", "Add Allowance"];
+  const { tokenAddress, amount = 0, vendorContract, paymentMethod } = details || {};
+
+  const { wallet: currentWallet = '' } = paymentMethod || {};
+
+  const steps = ['Connect Wallet', 'Add Allowance'];
   const minAmountText = amount / 10 ** 6;
   // as we go through the steps, check for the necessary
   // e.g. after connecting wallet, check if balance and allowance enough
@@ -43,15 +28,12 @@ const AddAllowanceModal = (props: any) => {
       minAmountText * 12
     } to ensure a smooth subscription`,
   ]);
-  const [stepsButtonText, setStepsButtonText] = useState([
-    "Connect Wallet",
-    "Add Allowance",
-  ]);
+  const [stepsButtonText, setStepsButtonText] = useState(['Connect Wallet', 'Add Allowance']);
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const [newAllowance, setNewAllowance] = useState(0);
 
   const handleNext = async () => {
@@ -90,9 +72,9 @@ const AddAllowanceModal = (props: any) => {
       setButtonLoading(true);
       try {
         const approveToken = await contract.methods
-          .approve(vendorContract, "1000000000000000")
+          .approve(vendorContract, '1000000000000000')
           .send({ from: address })
-          .on("transactionHash", (hash: any) => {
+          .on('transactionHash', (hash: any) => {
             console.log(hash);
           });
 
@@ -110,29 +92,27 @@ const AddAllowanceModal = (props: any) => {
   };
 
   return (
-    <CustomModal open={modalIsOpen} onClose={closeModal}>
+    <>
       <Typography
         id="modal-modal-title"
         variant="h6"
         component="h2"
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          "& > :first-of-type": {
-            marginRight: "auto",
+          display: 'flex',
+          justifyContent: 'space-between',
+          '& > :first-of-type': {
+            marginRight: 'auto',
           },
         }}
       >
         <span>Add Allowance</span>
         {address && (
-          <span>{`${address.substring(0, 4)}...${address.substring(
-            address.length - 4
-          )}`}</span>
+          <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
         )}
       </Typography>
       {/* Steps for start plan */}
       <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-        {steps.map((label, index) => {
+        {steps.map((label) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: {
             optional?: React.ReactNode;
@@ -151,12 +131,12 @@ const AddAllowanceModal = (props: any) => {
           <Typography sx={{ mt: 2, mb: 1 }}>
             {`You have successfully changed set the allowance to ${newAllowance} USDT`}
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Box sx={{ flex: "1 1 auto" }} />
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+            <Box sx={{ flex: '1 1 auto' }} />
             <Button
               onClick={() => {
-                refreshData();
-                closeModal();
+                setRefreshData();
+                setModal(undefined);
               }}
             >
               Close
@@ -166,7 +146,7 @@ const AddAllowanceModal = (props: any) => {
       ) : (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <CustomButton
               text={stepsButtonText[activeStep]}
               onClick={handleNext}
@@ -175,8 +155,8 @@ const AddAllowanceModal = (props: any) => {
           </Box>
         </React.Fragment>
       )}
-    </CustomModal>
+    </>
   );
 };
 
-export default AddAllowanceModal;
+export default AddAllowanceContent;

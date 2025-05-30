@@ -1,14 +1,12 @@
+import { useSubcriptionDetail } from '@checkout/store';
 import { TagRounded } from '@mui/icons-material';
 import { Typography, Divider, Box, IconButton } from '@mui/material';
-import { formatDate, VendorClientSubscriptionDetails } from 'core';
+import { formatDate } from 'core';
 import { FC } from 'react';
 
-interface IInvoiceHistory {
-  details: VendorClientSubscriptionDetails;
-}
-
-const InvoiceHistory: FC<IInvoiceHistory> = ({ details }) => {
-  const { invoices } = details;
+const InvoiceHistory: FC = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const { invoices = [] } = details || {};
   return (
     <>
       <Typography component="h1" variant="h5" sx={{ mt: 3 }}>

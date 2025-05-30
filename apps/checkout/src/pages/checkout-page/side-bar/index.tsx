@@ -1,14 +1,14 @@
+import { useSubcriptionDetail } from '@checkout/store';
 import { KeyboardBackspace } from '@mui/icons-material';
 import { useMediaQuery, Grid, Box, Typography } from '@mui/material';
-import { VendorClientSubscriptionDetails } from 'core';
 import { FC } from 'react';
 
-interface ISideBar {
-  details: VendorClientSubscriptionDetails;
-}
-
-const SideBar: FC<ISideBar> = ({ details }) => {
+const SideBar: FC = () => {
   const isSmOrUp = useMediaQuery('(min-width:600px)');
+
+  const details = useSubcriptionDetail((state) => state.details);
+
+  const { vendor, returnUrl } = details || {};
 
   return (
     <Grid
@@ -44,19 +44,17 @@ const SideBar: FC<ISideBar> = ({ details }) => {
             justifyContent: 'flex-start',
           }}
         >
-          {isSmOrUp && (
-            <Typography variant="h5">Manage your {details.vendor} Billing Settings</Typography>
-          )}
+          {isSmOrUp && <Typography variant="h5">Manage your {vendor} Billing Settings</Typography>}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
               '&:hover': { color: 'lightgray', cursor: 'pointer' },
             }}
-            onClick={() => (window.location.href = details.returnUrl!)}
+            onClick={() => (window.location.href = returnUrl!)}
           >
             <KeyboardBackspace />
-            <Typography>Return to {details!.vendor}</Typography>
+            <Typography>Return to {vendor}</Typography>
           </Box>
           {isSmOrUp && <Typography sx={{ mt: 'auto' }}>Powered by RecurCrypt</Typography>}
         </Box>

@@ -1,9 +1,9 @@
-import { CssBaseline, ThemeProvider, useMediaQuery, Grid } from '@mui/material';
+import { CssBaseline, ThemeProvider, Grid } from '@mui/material';
 import axios from 'axios';
-import { VendorClientSubscriptionDetails } from 'core';
 import { useState, useEffect } from 'react';
 import CheckoutPage from './pages/checkout-page';
 import { createTheme } from '@mui/material/styles';
+import { useSubcriptionDetail } from './store';
 
 const defaultTheme = createTheme({
   components: {
@@ -22,14 +22,18 @@ const defaultTheme = createTheme({
 });
 
 const App = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const setDetails = useSubcriptionDetail((state) => state.setDetails);
+  const refreshData = useSubcriptionDetail((state) => state.refreshData);
+  const setAuthToken = useSubcriptionDetail((state) => state.setAuthToken);
+
   const searchParams = new URLSearchParams(window.location.search);
   const encodedAuthToken = searchParams.get('authToken');
 
   const authToken = encodedAuthToken?.replace(/~/g, '.');
+  setAuthToken(authToken || '');
 
   const [isLoading, setIsLoading] = useState(true);
-  const [details, setDetails] = useState<VendorClientSubscriptionDetails | null>(null);
-  const [refreshData, setRefreshData] = useState(false);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -54,6 +58,7 @@ const App = () => {
     };
     getData();
 
+    // sample url: http://localhost:3032/?authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9~eyJ2ZW5kb3IiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwOWYiLCJ2ZW5kb3JDbGllbnQiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwYTEiLCJleHAiOjE3NDc3NTQ1NjUsImlhdCI6MTc0NzY2ODE2NX0~W5Ck1wmOr2iZy1tb1BcYWBGeKypO-8JivYXM-4vG9Cc
     // simulate got this from call API
     // const sampleData = activeSampleData;
     // const sampleData = inactiveSampleData;
@@ -69,16 +74,7 @@ const App = () => {
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
-        {isShowLoader ? (
-          <div>Loading</div>
-        ) : (
-          <CheckoutPage
-            refreshData={refreshData}
-            setRefreshData={setRefreshData}
-            details={details}
-            authToken={authToken}
-          />
-        )}
+        {isShowLoader ? <div>Loading</div> : <CheckoutPage />}
       </Grid>
     </ThemeProvider>
   );

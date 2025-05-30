@@ -1,13 +1,10 @@
+import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import { Typography, Divider, Box, Button } from '@mui/material';
-import { VendorClientSubscriptionDetails } from 'core';
 import { FC } from 'react';
 
-interface IBillingInfo {
-  details: VendorClientSubscriptionDetails | null;
-  setUpdateBillingInfoModal: (value: boolean) => void;
-}
-
-const BillingInfo: FC<IBillingInfo> = ({ details, setUpdateBillingInfoModal }) => {
+const BillingInfo: FC = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const setModal = useCheckoutModal((state) => state.setModal);
   return (
     <>
       <Typography component="h1" variant="h5" sx={{ mt: 3 }}>
@@ -19,7 +16,7 @@ const BillingInfo: FC<IBillingInfo> = ({ details, setUpdateBillingInfoModal }) =
           <Box>
             <Box>Name: {details!.billingInfo!.name}</Box>
             <Box>Billing Address: {details!.billingInfo!.address}</Box>
-            <Button variant="contained" onClick={() => setUpdateBillingInfoModal(true)}>
+            <Button variant="contained" onClick={() => setModal(ECheckoutModal.UPDATE_BILLING)}>
               Update
             </Button>
           </Box>

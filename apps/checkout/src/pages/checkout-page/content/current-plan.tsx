@@ -1,22 +1,20 @@
+import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import { Typography, Divider, Box, Button } from '@mui/material';
-import { capitalizeFirstLetter, formatDate, VendorClientSubscriptionDetails } from 'core';
+import { capitalizeFirstLetter, formatDate } from 'core';
 
 import { FC } from 'react';
 
-interface ICurrentPlan {
-  details: VendorClientSubscriptionDetails;
-  setConfigurePlanModal: (value: boolean) => void;
-  setCancelPlanModal: (value: boolean) => void;
-}
+const CurrentPlan: FC = () => {
+  const details = useSubcriptionDetail((state) => state.details);
+  const setModal = useCheckoutModal((state) => state.setModal);
+  const { status = 'inactive', nextDate, amount = 0, plan, token } = details || {};
 
-const CurrentPlan: FC<ICurrentPlan> = ({ details, setConfigurePlanModal, setCancelPlanModal }) => {
   const textBasedOnStatus = (
     active: string,
     inactive: string,
     cancelled: string,
     ended: string
   ) => {
-    const status = details!.status;
     if (status === 'active') return active;
     if (status === 'inactive') return inactive;
     if (status === 'cancelled') return cancelled;
@@ -32,25 +30,25 @@ const CurrentPlan: FC<ICurrentPlan> = ({ details, setConfigurePlanModal, setCanc
       <Box sx={{ mt: 1 }}>
         <Box
           sx={{
-            backgroundColor: details!.status === 'active' ? '#d7f7c2' : '#e3e8ed',
+            backgroundColor: status === 'active' ? '#d7f7c2' : '#e3e8ed',
             display: 'inline-block',
             padding: '3px 10px',
             borderRadius: '5px',
           }}
         >
-          {capitalizeFirstLetter(details!.status)}
+          {capitalizeFirstLetter(status)}
         </Box>
-        <Box>{details!.plan}</Box>
+        <Box>{plan}</Box>
         <Box>
-          {details!.amount / 10 ** 6} {details!.token} per month
+          {amount / 10 ** 6} {token} per month
         </Box>
         <Box>
           {textBasedOnStatus(
-            `Your plan will auto renew on ${formatDate(details!.nextDate!)}`,
+            `Your plan will auto renew on ${formatDate(nextDate)}`,
             '',
-            `Your plan has been cancelled and will stop on ${formatDate(details!.nextDate!)}
+            `Your plan has been cancelled and will stop on ${formatDate(nextDate)}
                   `,
-            `Your plan has been ended since ${formatDate(details!.nextDate!)}
+            `Your plan has been ended since ${formatDate(nextDate)}
                   `
           )}
         </Box>
@@ -58,7 +56,11 @@ const CurrentPlan: FC<ICurrentPlan> = ({ details, setConfigurePlanModal, setCanc
           variant="contained"
           onClick={() =>
             // if active, cancel plan modal, if inactive/cancelled, configure plan
-            details!.status === 'active' ? setCancelPlanModal(true) : setConfigurePlanModal(true)
+            setModal(
+              details!.status === 'active'
+                ? ECheckoutModal.CANCEL_PLAN
+                : ECheckoutModal.CONFIGURE_PLAN
+            )
           }
         >
           {textBasedOnStatus('Cancel ', 'Start ', 'Renew ', 'Renew ')}

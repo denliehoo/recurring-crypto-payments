@@ -26,9 +26,6 @@ import { ChangeEvent, FC } from 'react';
       />
 
 */
-interface IDetailsToSubmit {
-  [key: string]: unknown;
-}
 
 interface IValidationErrors {
   [key: string]: string;
@@ -38,9 +35,10 @@ interface IFieldTypes {
   [key: string]: string;
 }
 
+// TODO: Fix any
 interface ICustomFormFieldsProps {
-  detailsToSubmit: IDetailsToSubmit;
-  setDetailsToSubmit: (details: IDetailsToSubmit) => void;
+  detailsToSubmit: any;
+  setDetailsToSubmit: (details: any) => void;
   validationErrors: IValidationErrors;
   setValidationErrors: (errors: IValidationErrors) => void;
   fieldsTypes: IFieldTypes;
