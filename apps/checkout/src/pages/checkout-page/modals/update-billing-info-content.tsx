@@ -33,7 +33,6 @@ const UpdateBillingInfoModal: FC = () => {
   const handleSubmit = async () => {
     if (!validateForm(detailsToSubmit, fieldsTypes, setValidationErrors)) return;
     setButtonLoading(true);
-    // rest of the api...
 
     try {
       const headers = {
