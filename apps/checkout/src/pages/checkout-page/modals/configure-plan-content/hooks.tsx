@@ -1,20 +1,13 @@
-// import classes from "./ConfigurePlanModal.module.css";
-
-import { Box, Button, Grid, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
-import React, { ChangeEvent, FC, useState } from 'react';
-import CustomButton from '@components/button';
+import { useSubcriptionDetail } from '@checkout/store';
+import { connectWallet } from '@core/utils/wallet';
+import { ChangeEvent, useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
 import axios from 'axios';
 import { formatDate } from '@core/utils/text';
-import { connectWallet } from '@core/utils/wallet';
-import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 
-const ConfigurePlanModal: FC = () => {
+export const useConfigurePlanContent = () => {
   const authToken = useSubcriptionDetail((state) => state.authToken);
   const details = useSubcriptionDetail((state) => state.details);
-
-  const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
-  const setModal = useCheckoutModal((state) => state.setModal);
 
   const {
     tokenAddress,
@@ -27,11 +20,10 @@ const ConfigurePlanModal: FC = () => {
 
   const { wallet: currentWallet = '' } = paymentMethod || {};
 
-  // status: active means user want to change payment method
-  // status: cancelled means user wants to start plan again / renew plan
-  // status: inactive means user wants to start plan (for the first time)
-
   const apiUrl = process.env.REACT_APP_API_URL;
+
+  const minAmountText = amount / 10 ** 6;
+
   const steps = [
     'Connect Wallet',
     'Check Balance',
@@ -39,11 +31,7 @@ const ConfigurePlanModal: FC = () => {
     // if active, it is confirm change , if inactive/cancelled confirm subscription
     `Confirm ${status === 'active' ? 'Change' : 'Subscription'}`,
   ];
-  const minAmountText = amount / 10 ** 6;
-  // as we go through the steps, check for the necessary
-  // e.g. after connecting wallet, check if balance and allowance enough
-  // if enough change text to "You have sufficient xxx" or something for that step
-  // as leave it as that and proceed
+
   const [stepsText, setStepsText] = useState([
     status === 'active'
       ? `Your current payment wallet is ${currentWallet}. To change payment wallet, please connect to a different wallet`
@@ -53,12 +41,14 @@ const ConfigurePlanModal: FC = () => {
     'You have sufficient allowance and may proceed',
     'Please confirm your subscription. Subsequently, we will be deducting XXX USDT monthly',
   ]);
+
   const [stepsButtonText, setStepsButtonText] = useState([
     'Connect Wallet',
     'Next',
     'Approve Allowance', // or NEXT
     'Confirm',
   ]);
+
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
@@ -71,6 +61,7 @@ const ConfigurePlanModal: FC = () => {
     balanceSufficient: false,
     allowanceSufficient: false,
   });
+
   const [nameInput, setNameInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [addressInput, setAddressInput] = useState('');
@@ -245,7 +236,7 @@ const ConfigurePlanModal: FC = () => {
             },
             userAddress: address,
           };
-          const res = await axios.post(`${apiUrl}/externalPage/initiate-subscription`, body, {
+          await axios.post(`${apiUrl}/externalPage/initiate-subscription`, body, {
             headers,
           });
         } catch (err) {
@@ -260,7 +251,7 @@ const ConfigurePlanModal: FC = () => {
           const body = {
             newAddress: address,
           };
-          const res = await axios.post(`${apiUrl}/externalPage/change-payment-method`, body, {
+          await axios.post(`${apiUrl}/externalPage/change-payment-method`, body, {
             headers,
           });
         } catch (err) {
@@ -275,7 +266,7 @@ const ConfigurePlanModal: FC = () => {
           const body = {
             wallet: address,
           };
-          const res = await axios.post(`${apiUrl}/externalPage/renew-subscription`, body, {
+          await axios.post(`${apiUrl}/externalPage/renew-subscription`, body, {
             headers,
           });
         } catch (err) {
@@ -289,112 +280,22 @@ const ConfigurePlanModal: FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  return (
-    <>
-      <Typography
-        id="modal-modal-title"
-        variant="h6"
-        component="h2"
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          '& > :first-of-type': {
-            marginRight: 'auto',
-          },
-        }}
-      >
-        <span>{status === 'active' ? 'Change Payment Method' : 'Start Plan'}</span>
-        {address && (
-          <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
-        )}
-      </Typography>
-      {/* Steps for start plan */}
-      <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: {
-            optional?: React.ReactNode;
-          } = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-
-      {/* Stepper info text */}
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            {status !== 'active'
-              ? 'You have successfully subscribed!'
-              : 'You have successfully changed your payment wallet!'}
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Box sx={{ flex: '1 1 auto' }} />
-            <Button
-              onClick={() => {
-                setRefreshData();
-                setModal(undefined);
-              }}
-            >
-              Close
-            </Button>
-          </Box>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
-          {activeStep === 3 && status === 'inactive' && (
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  type="text"
-                  label="Name"
-                  variant="outlined"
-                  fullWidth
-                  value={nameInput}
-                  onChange={handleNameChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  type="text"
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  value={emailInput}
-                  onChange={handleEmailChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  type="text"
-                  label="Address"
-                  variant="outlined"
-                  fullWidth
-                  value={addressInput}
-                  onChange={handleAddressChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                {inputError && <span>{inputError}</span>}
-              </Grid>
-            </Grid>
-          )}
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <CustomButton
-              text={stepsButtonText[activeStep]}
-              onClick={handleNext}
-              loading={buttonLoading}
-              disabled={buttonDisabled}
-            />
-          </Box>
-        </React.Fragment>
-      )}
-    </>
-  );
+  return {
+    steps,
+    handleNext,
+    address,
+    activeStep,
+    stepsText,
+    nameInput,
+    handleNameChange,
+    emailInput,
+    handleEmailChange,
+    addressInput,
+    handleAddressChange,
+    inputError,
+    buttonLoading,
+    buttonDisabled,
+    stepsButtonText,
+    status,
+  };
 };
-
-export default ConfigurePlanModal;
