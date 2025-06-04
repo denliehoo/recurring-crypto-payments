@@ -1,11 +1,11 @@
-import { Box, Modal, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import IntegrationFormFields from "./IntegrationFormFields";
-import { apiCallAuth } from "../../../utils/apiRequest";
+import { Box, Modal, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import IntegrationFormFields from './IntegrationFormFields';
+import { apiCallAuth } from '../../../utils/api-request';
 
-import CustomButton from "@components/button";
-import CustomModal from "@components/modal";
-import { validateForm } from "@core/utils/form";
+import CustomButton from '@components/button';
+import CustomModal from '@components/modal';
+import { validateForm } from '@core/utils/form';
 
 const EditConfigurationsModal = (props: any) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;
@@ -23,11 +23,11 @@ const EditConfigurationsModal = (props: any) => {
   const [formChanged, setFormChanged] = useState(false);
 
   const fieldsTypes = {
-    monthlySubscriptionPrice: "number",
-    businessName: "text",
-    webhookUrl: "text",
-    returnUrl: "text",
-    planName: "text",
+    monthlySubscriptionPrice: 'number',
+    businessName: 'text',
+    webhookUrl: 'text',
+    returnUrl: 'text',
+    planName: 'text',
   };
 
   const handleEdit = async () => {
@@ -47,15 +47,13 @@ const EditConfigurationsModal = (props: any) => {
       webhookUrl: vendorDetails.webhookUrl,
       returnUrl: vendorDetails.returnUrl,
       tokenAddress: vendorDetails.tokenAddress,
-      amount: Math.ceil(
-        parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6
-      ),
+      amount: Math.ceil(parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6),
       plan: vendorDetails.planName,
       vendorContract: vendor.vendorContract,
       id: vendorId,
     };
     try {
-      const res = await apiCallAuth("put", "/vendors", bodyData);
+      const res = await apiCallAuth('put', '/vendors', bodyData);
 
       setButtonLoading(false);
       refreshData();
@@ -71,8 +69,7 @@ const EditConfigurationsModal = (props: any) => {
       vendorDetails.webhookUrl === vendor.webhookUrl &&
       vendorDetails.returnUrl === vendor.returnUrl &&
       vendorDetails.tokenAddress === vendor.tokenAddress &&
-      vendorDetails.monthlySubscriptionPrice.toString() ===
-        (vendor.amount / 10 ** 6).toString() &&
+      vendorDetails.monthlySubscriptionPrice.toString() === (vendor.amount / 10 ** 6).toString() &&
       vendorDetails.planName === vendor.plan
     ) {
       setFormChanged(false);

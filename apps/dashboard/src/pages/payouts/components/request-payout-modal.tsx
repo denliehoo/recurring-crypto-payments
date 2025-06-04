@@ -1,47 +1,33 @@
 // import classes from "./RequestPayoutModal.module.css";
 
-import {
-  Box,
-  Button,
-  Modal,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { connectWallet } from "@core/utils/wallet";
-import CustomButton from "@components/button";
-import RecurringPaymentsVendor from "../../../truffle_abis/RecurringPaymentsVendor.json";
-import axios from "axios";
-import { apiCallAuth } from "../../../utils/apiRequest";
-import CustomModal from "@components/modal";
+import { Box, Button, Modal, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { connectWallet } from '@core/utils/wallet';
+import CustomButton from '@components/button';
+import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
+import axios from 'axios';
+import { apiCallAuth } from '../../../utils/api-request';
+import CustomModal from '@components/modal';
 
 const RequestPayoutModal = (props: any) => {
-  const {
-    requestPayoutModal,
-    closeRequestPayoutModal,
-    vendor,
-    owner,
-    refreshData,
-  } = props;
+  const { requestPayoutModal, closeRequestPayoutModal, vendor, owner, refreshData } = props;
   // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
   // if its false, means that they want to change payment method
 
-  const steps = ["Connect Wallet", "Check Address", "Request Payout"];
+  const steps = ['Connect Wallet', 'Check Address', 'Request Payout'];
 
   const [stepsText, setStepsText] = useState([
     `To start, please connect your wallet with the wallet address ${owner}`,
-    "You have connected to the correct wallet address",
-    "Please Confirm Payout",
+    'You have connected to the correct wallet address',
+    'Please Confirm Payout',
   ]);
-  const stepsButtonText = ["Connect Wallet", "Continue", "Confirm"];
+  const stepsButtonText = ['Connect Wallet', 'Continue', 'Confirm'];
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const activeStepRef = useRef(activeStep); // Create a mutable reference to activeStep
 
   const handleNext = async () => {
@@ -87,7 +73,7 @@ const RequestPayoutModal = (props: any) => {
         const withdraw = await contract.methods
           .withdraw()
           .send({ from: address })
-          .on("transactionHash", (hash: any) => {
+          .on('transactionHash', (hash: any) => {
             console.log(hash);
           });
 
@@ -95,11 +81,11 @@ const RequestPayoutModal = (props: any) => {
           amount: parseInt(withdraw.events.VendorWithdraw.returnValues.amount), // parseInt first
           tokenAddress: vendor.tokenAddress,
           userAddress: address,
-          token: "USDT", // hard code to USDT for now
+          token: 'USDT', // hard code to USDT for now
           hash: withdraw.transactionHash,
         };
         const res = await apiCallAuth(
-          "post",
+          'post',
           `/payments/create-payout/${vendor._id.toString()}`,
           bodyData
         );
@@ -133,15 +119,12 @@ const RequestPayoutModal = (props: any) => {
   useEffect(() => {
     // Add event listener for account changes when the component mounts
     if (window.ethereum) {
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
     }
     // Clean up the event listener when the component unmounts
     return () => {
       if (window.ethereum) {
-        window.ethereum.removeListener(
-          "accountsChanged",
-          handleAccountsChanged
-        );
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
       }
     };
   }, []);
@@ -153,17 +136,15 @@ const RequestPayoutModal = (props: any) => {
         variant="h6"
         component="h2"
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          "& > :first-of-type": {
-            marginRight: "auto",
+          display: 'flex',
+          justifyContent: 'space-between',
+          '& > :first-of-type': {
+            marginRight: 'auto',
           },
         }}
       >
         <span>Start plan</span>
-        <span>{`${address.substring(0, 4)}...${address.substring(
-          address.length - 4
-        )}`}</span>
+        <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
       </Typography>
       {/* Steps for start plan */}
       <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
@@ -183,11 +164,9 @@ const RequestPayoutModal = (props: any) => {
       {/* Stepper info text */}
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            Your payout has been processed
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Box sx={{ flex: "1 1 auto" }} />
+          <Typography sx={{ mt: 2, mb: 1 }}>Your payout has been processed</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+            <Box sx={{ flex: '1 1 auto' }} />
             {/* refresh the data in Payout page too */}
             <Button
               onClick={() => {
@@ -203,7 +182,7 @@ const RequestPayoutModal = (props: any) => {
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
 
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <CustomButton
               text={stepsButtonText[activeStep]}
               onClick={handleNext}

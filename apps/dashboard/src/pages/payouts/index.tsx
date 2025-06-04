@@ -1,42 +1,34 @@
-// import classes from "./Payouts.module.css";
-import {
-  Box,
-  Divider,
-  IconButton,
-  Paper,
-  TableContainer,
-  Typography,
-} from "@mui/material";
-import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
-import { useEffect, useState } from "react";
-import CustomButton from "@components/button";
-import RequestPayoutModal from "./components/RequestPayoutModal";
-import { apiCallAuth } from "../../utils/apiRequest";
-import TagIcon from "@mui/icons-material/Tag";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { renderAmount, renderDate } from "../../utils/renderTableCell";
+import { Box, Divider, IconButton, Paper, TableContainer, Typography } from '@mui/material';
+import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
+import { useEffect, useState } from 'react';
+import CustomButton from '@components/button';
+import RequestPayoutModal from './components/request-payout-modal';
+import { apiCallAuth } from '../../utils/api-request';
+import TagIcon from '@mui/icons-material/Tag';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { renderAmount, renderDate } from '../../utils/renderTableCell';
 
 const columns: GridColDef[] = [
   {
-    field: "payoutDate",
-    headerName: "Date",
+    field: 'payoutDate',
+    headerName: 'Date',
     width: 250,
     renderCell: renderDate,
   },
   {
-    field: "amount",
-    headerName: "Amount",
+    field: 'amount',
+    headerName: 'Amount',
     width: 150,
     renderCell: renderAmount,
   },
   {
-    field: "token",
-    headerName: "Token",
+    field: 'token',
+    headerName: 'Token',
     width: 150,
   },
   {
-    field: "hash",
-    headerName: "Hash",
+    field: 'hash',
+    headerName: 'Hash',
     width: 150,
     sortable: false,
     filterable: false,
@@ -58,7 +50,7 @@ const Payouts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [requestPayoutModal, setRequestPayoutModal] = useState(false);
   const [rows, setRows] = useState<any[]>([]);
-  const [owner, setOwner] = useState("");
+  const [owner, setOwner] = useState('');
   const [pendingBalance, setPendingBalance] = useState(0);
   const [vendorDetails, setVendorDetails] = useState<any>(null);
   const [refreshData, setRefreshData] = useState(true);
@@ -91,10 +83,7 @@ const Payouts = () => {
     // setVendorDetails(fakeVendor);
     const getDetails = async () => {
       try {
-        const res: any = await apiCallAuth(
-          "get",
-          "/payments/get-payouts-details"
-        );
+        const res: any = await apiCallAuth('get', '/payments/get-payouts-details');
 
         const { payouts, pendingBalance, owner, vendor } = await res!.data;
         setOwner(owner);
@@ -119,15 +108,13 @@ const Payouts = () => {
           {vendorDetails?.tokenAddress ? (
             <Box>
               <Typography variant="h5">Payouts</Typography>
-              <Typography>
-                You currently have {pendingBalance / 10 ** 6} USDT Pending
-              </Typography>
+              <Typography>You currently have {pendingBalance / 10 ** 6} USDT Pending</Typography>
               <CustomButton
                 variant="contained"
                 onClick={() => setRequestPayoutModal(true)}
                 text="Request Payout"
                 fullWidth
-                disabled={pendingBalance.toString() === "0"} // disable if no usdt pending
+                disabled={pendingBalance.toString() === '0'} // disable if no usdt pending
               />
               <Box>
                 <Divider sx={{ mt: 2, mb: 2 }} />

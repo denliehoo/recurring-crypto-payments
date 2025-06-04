@@ -1,17 +1,16 @@
-import Box from "@mui/material/Box";
+import Box from '@mui/material/Box';
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import PaymentsTable from "../../components/shared/PaymentsTable";
-import DashboardLineChart from "./components/DashboardLineChart";
-import { Button, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { apiCallAuth } from "../../utils/apiRequest";
-import { useNavigate } from "react-router-dom";
-import ConfigureIntegrationsFirst from "../../components/shared/ConfigureIntegrationsFirst";
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import PaymentsTable from '../../components/shared/PaymentsTable';
+import DashboardLineChart from './components/DashboardLineChart';
+import { Button, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
+import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
 
-// import classes from "./Dashboard.module.css";
-
+// TODO: Proper typing
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -23,21 +22,16 @@ const Dashboard = () => {
     const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
     const getDashboard = async () => {
       try {
-        const res: any = await apiCallAuth(
-          "get",
-          `/payments/get-dashboard?utc=${clientTimezone}`
-        );
-        if (res.status === 200) {
-          setIsConfigured(true);
-          setDashboard({
-            chartData: res?.data?.chartData,
-            pendingBalance: res?.data?.pendingBalance,
-            recentPayments: res?.data?.recentPayments,
-            totalDaily: res?.data?.totalDaily,
-          });
-        }
+        const res: any = await apiCallAuth('get', `/payments/get-dashboard?utc=${clientTimezone}`);
+        setIsConfigured(true);
+        setDashboard({
+          chartData: res?.data?.chartData,
+          pendingBalance: res?.data?.pendingBalance,
+          recentPayments: res?.data?.recentPayments,
+          totalDaily: res?.data?.totalDaily,
+        });
       } catch (err) {
-        console.log(err);
+        handleApiError(err);
       }
       setIsLoading(false);
     };
@@ -54,8 +48,8 @@ const Dashboard = () => {
           <Paper
             sx={{
               p: 2,
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               height: 240,
             }}
           >
@@ -67,8 +61,8 @@ const Dashboard = () => {
           <Paper
             sx={{
               p: 2,
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               height: 240,
             }}
           >
@@ -78,25 +72,23 @@ const Dashboard = () => {
             </Box>
             <Typography variant="h5">Pending</Typography>
             <Box>
-              <Typography variant="h6">
-                {dashboard.pendingBalance / 10 ** 6} USDT
-              </Typography>
+              <Typography variant="h6">{dashboard.pendingBalance / 10 ** 6} USDT</Typography>
             </Box>
-            <Button variant="contained" onClick={() => navigate("/payouts")}>
+            <Button variant="contained" onClick={() => navigate('/payouts')}>
               Claim
             </Button>
           </Paper>
         </Grid>
         {/* Recent Payments */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h5" sx={{ mb: 2 }}>
               Recent Payments
             </Typography>
             <PaymentsTable rows={dashboard.recentPayments} hideFooter={true} />
 
             <Box sx={{ mt: 2 }}>
-              <Button variant="contained" onClick={() => navigate("/payments")}>
+              <Button variant="contained" onClick={() => navigate('/payments')}>
                 View All
               </Button>
             </Box>

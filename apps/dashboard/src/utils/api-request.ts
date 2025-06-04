@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 class ApiCallError extends Error {
   public responseStatus: number;
@@ -10,15 +10,15 @@ class ApiCallError extends Error {
 }
 
 export const apiCallAuth = async <T>(
-  method: "get" | "post" | "put" | "patch" | "delete",
+  method: 'get' | 'post' | 'put' | 'patch' | 'delete',
   subUrl: string,
   data: any = null
-): Promise<AxiosResponse<T> | undefined> => {
+): Promise<AxiosResponse<T>> => {
   const apiUrl = process.env.REACT_APP_API_URL;
-  const token = localStorage.getItem("JWT");
+  const token = localStorage.getItem('JWT');
 
   try {
-    if (!token) throw new ApiCallError("JWT Token does not exist", 401);
+    if (!token) throw new ApiCallError('JWT Token does not exist', 401);
 
     const headers = {
       Authorization: token,
@@ -34,17 +34,38 @@ export const apiCallAuth = async <T>(
     const res = await axios(config);
     return res;
   } catch (err: any) {
-    if (
-      err instanceof ApiCallError ||
-      (err.response && err.response.status === 401)
-    ) {
-      // Token expired or unauthorized, redirect to login page
-      window.location.href = "/login";
-    } else {
+    if (axios.isAxiosError(err)) {
+      if (err.response?.status === 401) {
+        window.location.href = '/login';
+      }
+
       throw err;
     }
+
+    throw new Error('Unexpected error during API call: ' + err?.message);
   }
-  return undefined;
+};
+
+export const handleApiError = (error: unknown) => {
+  const GENERIC_ERROR_MESSAGE = 'An unknown error occured';
+  console.error(error);
+  if (axios.isAxiosError(error)) {
+    if (error.code === AxiosError.ERR_NETWORK) {
+      return {
+        status: 500,
+        message: 'Server Network Error',
+      };
+    }
+
+    return {
+      status: error.status,
+      message: error.response?.data?.error || GENERIC_ERROR_MESSAGE,
+    };
+  }
+  return {
+    status: 400,
+    message: GENERIC_ERROR_MESSAGE,
+  };
 };
 
 /*

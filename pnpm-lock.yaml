@@ -81,12 +81,6 @@ importers:
       axios:
         specifier: ^1.4.0
         version: 1.9.0
-      components:
-        specifier: workspace:*
-        version: link:../../packages/components
-      core:
-        specifier: workspace:*
-        version: link:../../packages/core
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
@@ -163,12 +157,6 @@ importers:
       chai-as-promised:
         specifier: ^7.1.1
         version: 7.1.2(chai@4.5.0)
-      components:
-        specifier: workspace:*
-        version: link:../../packages/components
-      core:
-        specifier: workspace:*
-        version: link:../../packages/core
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
@@ -236,9 +224,6 @@ importers:
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
-      core:
-        specifier: workspace:*
-        version: link:../../packages/core
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -286,11 +271,7 @@ importers:
         specifier: ^10.9.1
         version: 10.9.2(@types/node@16.18.126)(typescript@5.8.3)
 
-  packages/components:
-    dependencies:
-      core:
-        specifier: workspace:*
-        version: link:../core
+  packages/components: {}
 
   packages/core: {}
 

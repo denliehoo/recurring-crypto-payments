@@ -1,15 +1,15 @@
-import "./App.css";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/dashboard/Dashboard";
+import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Dashboard from './pages/dashboard';
 
-import Login from "./pages/login/Login";
-import Layout from "./components/layout/Layout";
-import Payments from "./pages/payments/Payments";
-import Customers from "./pages/customers/Customers";
-import Integrations from "./pages/integrations/Integrations";
-import Payouts from "./pages/payouts/Payouts";
-import VerifyEmail from "./pages/verifyEmail/VerifyEmail";
-import NotFound from "./pages/notFound/NotFound";
+import Login from './pages/login';
+import Layout from './components/layout/Layout';
+import Payments from './pages/payments';
+import Customers from './pages/customers';
+import Integrations from './pages/integrations/Integrations';
+import Payouts from './pages/payouts';
+import VerifyEmail from './pages/verify-email';
+import NotFound from './pages/not-found';
 
 function App() {
   return (

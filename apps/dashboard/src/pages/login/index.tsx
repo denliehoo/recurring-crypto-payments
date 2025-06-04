@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Button, Grid, Typography, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { apiCallAuth } from "../../utils/apiRequest";
-import { useDispatch } from "react-redux";
-import { addVendorDetails } from "../../slices/vendorDetailsSlice";
-import CentrePage from "../../components/UI/CentrePage";
-import CustomButton from "@components/button";
+import { useState } from 'react';
+import { TextField, Grid, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { apiCallAuth, handleApiError } from '../../utils/api-request';
+
+import CentrePage from '../../components/UI/CentrePage';
+import CustomButton from '@components/button';
+import { useAppDispatch } from '@dashboard/store';
+import { addVendorDetails } from '@dashboard/slices/vendorDetailsSlice';
 
 function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [regLogButtonLoading, setRegLogButtonLoading] = useState(false);
   const [resendButtonLoading, setResendButtonLoading] = useState(false);
 
@@ -21,24 +22,24 @@ function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleUsernameChange = (event: any) => {
     setUsername(event.target.value);
-    setError("");
-    setFieldErrors({ ...fieldErrors, email: "" });
+    setError('');
+    setFieldErrors({ ...fieldErrors, email: '' });
   };
 
   const handlePasswordChange = (event: any) => {
     setPassword(event.target.value);
-    setError("");
-    setFieldErrors({ ...fieldErrors, password: "" });
+    setError('');
+    setFieldErrors({ ...fieldErrors, password: '' });
   };
 
   const toggleLoginRegister = () => {
     setIsLogin(!isLogin);
-    setError("");
-    setFieldErrors({ password: "", email: "" });
+    setError('');
+    setFieldErrors({ password: '', email: '' });
   };
 
   const handleResendVerification = async () => {
@@ -49,7 +50,7 @@ function Login() {
       });
 
       setVerificationSent(true);
-      setError("");
+      setError('');
     } catch (err) {
       console.log(err);
     }
@@ -57,10 +58,9 @@ function Login() {
   };
 
   const setVendorDetails = async () => {
-    const res: any = await apiCallAuth("get", "/vendors/getVendorByToken");
+    const res: any = await apiCallAuth('get', '/vendors/getVendorByToken');
 
-    const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } =
-      res.data;
+    const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } = res.data;
     dispatch(
       addVendorDetails({
         name,
@@ -87,18 +87,17 @@ function Login() {
 
         // Redirect to dashboard upon successful login
         if (res.status === 200) {
-          localStorage.setItem("JWT", res.data.token);
+          localStorage.setItem('JWT', res.data.token);
           await setVendorDetails();
-          navigate("/dashboard");
+          navigate('/dashboard');
         }
-      } catch (error: any) {
-        console.log(error);
-        setError(error.response.data.error);
+      } catch (err) {
+        const { message } = handleApiError(err);
+        setError(message);
       }
     } else {
       // register and login
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
       const validPassword = passwordRegex.test(password);
@@ -108,18 +107,17 @@ function Login() {
         setFieldErrors({
           ...fieldErrors,
           password:
-            "Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character",
+            'Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character',
         });
 
-      if (!validEmail)
-        setFieldErrors({ ...fieldErrors, email: "Enter a valid email" });
+      if (!validEmail) setFieldErrors({ ...fieldErrors, email: 'Enter a valid email' });
 
       if (!validEmail || !validPassword) {
         setFieldErrors({
-          email: validEmail ? "" : "Enter a valid email",
+          email: validEmail ? '' : 'Enter a valid email',
           password: validPassword
-            ? ""
-            : "Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character",
+            ? ''
+            : 'Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character',
         });
         return;
       }
@@ -141,9 +139,8 @@ function Login() {
 
   return (
     <CentrePage>
-      {/* TODO: Remove the test */}
       <Typography variant="h4">RecurCrypt</Typography>
-      <Typography variant="h5">{isLogin ? "Login" : "Register"}</Typography>
+      <Typography variant="h5">{isLogin ? 'Login' : 'Register'}</Typography>
 
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -173,14 +170,14 @@ function Login() {
           </Grid>
           {error && (
             <Grid item xs={12}>
-              <Typography sx={{ ml: 2, color: "red" }}>{error}</Typography>
+              <Typography sx={{ ml: 2, color: 'red' }}>{error}</Typography>
             </Grid>
           )}
           {verificationSent && (
             <Grid item xs={12}>
               <Typography sx={{ ml: 2 }}>
-                A verification link has been sent to your email. Please click on
-                it to verify your email
+                A verification link has been sent to your email. Please click on it to verify your
+                email
               </Typography>
             </Grid>
           )}
@@ -192,21 +189,21 @@ function Login() {
               color="primary"
               fullWidth
               loading={regLogButtonLoading}
-              text={isLogin ? "Login" : "Register"}
+              text={isLogin ? 'Login' : 'Register'}
             />
           </Grid>
         </Grid>
       </form>
       {/*  */}
-      <Box sx={{ width: "100%", mt: 2 }}>
+      <Box sx={{ width: '100%', mt: 2 }}>
         <CustomButton
           variant="outlined"
           color="primary"
           fullWidth
           onClick={toggleLoginRegister}
-          text={isLogin ? "Change To Register" : "Change To Login"}
+          text={isLogin ? 'Change To Register' : 'Change To Login'}
         />
-        {error === "Email Unverified" && (
+        {error === 'Email Unverified' && (
           <CustomButton
             sx={{ mt: 2 }}
             fullWidth

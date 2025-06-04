@@ -9,8 +9,6 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.38",
-    "core": "workspace:*",
-    "components": "workspace:*",
     "axios": "^1.4.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",

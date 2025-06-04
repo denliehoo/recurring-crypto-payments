@@ -1,13 +1,8 @@
-import { BillingInfo, Invoice, PaymentMethod } from "@core/types";
-import mongoose, { Schema, Document } from "mongoose";
+import { VendorClient } from '@core/types';
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IVendorClient extends Document {
+export interface IVendorClient extends Omit<VendorClient, 'vendor' | '_id'>, Document {
   vendor: mongoose.Types.ObjectId; // Reference to the Vendor model
-  billingInfo: BillingInfo | null;
-  paymentMethod: PaymentMethod | null;
-  nextDate: Date | null;
-  invoices: Invoice[];
-  status: "inactive" | "active" | "cancelled" | "ended";
 }
 /*
   inactive: user has never subscribed before
@@ -19,7 +14,7 @@ export interface IVendorClient extends Document {
 
 const vendorClientSchema: Schema = new Schema(
   {
-    vendor: { type: Schema.Types.ObjectId, ref: "Vendor", required: true },
+    vendor: { type: Schema.Types.ObjectId, ref: 'Vendor', required: true },
     billingInfo: {
       name: { type: String },
       address: { type: String },
@@ -45,14 +40,11 @@ const vendorClientSchema: Schema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["inactive", "active", "cancelled", "ended"],
-      default: "inactive",
+      enum: ['inactive', 'active', 'cancelled', 'ended'],
+      default: 'inactive',
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IVendorClient>(
-  "VendorClient",
-  vendorClientSchema
-);
+export default mongoose.model<IVendorClient>('VendorClient', vendorClientSchema);
