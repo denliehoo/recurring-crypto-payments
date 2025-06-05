@@ -40,13 +40,13 @@ This app follows a **monorepo** structure:
 apps/
   dashboard     # Client dashboard page
   checkout      # Client checkout page
-  bff           # GraphQL layer for frontend to call server (certain APIs)
+  bff           # TODO: GraphQL layer for frontend to call server (certain APIs)
   server        # Backend server
 
 packages/
   components    # Frontend UI components
-  core          # Shared logic among all apps and packages
-  client-core   # Shared logic specifically for client only (e.g. client state, etc)
+  configs       # Shared application configs
+  core          # Shared code among all apps and packages (e.g. types, utils)
 ```
 
 - **apps/**: Contains all application entry points (frontend and backend).
@@ -58,8 +58,8 @@ packages/
 
 - **packages/**: Contains shared code and libraries.
   - **components**: Reusable frontend UI components.
-  - **core**: Logic and utilities shared across all apps and packages.
-  - **client-core**: Logic shared only among client-facing apps.
+  - **configs**: Shared application configs
+  - **core**: Logic, types and utilities shared across all apps and packages.
 
 This structure helps organize code for scalability and code sharing across multiple applications.
 
@@ -72,7 +72,7 @@ This project requires the following dependencies:
 - node: Project uses node 22.14.0
 - nodemon
   - `npm install -g nodemon`
-- Mongodb (Instructions TBC)
+- Mongodb (TODO: Instructions)
 
 To install: `pnpm install`
 
