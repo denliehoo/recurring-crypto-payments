@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { apiCallAuth, handleApiError } from '../../utils/api-request';
+import { apiCallAuth } from '../../api/api-request';
 import PaymentsTable from '../../components/shared/PaymentsTable';
 import { ScheduledPayment } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
+import { handleApiError } from '@core/utils';
 
 const Payments = () => {
   const [rows, setRows] = useState<ScheduledPayment[]>([]);

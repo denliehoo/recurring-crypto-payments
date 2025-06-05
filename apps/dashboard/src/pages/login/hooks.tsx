@@ -1,8 +1,8 @@
 import { Vendor } from '@core/types';
-import { PASSWORD_REGEX, EMAIL_REGEX } from '@core/utils';
+import { PASSWORD_REGEX, EMAIL_REGEX, handleApiError } from '@core/utils';
 import { addVendorDetails } from '@dashboard/slices/vendorDetailsSlice';
 import { useAppDispatch } from '@dashboard/store';
-import { handleApiError, apiCallAuth } from '@dashboard/utils/api-request';
+import { apiCallAuth } from '@dashboard/api/api-request';
 import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';

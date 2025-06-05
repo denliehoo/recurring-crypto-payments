@@ -6,7 +6,7 @@ import CustomButton from '@components/button';
 import CustomModal from '@components/modal';
 import { validateForm } from '@core/utils/form';
 import { Vendor } from '@core/types';
-import { apiCallAuth } from '@dashboard/utils/api-request';
+import { apiCallAuth } from '@dashboard/api/api-request';
 
 interface IEditConfigurationsModal {
   editModalOpen: boolean;

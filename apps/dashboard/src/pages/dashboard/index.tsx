@@ -7,9 +7,10 @@ import DashboardLineChart from './components/dashboard-line-chart';
 import { Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
+import { apiCallAuth } from '@dashboard/api/api-request';
 import { DashboardApiResponse } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
+import { handleApiError } from '@core/utils';
 
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(undefined);

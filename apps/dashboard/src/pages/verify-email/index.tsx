@@ -3,8 +3,8 @@ import CentrePage from '../../components/UI/CentrePage';
 import { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import axios from 'axios';
-import { handleApiError } from '@dashboard/utils/api-request';
 import LoadingOverlay from '@components/loading-overlay';
+import { handleApiError } from '@core/utils';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();

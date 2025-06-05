@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderStatus } from '../../utils/renderTableCell';
 import { VendorClient } from '@core/types/VendorClient';
-import { apiCallAuth } from '@dashboard/utils/api-request';
+import { apiCallAuth } from '@dashboard/api/api-request';
 import PageLayout from '@dashboard/components/layout/page-layout';
 
 const columns: GridColDef<VendorClient>[] = [

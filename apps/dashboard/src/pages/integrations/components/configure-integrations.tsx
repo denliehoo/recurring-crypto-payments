@@ -1,4 +1,4 @@
-import { apiCallAuth } from '../../../utils/api-request';
+import { apiCallAuth } from '../../../api/api-request';
 import { FC, useState } from 'react';
 
 import { Box, Button, Typography, Stepper, Step, StepLabel } from '@mui/material';

@@ -1,5 +1,5 @@
-import { connectWallet } from '@core/utils';
-import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
+import { connectWallet, handleApiError } from '@core/utils';
+import { apiCallAuth } from '@dashboard/api/api-request';
 import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
 import { Vendor } from '@core/types';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { apiCallAuth } from '../../utils/api-request';
+import { apiCallAuth } from '../../api/api-request';
 
 import ConfigureIntegrations from './components/configure-integrations';
 import ConfiguredIntergrations from './components/configured-integrations';
