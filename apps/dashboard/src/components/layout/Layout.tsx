@@ -1,28 +1,25 @@
 // import classes from "./Dashboard.module.css";
 
-import { useEffect, useState } from "react";
-import { styled } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import MuiDrawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Badge from "@mui/material/Badge";
-import Container from "@mui/material/Container";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useLocation } from "react-router-dom";
-import SideBar from "./SideBar";
-import DropDownMenu from "../UI/DropDownMenu";
-import IconAndText from "../UI/IconAndText";
+import { useState } from 'react';
+import { styled } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import MuiDrawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Container from '@mui/material/Container';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { useLocation } from 'react-router-dom';
+import SideBar from './SideBar';
+import DropDownMenu from '../UI/DropDownMenu';
+import IconAndText from '../UI/IconAndText';
 
 const Layout = (props: any) => {
   const { pathname } = useLocation();
@@ -34,9 +31,9 @@ const Layout = (props: any) => {
 
   const shouldUseLayout = () => {
     if (
-      pathname === "/login" ||
-      pathname.includes("/verify-email") ||
-      pathname === "/page-not-found"
+      pathname === '/login' ||
+      pathname.includes('/verify-email') ||
+      pathname === '/page-not-found'
     ) {
       return false;
     } else {
@@ -49,12 +46,12 @@ const Layout = (props: any) => {
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="absolute" open={open}>
         <Toolbar
           sx={{
-            pr: "24px", // keep right padding when drawer closed
+            pr: '24px', // keep right padding when drawer closed
           }}
         >
           <IconButton
@@ -63,19 +60,13 @@ const Layout = (props: any) => {
             aria-label="open drawer"
             onClick={toggleDrawer}
             sx={{
-              marginRight: "36px",
-              ...(open && { display: "none" }),
+              marginRight: '36px',
+              ...(open && { display: 'none' }),
             }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            sx={{ flexGrow: 1 }}
-          >
+          <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             RecurCrypt
           </Typography>
 
@@ -95,8 +86,8 @@ const Layout = (props: any) => {
               {
                 item: <IconAndText icon={<LogoutIcon />} text="Logout" />,
                 onClick: () => {
-                  localStorage.removeItem("JWT");
-                  window.location.href = "/login";
+                  localStorage.removeItem('JWT');
+                  window.location.href = '/login';
                 },
               },
             ]}
@@ -106,9 +97,9 @@ const Layout = (props: any) => {
       <Drawer variant="permanent" open={open}>
         <Toolbar
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
             px: [1],
           }}
         >
@@ -125,12 +116,10 @@ const Layout = (props: any) => {
         component="main"
         sx={{
           backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
+            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
           flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
+          height: '100vh',
+          overflow: 'auto',
         }}
       >
         <Toolbar />
@@ -152,17 +141,17 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
+  transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -170,25 +159,25 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
-  "& .MuiDrawer-paper": {
-    position: "relative",
-    whiteSpace: "nowrap",
+  '& .MuiDrawer-paper': {
+    position: 'relative',
+    whiteSpace: 'nowrap',
     width: drawerWidth,
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    boxSizing: "border-box",
+    boxSizing: 'border-box',
     ...(!open && {
-      overflowX: "hidden",
-      transition: theme.transitions.create("width", {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
-      [theme.breakpoints.up("sm")]: {
+      [theme.breakpoints.up('sm')]: {
         width: theme.spacing(9),
       },
     }),

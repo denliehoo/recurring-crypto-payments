@@ -1,12 +1,6 @@
-import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import {
-  atomOneDark,
-  tomorrowNight,
-  atomOneLight,
-} from "react-syntax-highlighter/dist/esm/styles/hljs";
-import CodeBlock from "./CodeBlock";
+import { Typography } from '@mui/material';
+import { Box } from '@mui/system';
+import CodeBlock from './code-block';
 
 const IntegrationInstructions = () => {
   const createVendorClient = `
@@ -108,25 +102,25 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
     <Box>
       <Typography variant="h5">Integration in 3 Easy steps</Typography>
       <Typography>
-        Example Project Integration at:{" "}
+        Example Project Integration at:{' '}
         <a href="https://github.com/denliehoo/project-tracker/tree/reucrcrypt-crypto-as-billing">
           https://github.com/denliehoo/project-tracker/tree/reucrcrypt-crypto-as-billing
-        </a>{" "}
+        </a>{' '}
       </Typography>
       <Typography>
-        Customer Creation Example:{" "}
+        Customer Creation Example:{' '}
         <a href="https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/server/controllers/user/index.js">
           https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/server/controllers/user/index.js
         </a>
       </Typography>
       <Typography>
-        Customer Subscription Session Example:{" "}
+        Customer Subscription Session Example:{' '}
         <a href="https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/client/src/pages/billing/Billing.js">
           https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/client/src/pages/billing/Billing.js
         </a>
       </Typography>
       <Typography>
-        Listening To Webhooks Example:{" "}
+        Listening To Webhooks Example:{' '}
         <a href="https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/server/controllers/payments/index.js">
           https://github.com/denliehoo/project-tracker/blob/reucrcrypt-crypto-as-billing/server/controllers/payments/index.js
         </a>
@@ -135,31 +129,28 @@ app.post(YOUR_CONFIGURED_WEBHOOK_URL, async(req, res) => {
       <Box>
         <Typography variant="h6">1. Customer Creation</Typography>
         <Typography>
-          During, customer creation, create a vendor client and save it to your
-          database. This can be done by making an API call to
-          apiUrl/vendorClients/create/:id where id refers to your RecurCrypt ID
+          During, customer creation, create a vendor client and save it to your database. This can
+          be done by making an API call to apiUrl/vendorClients/create/:id where id refers to your
+          RecurCrypt ID
         </Typography>
         <CodeBlock code={createVendorClient} />
       </Box>
       <Box>
-        <Typography variant="h6">
-          2. Set Up Customer Subscription Session
-        </Typography>
+        <Typography variant="h6">2. Set Up Customer Subscription Session</Typography>
         <Typography>
-          Next, make a post request to apiUrl/externalPage/manage-subscription
-          along with your RecurCrypt ID and the client's ID. The api will return
-          a URL of which you should redirect your users to. At that redirected
-          page, users can manage their subscription
+          Next, make a post request to apiUrl/externalPage/manage-subscription along with your
+          RecurCrypt ID and the client's ID. The api will return a URL of which you should redirect
+          your users to. At that redirected page, users can manage their subscription
         </Typography>
         <CodeBlock code={subscriptionSession} />
       </Box>
       <Box>
         <Typography variant="h6">3. Listen to webhook events </Typography>
         <Typography>
-          Next, you will have to configure your server to listen to webhook
-          events. Such events includes: initiation of subscription, cancellation
-          of subscription, renewal of subscription, end of subscription, client
-          failed payments, client successful payments, etc..
+          Next, you will have to configure your server to listen to webhook events. Such events
+          includes: initiation of subscription, cancellation of subscription, renewal of
+          subscription, end of subscription, client failed payments, client successful payments,
+          etc..
         </Typography>
         <CodeBlock code={listenToWebHook} />
       </Box>

@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { apiCallAuth } from '../../utils/api-request';
 
 import { Box } from '@mui/material';
-import ConfigureIntegrations from './components/ConfigureIntegrations';
-import ConfiguredIntergrations from './components/ConfiguredIntegrations';
+import ConfigureIntegrations from './components/configure-integrations';
+import ConfiguredIntergrations from './components/configured-integrations';
 import { Vendor } from '@core/types';
 
 const Integrations = () => {
@@ -45,29 +45,25 @@ const Integrations = () => {
     };
     getVendorDetails();
   }, [refreshData]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (vendor && vendor.plan) {
+    return (
+      <ConfiguredIntergrations
+        vendorId={vendorId}
+        vendor={vendor}
+        refreshData={() => setRefreshData(!refreshData)}
+      />
+    );
+  }
+
+  // Have not configured integrations
+
   return (
-    <Box>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : vendor!.plan ? (
-        // Have configured integrations
-        <Box>
-          <ConfiguredIntergrations
-            vendorId={vendorId}
-            vendor={vendor}
-            refreshData={() => setRefreshData(!refreshData)}
-          />
-        </Box>
-      ) : (
-        // Have not configured integrations
-        <Box>
-          <ConfigureIntegrations
-            vendorId={vendorId}
-            refreshData={() => setRefreshData(!refreshData)}
-          />
-        </Box>
-      )}
-    </Box>
+    <ConfigureIntegrations vendorId={vendorId} refreshData={() => setRefreshData(!refreshData)} />
   );
 };
 

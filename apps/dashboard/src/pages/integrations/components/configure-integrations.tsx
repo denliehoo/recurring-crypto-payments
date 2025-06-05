@@ -1,27 +1,29 @@
 import { apiCallAuth } from '../../../utils/api-request';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 
 import { Box, Button, Typography, Stepper, Step, StepLabel } from '@mui/material';
 import React from 'react';
 import { connectWallet } from '@core/utils/wallet';
 import RecurringPayments from '../../../truffle_abis/RecurringPayments.json';
-import IntegrationFormFields from './IntegrationFormFields';
+import IntegrationFormFields from './integration-form-fields';
 import { addVendorDetails } from '../../../slices/vendorDetailsSlice';
 import CustomButton from '@components/button';
 import { validateForm } from '@core/utils/form';
 import { useAppDispatch } from '@dashboard/store';
+import { IVendorDetails } from './edit-configurations-modal';
 
 interface ConfigureIntegrationsProps {
   vendorId: string;
   refreshData: () => void;
 }
 
-const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({ vendorId, refreshData }) => {
-  const [vendorDetails, setVendorDetails] = useState<any>({});
+const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refreshData }) => {
+  const [vendorDetails, setVendorDetails] = useState<IVendorDetails | undefined>(undefined);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [walletAddress, setWalletAddress] = useState('');
+  // TODO: Typing for contracts
   const [contract, setContract] = useState<any>(null);
   const [addressError, setAddressError] = useState(false);
   const dispatch = useAppDispatch();
@@ -64,9 +66,9 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({ vendorId,
     if (activeStep === 1) {
       if (
         !validateForm(vendorDetails, fieldsTypes, setValidationErrors) ||
-        !vendorDetails.tokenAddress
+        vendorDetails?.tokenAddress
       ) {
-        if (!vendorDetails.tokenAddress) {
+        if (vendorDetails?.tokenAddress) {
           setAddressError(true);
         }
         return;
@@ -76,10 +78,13 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({ vendorId,
     // create contract
     if (activeStep === 2) {
       setButtonLoading(true);
+      if (!vendorDetails) {
+        return;
+      }
       try {
         // create the contract
         const createContract = await contract.methods
-          .createVendorContract(vendorDetails.tokenAddress)
+          .createVendorContract(vendorDetails?.tokenAddress)
           .send({ from: walletAddress })
           .on('transactionHash', (hash: any) => {
             console.log(hash);
@@ -93,19 +98,15 @@ const ConfigureIntegrations: React.FC<ConfigureIntegrationsProps> = ({ vendorId,
           webhookUrl: vendorDetails.webhookUrl,
           returnUrl: vendorDetails.returnUrl,
           tokenAddress: vendorDetails.tokenAddress,
-          amount: Math.ceil(parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6),
+          amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
           plan: vendorDetails.planName,
           vendorContract: vendorContractCreated,
           id: vendorId,
         };
-        const res = await apiCallAuth('put', '/vendors', bodyData);
+        await apiCallAuth('put', '/vendors', bodyData);
 
         dispatch(
           addVendorDetails({
-            name: vendorDetails.name,
-            email: vendorDetails.email,
-            apiKey: vendorDetails.apiKey,
-            plan: vendorDetails.plan,
             vendorContract: vendorContractCreated,
             tokenAddress: vendorDetails.tokenAddress,
             id: vendorId,

@@ -1,19 +1,10 @@
-// import classes from "./RequestPayoutModal.module.css";
-
-import { Box, Button, Modal, Step, StepLabel, Stepper, Typography } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
-import { connectWallet } from '@core/utils/wallet';
-import CustomButton from '@components/button';
+import { connectWallet } from '@core/utils';
+import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
+import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
-import axios from 'axios';
-import { apiCallAuth } from '../../../utils/api-request';
-import CustomModal from '@components/modal';
+import { Vendor } from '@core/types';
 
-const RequestPayoutModal = (props: any) => {
-  const { requestPayoutModal, closeRequestPayoutModal, vendor, owner, refreshData } = props;
-  // get this from props or something; for now leave it as true; if is start plan means they havent added payment method
-  // if its false, means that they want to change payment method
-
+export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   const steps = ['Connect Wallet', 'Check Address', 'Request Payout'];
 
   const [stepsText, setStepsText] = useState([
@@ -84,15 +75,11 @@ const RequestPayoutModal = (props: any) => {
           token: 'USDT', // hard code to USDT for now
           hash: withdraw.transactionHash,
         };
-        const res = await apiCallAuth(
-          'post',
-          `/payments/create-payout/${vendor._id.toString()}`,
-          bodyData
-        );
+        await apiCallAuth('post', `/payments/create-payout/${vendor._id.toString()}`, bodyData);
 
         setButtonLoading(false);
       } catch (err) {
-        console.log(err);
+        handleApiError(err);
         setButtonLoading(false);
       }
     }
@@ -129,71 +116,14 @@ const RequestPayoutModal = (props: any) => {
     };
   }, []);
 
-  return (
-    <CustomModal open={requestPayoutModal} onClose={closeRequestPayoutModal}>
-      <Typography
-        id="modal-modal-title"
-        variant="h6"
-        component="h2"
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          '& > :first-of-type': {
-            marginRight: 'auto',
-          },
-        }}
-      >
-        <span>Start plan</span>
-        <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
-      </Typography>
-      {/* Steps for start plan */}
-      <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: {
-            optional?: React.ReactNode;
-          } = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-
-      {/* Stepper info text */}
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>Your payout has been processed</Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Box sx={{ flex: '1 1 auto' }} />
-            {/* refresh the data in Payout page too */}
-            <Button
-              onClick={() => {
-                closeRequestPayoutModal();
-                refreshData();
-              }}
-            >
-              Close
-            </Button>
-          </Box>
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
-
-          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <CustomButton
-              text={stepsButtonText[activeStep]}
-              onClick={handleNext}
-              loading={buttonLoading}
-              disabled={buttonDisabled}
-            />
-          </Box>
-        </React.Fragment>
-      )}
-    </CustomModal>
-  );
+  return {
+    address,
+    steps,
+    activeStep,
+    stepsText,
+    stepsButtonText,
+    handleNext,
+    buttonDisabled,
+    buttonLoading,
+  };
 };
-
-export default RequestPayoutModal;

@@ -1,14 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { Payout } from '@core/types';
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IPayout extends Document {
-  payoutDate: Date;
-  amount: number;
-  tokenAddress: string;
-  userAddress: string;
-  token: string;
-  hash: string;
-  vendorId: mongoose.Types.ObjectId;
-}
+export interface IPayout extends Document, Omit<Payout, 'vendorId' | '_id'> {}
 
 export const payoutSchema: Schema = new Schema(
   {
@@ -23,4 +16,4 @@ export const payoutSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IPayout>("Payout", payoutSchema);
+export default mongoose.model<IPayout>('Payout', payoutSchema);

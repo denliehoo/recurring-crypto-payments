@@ -1,16 +1,11 @@
-import React from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
-} from "@mui/material";
-import CustomFormFields from "@components/form-field";
+import React, { FC } from 'react';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import CustomFormFields from '@components/form-field';
+import { IVendorDetails } from './edit-configurations-modal';
 
 interface IntegrationFormFieldsProps {
-  vendorDetails: any;
-  setVendorDetails: React.Dispatch<React.SetStateAction<any>>;
+  vendorDetails: IVendorDetails | undefined;
+  setVendorDetails: React.Dispatch<React.SetStateAction<IVendorDetails | undefined>>;
   validationErrors: any;
   setValidationErrors: React.Dispatch<React.SetStateAction<any>>;
   fieldsTypes: any;
@@ -18,7 +13,8 @@ interface IntegrationFormFieldsProps {
   setAddressError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const IntegrationFormFields: React.FC<IntegrationFormFieldsProps> = ({
+// TODO: Proper typing
+const IntegrationFormFields: FC<IntegrationFormFieldsProps> = ({
   vendorDetails,
   setVendorDetails,
   validationErrors,
@@ -28,32 +24,28 @@ const IntegrationFormFields: React.FC<IntegrationFormFieldsProps> = ({
   setAddressError,
 }) => {
   return (
-    <React.Fragment>
-      {/* token address field */}
+    <>
       <FormControl fullWidth sx={{ mb: 2 }} error={addressError}>
         <InputLabel>Token Address</InputLabel>
         <Select
-          value={vendorDetails.tokenAddress || ""}
+          value={vendorDetails?.tokenAddress || ''}
           label="Token Address"
           onChange={(e) => {
             setVendorDetails({
               ...vendorDetails,
+              monthlySubscriptionPrice: vendorDetails?.monthlySubscriptionPrice ?? '',
               tokenAddress: e.target.value,
             });
             setAddressError(false);
           }}
         >
-          <MenuItem value={"0xc9606fea595ed3a94b4c8548ca0c2252c7856e89"}>
-            USDT (Sepolia)
-          </MenuItem>
+          <MenuItem value={'0xc9606fea595ed3a94b4c8548ca0c2252c7856e89'}>USDT (Sepolia)</MenuItem>
           {/*
           <MenuItem value={20}>Twenty</MenuItem>
           <MenuItem value={30}>Thirty</MenuItem> 
           */}
         </Select>
-        {addressError && (
-          <FormHelperText>Token Address field cannot be empty</FormHelperText>
-        )}
+        {addressError && <FormHelperText>Token Address field cannot be empty</FormHelperText>}
       </FormControl>
       {/* other fields */}
       <CustomFormFields
@@ -63,7 +55,7 @@ const IntegrationFormFields: React.FC<IntegrationFormFieldsProps> = ({
         setValidationErrors={setValidationErrors}
         fieldsTypes={fieldsTypes}
       />
-    </React.Fragment>
+    </>
   );
 };
 

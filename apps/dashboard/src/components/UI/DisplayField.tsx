@@ -1,26 +1,21 @@
-import React, { useState } from "react";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
-import Tooltip from "@mui/material/Tooltip";
-import { SxProps } from "@mui/material";
+import React, { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
+import Tooltip from '@mui/material/Tooltip';
+import { SxProps } from '@mui/material';
 
 interface DisplayFieldProps {
   label: string;
-  text: string;
+  text: string | undefined;
   hideOption: boolean;
   sx?: SxProps;
 }
 
-const DisplayField: React.FC<DisplayFieldProps> = ({
-  label,
-  text,
-  hideOption,
-  sx,
-}) => {
+const DisplayField: React.FC<DisplayFieldProps> = ({ label, text = '', hideOption, sx }) => {
   const [showKeys, setShowKeys] = useState(!hideOption); // Show the keys by default if hideOption is false
   const [isCopied, setIsCopied] = useState(false);
 
@@ -38,7 +33,7 @@ const DisplayField: React.FC<DisplayFieldProps> = ({
         }, 2000);
       },
       (error) => {
-        console.error("Failed to copy text: ", error);
+        console.error('Failed to copy text: ', error);
       }
     );
   };
@@ -46,7 +41,7 @@ const DisplayField: React.FC<DisplayFieldProps> = ({
   return (
     <TextField
       label={label}
-      value={showKeys ? text : "***********************"} // Show text when 'showKeys' is true
+      value={showKeys ? text : '***********************'} // Show text when 'showKeys' is true
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
@@ -57,7 +52,7 @@ const DisplayField: React.FC<DisplayFieldProps> = ({
             )}
             <Tooltip
               open={isCopied} // Show the tooltip when 'isCopied' is true
-              title={"Copied to clipboard!"}
+              title={'Copied to clipboard!'}
               placement="top"
             >
               <IconButton onClick={handleCopyToClipboard}>

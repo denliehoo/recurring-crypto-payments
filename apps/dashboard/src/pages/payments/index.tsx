@@ -1,41 +1,38 @@
 import { useEffect, useState } from 'react';
-import { apiCallAuth } from '../../utils/api-request';
+import { apiCallAuth, handleApiError } from '../../utils/api-request';
 import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
 import PaymentsTable from '../../components/shared/PaymentsTable';
 import { useAppSelector } from '@dashboard/store';
+import { ScheduledPayment } from '@core/types';
 
 const Payments = () => {
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<ScheduledPayment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const vendorDetails = useAppSelector((state) => state.vendorDetails);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const res: any = await apiCallAuth('get', `/payments/get-all-payments`);
+        const { data } = await apiCallAuth<ScheduledPayment[]>('get', `/payments/get-all-payments`);
 
-        setRows(res.data);
+        setRows(data);
         setIsLoading(false);
       } catch (err) {
-        console.log(err);
+        handleApiError(err);
         setIsLoading(false);
       }
     };
     getData();
   }, []);
-  return (
-    <div>
-      {isLoading ? (
-        <div>Loading....</div>
-      ) : !vendorDetails.vendorContract ? (
-        <ConfigureIntegrationsFirst />
-      ) : (
-        <div>
-          <PaymentsTable rows={rows} />
-        </div>
-      )}
-    </div>
-  );
+
+  if (isLoading) {
+    return <div>Loading....</div>;
+  }
+  if (!vendorDetails.vendorContract) {
+    return <ConfigureIntegrationsFirst />;
+  }
+
+  return <PaymentsTable rows={rows} />;
 };
 
 export default Payments;

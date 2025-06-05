@@ -1,33 +1,29 @@
-import { Request, Response } from "express";
-import {
-  findVendorByEmail,
-  findVendorById,
-  findVendorClientById,
-} from "../utility/findFromDb";
-import models from "../models";
-const Web3 = require("web3");
-import RecurringPaymentsVendor from "../contractABIs/RecurringPaymentsVendor.json";
-import { CustomRequest } from "../types/requests";
-import { IScheduledPayment } from "../models/scheduledPayment";
-import { ICompletedPayment } from "../models/completedPayment";
-import { IPayout } from "../models/payout";
-const jwt = require("jsonwebtoken");
-import moment from "moment";
+import { Request, Response } from 'express';
+import { findVendorByEmail, findVendorById, findVendorClientById } from '../utility/findFromDb';
+import models from '../models';
+const Web3 = require('web3');
+import RecurringPaymentsVendor from '../contractABIs/RecurringPaymentsVendor.json';
+import { CustomRequest } from '../types/requests';
+import { IScheduledPayment } from '../models/scheduledPayment';
+import { ICompletedPayment } from '../models/completedPayment';
+import { IPayout } from '../models/payout';
+const jwt = require('jsonwebtoken');
+import moment from 'moment';
 import {
   isAllowanceAndBalanceSufficient,
   sendReduceUserBalanceTransactionasync,
-} from "../utility/interactWithBlockchain";
+} from '../utility/interactWithBlockchain';
 import {
   addCompletedPayment,
   addScheduledPayment,
   deleteScheduledPayment,
-} from "../utility/payments";
-import { sendWebHook } from "../utility/sendWebhook";
-import { IPendingEndSubscription } from "../models/pendingEndSubscription";
-import { deletePendingEndSubscription } from "../utility/pendingEndSubscription";
+} from '../utility/payments';
+import { sendWebHook } from '../utility/sendWebhook';
+import { IPendingEndSubscription } from '../models/pendingEndSubscription';
+import { deletePendingEndSubscription } from '../utility/pendingEndSubscription';
+import { DashboardChartData } from '@core/types';
 
-const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } =
-  models;
+const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } = models;
 
 // change payment method of client
 
@@ -36,10 +32,9 @@ export const cronApi = async (req: Request, res: Response) => {
   const auth = req.headers.authorization;
   const cronApiKey = process.env.CRON_API_KEY;
 
-  console.log("CRON API Called");
+  console.log('CRON API Called');
 
-  if (auth !== cronApiKey)
-    return res.status(401).json({ error: "You are unauthorized" });
+  if (auth !== cronApiKey) return res.status(401).json({ error: 'You are unauthorized' });
   // Get the date 60 minutes into the future
   const futureDate = new Date(new Date().getTime() + 60 * 60000);
   // filter to see all the scheduled payments that are due in less than 60 mins
@@ -75,13 +70,12 @@ export const cronApi = async (req: Request, res: Response) => {
 
       if (!v || !c) continue;
 
-      const [sufficientAllowance, sufficientBalance] =
-        await isAllowanceAndBalanceSufficient(
-          p.userAddress,
-          p.tokenAddress,
-          p.vendorContract,
-          p.amount
-        );
+      const [sufficientAllowance, sufficientBalance] = await isAllowanceAndBalanceSufficient(
+        p.userAddress,
+        p.tokenAddress,
+        p.vendorContract,
+        p.amount
+      );
 
       if (sufficientAllowance && sufficientBalance) {
         // only if successful, change isSuccessful to true
@@ -96,17 +90,15 @@ export const cronApi = async (req: Request, res: Response) => {
           // need to work more on errorhandling here
           // "move" the data to completedPayments with status "paid"
           const currentDate = new Date();
-          const nextDate = moment().add(1, "months").toDate();
+          const nextDate = moment().add(1, 'months').toDate();
 
           const newCompletedPayment: ICompletedPayment = new CompletedPayment({
             ...paymentDetails,
             paymentDate: currentDate,
-            status: "paid",
+            status: 'paid',
             hash: transactionHash,
           });
-          const isCompletedPaymentAdded = await addCompletedPayment(
-            newCompletedPayment
-          );
+          const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
           if (!isCompletedPaymentAdded) continue;
 
           // delete the data for that in scheduledPayment
@@ -118,16 +110,14 @@ export const cronApi = async (req: Request, res: Response) => {
             ...paymentDetails,
             paymentDate: nextDate,
           });
-          const isNewScheduledPaymentAdded = await addScheduledPayment(
-            newScheduledPayment
-          );
+          const isNewScheduledPaymentAdded = await addScheduledPayment(newScheduledPayment);
           if (!isNewScheduledPaymentAdded) continue;
 
           // Send a webhook to vendor that it is paid
           const subscriptionContinuedWebhook = await sendWebHook(
             v.apiKey!,
             v.webhookUrl!,
-            "SUBSCRIPTION_CONTINUED",
+            'SUBSCRIPTION_CONTINUED',
             {
               vendorId: v._id,
               vendorClientId: c._id,
@@ -138,7 +128,7 @@ export const cronApi = async (req: Request, res: Response) => {
           const successfulPaymentWebhook = await sendWebHook(
             v.apiKey!,
             v.webhookUrl!,
-            "SUCCESSFUL_PAYMENT",
+            'SUCCESSFUL_PAYMENT',
             {
               ...paymentDetails,
               paymentDate: currentDate,
@@ -146,27 +136,24 @@ export const cronApi = async (req: Request, res: Response) => {
             }
           );
 
-          if (!subscriptionContinuedWebhook || !successfulPaymentWebhook)
-            continue;
+          if (!subscriptionContinuedWebhook || !successfulPaymentWebhook) continue;
         }
       }
       if (!isSuccessful) {
         let remarks: string | null = null;
-        if (!sufficientAllowance) remarks = "Insufficient Allowance";
-        if (!sufficientBalance) remarks = "Insufficient Balance";
+        if (!sufficientAllowance) remarks = 'Insufficient Allowance';
+        if (!sufficientBalance) remarks = 'Insufficient Balance';
         if (!sufficientAllowance && !sufficientBalance)
-          remarks = "Insufficient Allowance & Balance";
+          remarks = 'Insufficient Allowance & Balance';
 
         // "move" the data to completedPayment with status "failed"
         const newCompletedPayment: ICompletedPayment = new CompletedPayment({
           ...paymentDetails,
           paymentDate: new Date(),
-          status: "failed",
+          status: 'failed',
           remarks: remarks,
         });
-        const isCompletedPaymentAdded = await addCompletedPayment(
-          newCompletedPayment
-        );
+        const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
         if (!isCompletedPaymentAdded) continue;
 
         // delete the data for that in scheduledPayments
@@ -174,11 +161,9 @@ export const cronApi = async (req: Request, res: Response) => {
         if (!isScheduledPaymentDeleted) continue;
 
         // Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
-        let vendorClient = await findVendorClientById(
-          p.vendorClientId.toString()
-        );
+        let vendorClient = await findVendorClientById(p.vendorClientId.toString());
         if (!vendorClient) continue;
-        vendorClient.status = "ended";
+        vendorClient.status = 'ended';
         try {
           vendorClient.save();
         } catch {
@@ -190,19 +175,17 @@ export const cronApi = async (req: Request, res: Response) => {
         const subscriptionCancelledWebhook = await sendWebHook(
           v.apiKey!,
           v.webhookUrl!,
-          "SUBSCRIPTION_ENDED",
+          'SUBSCRIPTION_ENDED',
           {
             vendorId: v._id,
             vendorClientId: c._id,
           }
         );
 
-        const failedPaymentWebhook = await sendWebHook(
-          v.apiKey!,
-          v.webhookUrl!,
-          "FAILED_PAYMENT",
-          { vendorId: v._id, vendorClientId: c._id }
-        );
+        const failedPaymentWebhook = await sendWebHook(v.apiKey!, v.webhookUrl!, 'FAILED_PAYMENT', {
+          vendorId: v._id,
+          vendorClientId: c._id,
+        });
 
         if (!subscriptionCancelledWebhook || !failedPaymentWebhook) continue;
       }
@@ -215,7 +198,7 @@ export const cronApi = async (req: Request, res: Response) => {
       const v = await findVendorById(p.vendorId.toString());
       if (!c || !v) continue;
 
-      c.status = "ended";
+      c.status = 'ended';
       try {
         await c.save();
       } catch {
@@ -228,7 +211,7 @@ export const cronApi = async (req: Request, res: Response) => {
       const subscriptionEndedWebhook = await sendWebHook(
         v.apiKey!,
         v.webhookUrl!,
-        "SUBSCRIPTION_ENDED",
+        'SUBSCRIPTION_ENDED',
         {
           vendorId: p.vendorId.toString(),
           vendorClientId: p.vendorClientId.toString(),
@@ -239,9 +222,9 @@ export const cronApi = async (req: Request, res: Response) => {
     }
   }
 
-  console.log("CRON API Completed");
+  console.log('CRON API Completed');
   // return a successful response
-  return res.send("all done");
+  return res.send('all done');
 };
 
 export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
@@ -256,10 +239,7 @@ export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
     });
 
     const web3 = new Web3(process.env.WEB3_PROVIDER!);
-    const contract = new web3.eth.Contract(
-      RecurringPaymentsVendor.abi,
-      vendor.vendorContract
-    );
+    const contract = new web3.eth.Contract(RecurringPaymentsVendor.abi, vendor.vendorContract);
 
     const balance: string = await contract.methods.balance().call();
     const owner: string = await contract.methods.owner().call();
@@ -272,7 +252,7 @@ export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Failed to get payouts.", error });
+    return res.status(500).json({ message: 'Failed to get payouts.', error });
   }
 };
 
@@ -293,7 +273,7 @@ export const createPayout = async (req: Request, res: Response) => {
     await newPayout.save();
     return res.send(newPayout);
   } catch (error) {
-    return res.status(500).json({ message: "Failed to create payout.", error });
+    return res.status(500).json({ message: 'Failed to create payout.', error });
   }
 };
 export const getAllPayments = async (req: CustomRequest, res: Response) => {
@@ -305,15 +285,12 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
   const results = scheduledPayments
     .map((p) => ({
       ...p.toObject(),
-      status: "pending",
+      status: 'pending',
       remarks: null as string | null,
       hash: null as string | null,
     }))
     .concat(completedPayments)
-    .sort(
-      (a: any, b: any) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
+    .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
   return res.send(results);
 };
@@ -334,21 +311,17 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     amount: number;
   };
 
-  type Amounts = {
-    time: string;
-    amount: number | undefined;
-  };
   const transformData = (data: PaymentData[], timezoneOffset: number) => {
-    let amounts: Amounts[] = [
-      { time: "00:00", amount: 0 },
-      { time: "03:00", amount: 0 },
-      { time: "06:00", amount: 0 },
-      { time: "09:00", amount: 0 },
-      { time: "12:00", amount: 0 },
-      { time: "15:00", amount: 0 },
-      { time: "18:00", amount: 0 },
-      { time: "21:00", amount: 0 },
-      { time: "24:00", amount: 0 },
+    let amounts: DashboardChartData[] = [
+      { time: '00:00', amount: 0 },
+      { time: '03:00', amount: 0 },
+      { time: '06:00', amount: 0 },
+      { time: '09:00', amount: 0 },
+      { time: '12:00', amount: 0 },
+      { time: '15:00', amount: 0 },
+      { time: '18:00', amount: 0 },
+      { time: '21:00', amount: 0 },
+      { time: '24:00', amount: 0 },
     ];
 
     for (let d of data) {
@@ -388,16 +361,14 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
   let dailyCompletedPayments;
   try {
     dailyCompletedPayments = await CompletedPayment.find({
-      status: "paid",
+      status: 'paid',
       paymentDate: {
         $gte: todayStart,
         $lte: new Date(), // curent time now
       },
     });
   } catch {
-    return res
-      .status(500)
-      .json({ error: "Error in fetching daily completed payments" });
+    return res.status(500).json({ error: 'Error in fetching daily completed payments' });
   }
 
   // const data = generateSampleData();
@@ -413,25 +384,18 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       .sort({ paymentDate: -1 }) // Sort by paymentDate in descending order (most recent first)
       .limit(5); // Limit the result to 5 documents
   } catch {
-    return res
-      .status(500)
-      .json({ error: "Error in fetching recent completed payments" });
+    return res.status(500).json({ error: 'Error in fetching recent completed payments' });
   }
 
   let pendingBalance;
   try {
     const web3 = new Web3(process.env.WEB3_PROVIDER!);
-    if (!vendor) return res.status(404).json({ error: "Vendor not found" });
-    const contract = new web3.eth.Contract(
-      RecurringPaymentsVendor.abi,
-      vendor.vendorContract
-    );
+    if (!vendor) return res.status(404).json({ error: 'Vendor not found' });
+    const contract = new web3.eth.Contract(RecurringPaymentsVendor.abi, vendor.vendorContract);
 
     pendingBalance = await contract.methods.balance().call();
   } catch {
-    return res
-      .status(500)
-      .json({ error: "Error in fetching pending balance from contract" });
+    return res.status(500).json({ error: 'Error in fetching pending balance from contract' });
   }
   return res.send({
     chartData: transformed,
@@ -476,7 +440,7 @@ export const getScheduledPayments = async (req: Request, res: Response) => {
     res.json(scheduledPayments);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: 'Server Error' });
   }
 };
 
@@ -486,19 +450,16 @@ export const getCompletedPayments = async (req: Request, res: Response) => {
     res.json(completedPayments);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: 'Server Error' });
   }
 };
 
-export const getPendingEndSubscriptions = async (
-  req: Request,
-  res: Response
-) => {
+export const getPendingEndSubscriptions = async (req: Request, res: Response) => {
   try {
     const pendingEndSubscriptions = await PendingEndSubscription.find({});
     res.json(pendingEndSubscriptions);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: 'Server Error' });
   }
 };

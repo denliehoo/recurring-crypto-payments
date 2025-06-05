@@ -3,33 +3,38 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import PaymentsTable from '../../components/shared/PaymentsTable';
-import DashboardLineChart from './components/DashboardLineChart';
+import DashboardLineChart from './components/dashboard-line-chart';
 import { Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
 import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
+import { DashboardApiResponse } from '@core/types';
 
-// TODO: Proper typing
 const Dashboard = () => {
-  const [dashboard, setDashboard] = useState<any>({});
+  const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isConfigured, setIsConfigured] = useState(false);
 
   const navigate = useNavigate();
 
+  const {
+    chartData = [],
+    pendingBalance = 0,
+    recentPayments = [],
+    totalDaily = 0,
+  } = dashboard || {};
+
   useEffect(() => {
     const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
     const getDashboard = async () => {
       try {
-        const res: any = await apiCallAuth('get', `/payments/get-dashboard?utc=${clientTimezone}`);
+        const { data } = await apiCallAuth<DashboardApiResponse>(
+          'get',
+          `/payments/get-dashboard?utc=${clientTimezone}`
+        );
         setIsConfigured(true);
-        setDashboard({
-          chartData: res?.data?.chartData,
-          pendingBalance: res?.data?.pendingBalance,
-          recentPayments: res?.data?.recentPayments,
-          totalDaily: res?.data?.totalDaily,
-        });
+        setDashboard(data);
       } catch (err) {
         handleApiError(err);
       }
@@ -37,11 +42,13 @@ const Dashboard = () => {
     };
     getDashboard();
   }, []);
-  return isLoading ? (
-    <div>Loading...</div>
-  ) : !isConfigured ? (
-    <ConfigureIntegrationsFirst />
-  ) : (
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!isConfigured) {
+    return <ConfigureIntegrationsFirst />;
+  }
+  return (
     <Box>
       <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
@@ -53,7 +60,7 @@ const Dashboard = () => {
               height: 240,
             }}
           >
-            <DashboardLineChart data={dashboard.chartData} />
+            <DashboardLineChart data={chartData} />
           </Paper>
         </Grid>
 
@@ -68,11 +75,11 @@ const Dashboard = () => {
           >
             <Typography variant="h5">Daily Total</Typography>
             <Box>
-              <Typography variant="h6">{dashboard.totalDaily} USDT</Typography>
+              <Typography variant="h6">{totalDaily} USDT</Typography>
             </Box>
             <Typography variant="h5">Pending</Typography>
             <Box>
-              <Typography variant="h6">{dashboard.pendingBalance / 10 ** 6} USDT</Typography>
+              <Typography variant="h6">{pendingBalance / 10 ** 6} USDT</Typography>
             </Box>
             <Button variant="contained" onClick={() => navigate('/payouts')}>
               Claim
@@ -85,7 +92,7 @@ const Dashboard = () => {
             <Typography variant="h5" sx={{ mb: 2 }}>
               Recent Payments
             </Typography>
-            <PaymentsTable rows={dashboard.recentPayments} hideFooter={true} />
+            <PaymentsTable rows={recentPayments} hideFooter={true} />
 
             <Box sx={{ mt: 2 }}>
               <Button variant="contained" onClick={() => navigate('/payments')}>

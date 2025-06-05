@@ -1,7 +1,7 @@
-import { Vendor } from "@core/types/Vendor";
-import mongoose, { Schema, Document } from "mongoose";
+import { Vendor } from '@core/types/Vendor';
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IVendor extends Document, Vendor {}
+export interface IVendor extends Document, Omit<Vendor, '_id'> {}
 // for now we assume that it is a monthly basis
 // whereby tokenaddress is which addrss of the token and amount is how much
 // per month. Furthermore, we assume that network is Sepolia
@@ -22,4 +22,4 @@ const VendorSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IVendor>("Vendor", VendorSchema);
+export default mongoose.model<IVendor>('Vendor', VendorSchema);

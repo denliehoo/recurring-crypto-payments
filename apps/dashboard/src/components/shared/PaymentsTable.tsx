@@ -1,11 +1,7 @@
-import React from "react";
-import { Paper, TableContainer } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import {
-  renderAmount,
-  renderDate,
-  renderStatus,
-} from "../../utils/renderTableCell";
+import React from 'react';
+import { Paper, TableContainer } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { renderAmount, renderDate, renderStatus } from '../../utils/renderTableCell';
 
 interface Row {
   _id: string;
@@ -28,37 +24,37 @@ interface Props {
 
 const columns: GridColDef[] = [
   {
-    field: "updatedAt",
-    headerName: "Date",
+    field: 'updatedAt',
+    headerName: 'Date',
     width: 130,
     renderCell: renderDate,
   },
   {
-    field: "vendorClientId",
-    headerName: "User Id",
+    field: 'vendorClientId',
+    headerName: 'User Id',
     width: 220,
   },
   {
-    field: "amount",
-    headerName: "Amount",
+    field: 'amount',
+    headerName: 'Amount',
     width: 80,
     renderCell: renderAmount,
   },
   {
-    field: "token",
-    headerName: "Token",
+    field: 'token',
+    headerName: 'Token',
     width: 100,
     renderCell: () => <span>USDT</span>,
   },
   {
-    field: "status",
-    headerName: "Status",
+    field: 'status',
+    headerName: 'Status',
     width: 100,
     renderCell: renderStatus,
   },
   {
-    field: "paymentDate",
-    headerName: "Payment Date",
+    field: 'paymentDate',
+    headerName: 'Payment Date',
     width: 150,
     renderCell: renderDate,
     // sortComparator: (v1, v2) => {
@@ -68,18 +64,18 @@ const columns: GridColDef[] = [
     // },
   },
   {
-    field: "remarks",
-    headerName: "Remarks",
+    field: 'remarks',
+    headerName: 'Remarks',
     width: 180,
   },
   {
-    field: "hash",
-    headerName: "Hash",
+    field: 'hash',
+    headerName: 'Hash',
     width: 300,
   },
   {
-    field: "userAddress",
-    headerName: "Wallet",
+    field: 'userAddress',
+    headerName: 'Wallet',
     width: 370,
   },
 ];
@@ -105,7 +101,6 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ rows, hideFooter }) => {
         disableRowSelectionOnClick
         autoHeight
         hideFooter={hideFooter}
-        // checkboxSelection
       />
     </TableContainer>
   );

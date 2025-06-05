@@ -1,6 +1,9 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { ScheduledPayment } from '@core/types';
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IScheduledPayment extends Document {
+export interface IScheduledPayment
+  extends Omit<ScheduledPayment, 'vendorId' | 'vendorClientId' | '_id'>,
+    Document {
   vendorContract: string;
   userAddress: string;
   amount: number;
@@ -26,7 +29,4 @@ export const scheduledPaymentSchema: Schema = new Schema(
 // index paymentDate to improve performance since it will be queried frequently
 scheduledPaymentSchema.index({ paymentDate: 1 });
 
-export default mongoose.model<IScheduledPayment>(
-  "ScheduledPayment",
-  scheduledPaymentSchema
-);
+export default mongoose.model<IScheduledPayment>('ScheduledPayment', scheduledPaymentSchema);

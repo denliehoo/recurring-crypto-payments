@@ -1,22 +1,44 @@
-import { Box, Modal, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import IntegrationFormFields from './IntegrationFormFields';
-import { apiCallAuth } from '../../../utils/api-request';
+import { Typography } from '@mui/material';
+import { FC, useEffect, useState } from 'react';
+import IntegrationFormFields from './integration-form-fields';
 
 import CustomButton from '@components/button';
 import CustomModal from '@components/modal';
 import { validateForm } from '@core/utils/form';
+import { Vendor } from '@core/types';
+import { apiCallAuth } from '@dashboard/utils/api-request';
 
-const EditConfigurationsModal = (props: any) => {
+interface IEditConfigurationsModal {
+  editModalOpen: boolean;
+  closeModal: () => void;
+  vendor: Vendor;
+  vendorId: string;
+  refreshData: () => void;
+}
+
+export interface IVendorDetails {
+  tokenAddress?: string;
+  monthlySubscriptionPrice: number | string;
+  businessName?: string;
+  webhookUrl?: string;
+  returnUrl?: string;
+  planName?: string;
+  amount?: number;
+}
+
+const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;
-  const [vendorDetails, setVendorDetails] = useState<any>({
+  const { amount: vendorAmount = 0 } = vendor;
+  const [vendorDetails, setVendorDetails] = useState<IVendorDetails | undefined>({
     tokenAddress: vendor.tokenAddress,
-    monthlySubscriptionPrice: vendor.amount / 10 ** 6,
+    monthlySubscriptionPrice: vendorAmount / 10 ** 6,
     businessName: vendor.name,
     webhookUrl: vendor.webhookUrl,
     returnUrl: vendor.returnUrl,
     planName: vendor.plan,
   });
+
+  console.log(vendorDetails);
   const [validationErrors, setValidationErrors] = useState({});
   const [addressError, setAddressError] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -34,26 +56,27 @@ const EditConfigurationsModal = (props: any) => {
     setButtonLoading(true);
     if (
       !validateForm(vendorDetails, fieldsTypes, setValidationErrors) ||
-      !vendorDetails.tokenAddress
+      vendorDetails?.tokenAddress
     ) {
-      if (!vendorDetails.tokenAddress) {
+      if (vendorDetails?.tokenAddress) {
         setAddressError(true);
       }
       setButtonLoading(false);
       return;
     }
     const bodyData = {
-      name: vendorDetails.businessName,
-      webhookUrl: vendorDetails.webhookUrl,
-      returnUrl: vendorDetails.returnUrl,
-      tokenAddress: vendorDetails.tokenAddress,
-      amount: Math.ceil(parseFloat(vendorDetails.monthlySubscriptionPrice) * 10 ** 6),
-      plan: vendorDetails.planName,
+      name: vendorDetails?.businessName,
+      webhookUrl: vendorDetails?.webhookUrl,
+      returnUrl: vendorDetails?.returnUrl,
+      tokenAddress: vendorDetails?.tokenAddress,
+      // When form value is edited, it will be a string even if it is an integer
+      amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
+      plan: vendorDetails?.planName,
       vendorContract: vendor.vendorContract,
       id: vendorId,
     };
     try {
-      const res = await apiCallAuth('put', '/vendors', bodyData);
+      await apiCallAuth('put', '/vendors', bodyData);
 
       setButtonLoading(false);
       refreshData();
@@ -65,18 +88,19 @@ const EditConfigurationsModal = (props: any) => {
 
   useEffect(() => {
     if (
-      vendorDetails.businessName === vendor.name &&
-      vendorDetails.webhookUrl === vendor.webhookUrl &&
-      vendorDetails.returnUrl === vendor.returnUrl &&
-      vendorDetails.tokenAddress === vendor.tokenAddress &&
-      vendorDetails.monthlySubscriptionPrice.toString() === (vendor.amount / 10 ** 6).toString() &&
-      vendorDetails.planName === vendor.plan
+      vendorDetails?.businessName === vendor.name &&
+      vendorDetails?.webhookUrl === vendor.webhookUrl &&
+      vendorDetails?.returnUrl === vendor.returnUrl &&
+      vendorDetails?.tokenAddress === vendor.tokenAddress &&
+      vendorDetails?.monthlySubscriptionPrice.toString() === (vendorAmount / 10 ** 6).toString() &&
+      vendorDetails?.planName === vendor.plan
     ) {
       setFormChanged(false);
     } else {
       setFormChanged(true);
     }
   }, [vendorDetails]);
+
   return (
     <CustomModal open={editModalOpen} onClose={closeModal}>
       <Typography variant="h6" sx={{ mb: 2 }}>

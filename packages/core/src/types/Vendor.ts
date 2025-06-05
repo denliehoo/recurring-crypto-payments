@@ -10,4 +10,5 @@ export interface Vendor {
   vendorContract?: string;
   plan?: string; // plan name
   isVerified?: boolean;
+  _id: string;
 }

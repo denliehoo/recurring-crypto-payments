@@ -6,7 +6,7 @@ import Login from './pages/login';
 import Layout from './components/layout/Layout';
 import Payments from './pages/payments';
 import Customers from './pages/customers';
-import Integrations from './pages/integrations/Integrations';
+import Integrations from './pages/integrations';
 import Payouts from './pages/payouts';
 import VerifyEmail from './pages/verify-email';
 import NotFound from './pages/not-found';
