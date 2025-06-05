@@ -1,5 +1,4 @@
 import { Box, Divider, IconButton, Paper, TableContainer, Typography } from '@mui/material';
-import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
 import { useEffect, useState } from 'react';
 import CustomButton from '@components/button';
 import RequestPayoutModal from './request-payout-modal';
@@ -8,6 +7,7 @@ import TagIcon from '@mui/icons-material/Tag';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderAmount, renderDate } from '../../utils/renderTableCell';
 import { GetPayoutsApiResponse, Payout, Vendor } from '@core/types';
+import PageLayout from '@dashboard/components/layout/page-layout';
 
 const columns: GridColDef<Payout>[] = [
   {
@@ -56,7 +56,6 @@ const Payouts = () => {
   const [vendorDetails, setVendorDetails] = useState<Vendor | undefined>(undefined);
   const [refreshData, setRefreshData] = useState(true);
 
-  // TODO: Figure out why most GET API calls are double calling
   useEffect(() => {
     const getDetails = async () => {
       try {
@@ -73,23 +72,13 @@ const Payouts = () => {
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
-        console.log(err);
       }
     };
     getDetails();
   }, [refreshData]);
 
-  // TODO: Refactor Loading, configureintfirst(config), content as a HOCC to be reused
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!vendorDetails?.tokenAddress) {
-    return <ConfigureIntegrationsFirst />;
-  }
-
   return (
-    <Box>
+    <PageLayout isLoading={isLoading}>
       <Typography variant="h5">Payouts</Typography>
       <Typography>You currently have {parseInt(pendingBalance) / 10 ** 6} USDT Pending</Typography>
       <CustomButton
@@ -122,12 +111,12 @@ const Payouts = () => {
         <RequestPayoutModal
           requestPayoutModal={requestPayoutModal}
           closeRequestPayoutModal={() => setRequestPayoutModal(false)}
-          vendor={vendorDetails}
+          vendor={vendorDetails as Vendor}
           owner={owner}
           refreshData={() => setRefreshData(!refreshData)}
         />
       )}
-    </Box>
+    </PageLayout>
   );
 };
 

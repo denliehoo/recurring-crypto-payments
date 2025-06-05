@@ -1,9 +1,10 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import CentrePage from '../../components/UI/CentrePage';
 import { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import axios from 'axios';
 import { handleApiError } from '@dashboard/utils/api-request';
+import LoadingOverlay from '@components/loading-overlay';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -40,27 +41,24 @@ const VerifyEmail = () => {
 
   return (
     <CentrePage>
-      {isLoading ? (
-        <Box>Loading...</Box>
-      ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <Typography variant="h6">
-            {isVerified ? 'You have been verified' : `Error: ${error}`}
-          </Typography>
+      <LoadingOverlay isLoading={isLoading} />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <Typography variant="h6">
+          {isVerified ? 'You have been verified' : `Error: ${error}`}
+        </Typography>
 
-          <Button onClick={() => navigate('/login')} variant="contained">
-            Proceed To Login
-          </Button>
-        </Box>
-      )}
+        <Button onClick={() => navigate('/login')} variant="contained">
+          Proceed To Login
+        </Button>
+      </Box>
     </CentrePage>
   );
 };

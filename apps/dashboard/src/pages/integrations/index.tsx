@@ -1,12 +1,10 @@
-// import classes from "./Integrations.module.css";
-
 import { useEffect, useState } from 'react';
 import { apiCallAuth } from '../../utils/api-request';
 
-import { Box } from '@mui/material';
 import ConfigureIntegrations from './components/configure-integrations';
 import ConfiguredIntergrations from './components/configured-integrations';
 import { Vendor } from '@core/types';
+import PageLayout from '@dashboard/components/layout/page-layout';
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +13,7 @@ const Integrations = () => {
   const [refreshData, setRefreshData] = useState(false);
   useEffect(() => {
     const getVendorDetails = async () => {
-      const res: any = await apiCallAuth('get', '/vendors/getVendorByToken');
+      const { data } = await apiCallAuth<Vendor>('get', '/vendors/getVendorByToken');
 
       const {
         name,
@@ -28,7 +26,7 @@ const Integrations = () => {
         vendorContract,
         plan,
         _id: id,
-      } = res.data;
+      } = data;
       setVendor({
         name,
         email,
@@ -39,6 +37,7 @@ const Integrations = () => {
         amount,
         vendorContract,
         plan,
+        _id: id,
       });
       setVendorId(id);
       setIsLoading(false);
@@ -46,24 +45,21 @@ const Integrations = () => {
     getVendorDetails();
   }, [refreshData]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (vendor && vendor.plan) {
-    return (
-      <ConfiguredIntergrations
-        vendorId={vendorId}
-        vendor={vendor}
-        refreshData={() => setRefreshData(!refreshData)}
-      />
-    );
-  }
-
-  // Have not configured integrations
-
   return (
-    <ConfigureIntegrations vendorId={vendorId} refreshData={() => setRefreshData(!refreshData)} />
+    <PageLayout isLoading={isLoading}>
+      {vendor && vendor.plan ? (
+        <ConfiguredIntergrations
+          vendorId={vendorId}
+          vendor={vendor}
+          refreshData={() => setRefreshData(!refreshData)}
+        />
+      ) : (
+        <ConfigureIntegrations
+          vendorId={vendorId}
+          refreshData={() => setRefreshData(!refreshData)}
+        />
+      )}
+    </PageLayout>
   );
 };
 

@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderStatus } from '../../utils/renderTableCell';
-import ConfigureIntegrationsFirst from '@dashboard/components/shared/ConfigureIntegrationsFirst';
 import { VendorClient } from '@core/types/VendorClient';
-import { useAppSelector } from '@dashboard/store';
 import { apiCallAuth } from '@dashboard/utils/api-request';
+import PageLayout from '@dashboard/components/layout/page-layout';
 
 const columns: GridColDef<VendorClient>[] = [
   {
@@ -45,7 +44,6 @@ const columns: GridColDef<VendorClient>[] = [
 const Customers = () => {
   const [rows, setRows] = useState<VendorClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const vendorDetails = useAppSelector((state) => state.vendorDetails);
 
   useEffect(() => {
     const getData = async () => {
@@ -64,15 +62,9 @@ const Customers = () => {
     };
     getData();
   }, []);
-  if (isLoading) {
-    return <div>Loading....</div>;
-  }
 
-  if (!vendorDetails.vendorContract) {
-    return <ConfigureIntegrationsFirst />;
-  }
   return (
-    <div>
+    <PageLayout isLoading={isLoading}>
       <TableContainer component={Paper}>
         <DataGrid
           rows={rows}
@@ -88,7 +80,7 @@ const Customers = () => {
           autoHeight
         />
       </TableContainer>
-    </div>
+    </PageLayout>
   );
 };
 

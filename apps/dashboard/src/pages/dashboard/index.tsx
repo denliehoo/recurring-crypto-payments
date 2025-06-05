@@ -7,14 +7,13 @@ import DashboardLineChart from './components/dashboard-line-chart';
 import { Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfigureIntegrationsFirst from '../../components/shared/ConfigureIntegrationsFirst';
 import { apiCallAuth, handleApiError } from '@dashboard/utils/api-request';
 import { DashboardApiResponse } from '@core/types';
+import PageLayout from '@dashboard/components/layout/page-layout';
 
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [isConfigured, setIsConfigured] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,7 +32,6 @@ const Dashboard = () => {
           'get',
           `/payments/get-dashboard?utc=${clientTimezone}`
         );
-        setIsConfigured(true);
         setDashboard(data);
       } catch (err) {
         handleApiError(err);
@@ -42,14 +40,9 @@ const Dashboard = () => {
     };
     getDashboard();
   }, []);
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (!isConfigured) {
-    return <ConfigureIntegrationsFirst />;
-  }
+
   return (
-    <Box>
+    <PageLayout isLoading={isLoading}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
           <Paper
@@ -102,7 +95,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-    </Box>
+    </PageLayout>
   );
 };
 
