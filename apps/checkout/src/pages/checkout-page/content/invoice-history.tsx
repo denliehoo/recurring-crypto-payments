@@ -1,7 +1,7 @@
 import { useSubcriptionDetail } from '@checkout/store';
 import { TagRounded } from '@mui/icons-material';
 import { Typography, Divider, Box, IconButton } from '@mui/material';
-import { formatDate } from 'core';
+import { formatDate } from '@core/utils';
 import { FC } from 'react';
 
 const InvoiceHistory: FC = () => {

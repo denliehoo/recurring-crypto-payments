@@ -1,13 +1,12 @@
 import { FC, useState } from 'react';
 import CustomButton from '@components/button';
 
-import CustomModal from '@components/modal';
 import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import CustomFormFields from '@components/form-field';
 import { validateForm } from '@core/utils/form';
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
-import { BillingInfo } from 'core';
+import { BillingInfo } from '@core/types';
 
 const UpdateBillingInfoModal: FC = () => {
   const authToken = useSubcriptionDetail((state) => state.authToken);

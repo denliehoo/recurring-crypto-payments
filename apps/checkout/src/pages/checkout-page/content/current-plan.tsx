@@ -1,6 +1,6 @@
 import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import { Typography, Divider, Box, Button } from '@mui/material';
-import { capitalizeFirstLetter, formatDate } from 'core';
+import { capitalizeFirstLetter, formatDate } from '@core/utils';
 
 import { FC } from 'react';
 

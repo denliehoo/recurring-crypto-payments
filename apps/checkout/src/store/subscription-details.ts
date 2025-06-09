@@ -1,4 +1,4 @@
-import { VendorClientSubscriptionDetails } from 'core';
+import { VendorClientSubscriptionDetails } from '@core/types';
 import { create } from 'zustand';
 
 interface ISubscriptionDetailState {

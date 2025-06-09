@@ -1,5 +1,5 @@
-import { useSubcriptionDetail, useCheckoutModal } from '@checkout/store';
-import { connectWallet } from 'core';
+import { useSubcriptionDetail } from '@checkout/store';
+import { connectWallet } from '@core/utils';
 import { useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
 
