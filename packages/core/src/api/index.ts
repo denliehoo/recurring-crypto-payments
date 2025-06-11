@@ -20,8 +20,8 @@ interface IAxiosHeaders {
 export interface IApiRequest {
   method: 'get' | 'post' | 'put' | 'patch' | 'delete';
   subPath: string;
-  data?: any; // as in body data
-  params?: any; // as in query params
+  data?: any; // body data
+  params?: any; // query params
   headers?: IAxiosHeaders;
 }
 

@@ -2,7 +2,6 @@ import { Box, Divider, IconButton, Paper, TableContainer, Typography } from '@mu
 import { useEffect, useState } from 'react';
 import CustomButton from '@components/button';
 import RequestPayoutModal from './request-payout-modal';
-import { apiCallAuth } from '../../api/api-request';
 import TagIcon from '@mui/icons-material/Tag';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderAmount, renderDate } from '../../utils/renderTableCell';

@@ -26,6 +26,7 @@ import {
 } from '../utility/pendingEndSubscription';
 import { IPendingEndSubscription } from '../models/pendingEndSubscription';
 import { VendorClientSubscriptionDetails } from '@core/types/VendorClientSubscriptionDetails';
+import { InitiateSubscription } from '@core/types/checkout';
 
 // import sendWebHook from "../utility/sendWebhook";
 
@@ -68,7 +69,7 @@ export const manageSubscription = async (req: Request, res: Response) => {
 };
 
 export const initiateSubscription = async (req: CustomRequest, res: Response) => {
-  const { billingInfo, paymentMethod, userAddress } = req.body;
+  const { billingInfo, paymentMethod, userAddress } = req.body as InitiateSubscription;
 
   const decoded = req.decoded;
   const vendorId = decoded.vendor;

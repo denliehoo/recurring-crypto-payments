@@ -1,8 +1,7 @@
 import { connectWallet, handleApiError } from '@core/utils';
-import { apiCallAuth } from '@dashboard/api/api-request';
 import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
-import { RequestPayoutParams, Vendor } from '@core/types';
+import { Vendor } from '@core/types';
 import { apiRequestPayout } from '@dashboard/api/payouts/request-payout';
 
 export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {

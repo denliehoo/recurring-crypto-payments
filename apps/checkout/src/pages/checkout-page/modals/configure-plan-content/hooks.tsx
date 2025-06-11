@@ -2,11 +2,13 @@ import { useSubcriptionDetail } from '@checkout/store';
 import { connectWallet } from '@core/utils/wallet';
 import { ChangeEvent, useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
-import axios from 'axios';
 import { formatDate } from '@core/utils/text';
+import { handleApiError } from '@core/utils';
+import { apiInitiateSubscription } from '@checkout/api/initiate-subscription';
+import { apiChangePaymentMethod } from '@checkout/api/change-payment-method';
+import { apiRenewSubscription } from '@checkout/api/renew-subscription';
 
 export const useConfigurePlanContent = () => {
-  const authToken = useSubcriptionDetail((state) => state.authToken);
   const details = useSubcriptionDetail((state) => state.details);
 
   const {
@@ -19,8 +21,6 @@ export const useConfigurePlanContent = () => {
   } = details || {};
 
   const { wallet: currentWallet = '' } = paymentMethod || {};
-
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const minAmountText = amount / 10 ** 6;
 
@@ -210,9 +210,6 @@ export const useConfigurePlanContent = () => {
     }
     //confirm subscription
     if (activeStep === 3) {
-      const headers = {
-        Authorization: authToken,
-      };
       if (status === 'inactive') {
         // means they want to add payment method and begin subscription
         if (!nameInput || !emailInput || !addressInput) {
@@ -229,18 +226,16 @@ export const useConfigurePlanContent = () => {
             },
             paymentMethod: {
               token: 'USDT',
-              tokenAddress: tokenAddress,
+              tokenAddress: tokenAddress || '',
               wallet: address,
               sufficientAllowance: true,
               sufficientBalance: true,
             },
             userAddress: address,
           };
-          await axios.post(`${apiUrl}/externalPage/initiate-subscription`, body, {
-            headers,
-          });
+          await apiInitiateSubscription(body);
         } catch (err) {
-          console.log(err);
+          handleApiError(err);
           setButtonLoading(false);
           return;
         }
@@ -251,11 +246,9 @@ export const useConfigurePlanContent = () => {
           const body = {
             newAddress: address,
           };
-          await axios.post(`${apiUrl}/externalPage/change-payment-method`, body, {
-            headers,
-          });
+          await apiChangePaymentMethod(body);
         } catch (err) {
-          console.log(err);
+          handleApiError(err);
           setButtonLoading(false);
           return;
         }
@@ -266,9 +259,8 @@ export const useConfigurePlanContent = () => {
           const body = {
             wallet: address,
           };
-          await axios.post(`${apiUrl}/externalPage/renew-subscription`, body, {
-            headers,
-          });
+
+          await apiRenewSubscription(body);
         } catch (err) {
           console.log(err);
           setButtonLoading(false);

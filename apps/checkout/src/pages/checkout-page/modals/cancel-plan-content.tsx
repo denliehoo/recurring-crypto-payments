@@ -1,27 +1,20 @@
 import { Button, Typography } from '@mui/material';
 import CustomButton from '@components/button';
 import { FC, useState } from 'react';
-import axios from 'axios';
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
+import { apiCancelSubscription } from '@checkout/api/cancel-subscription';
 
 const CancelPlanContent: FC = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const setModal = useCheckoutModal((state) => state.setModal);
-  const authToken = useSubcriptionDetail((state) => state.authToken);
+
   const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleCancelPlan = async () => {
     setButtonLoading(true);
     try {
-      const headers = {
-        Authorization: authToken,
-      };
-
-      await axios.post(`${apiUrl}/externalPage/cancel-subscription`, null, {
-        headers,
-      });
+      await apiCancelSubscription();
 
       setButtonLoading(false);
       setRefreshData();

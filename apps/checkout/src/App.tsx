@@ -25,14 +25,12 @@ const App = () => {
   const details = useSubcriptionDetail((state) => state.details);
   const setDetails = useSubcriptionDetail((state) => state.setDetails);
   const refreshData = useSubcriptionDetail((state) => state.refreshData);
-  const setAuthToken = useSubcriptionDetail((state) => state.setAuthToken);
 
   const searchParams = new URLSearchParams(window.location.search);
   const encodedAuthToken = searchParams.get('authToken');
 
   const authToken = encodedAuthToken?.replace(/~/g, '.');
   localStorage.setItem('JWT', authToken || '');
-  setAuthToken(authToken || '');
 
   const [isLoading, setIsLoading] = useState(true);
 

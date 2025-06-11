@@ -7,7 +7,6 @@ import DashboardLineChart from './components/dashboard-line-chart';
 import { Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiCallAuth } from '@dashboard/api/api-request';
 import { DashboardApiResponse } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';

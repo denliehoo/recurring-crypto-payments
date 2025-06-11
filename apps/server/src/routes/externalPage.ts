@@ -20,7 +20,7 @@ router.get(
   getSubscriptionPageDetails
 );
 
-router.post("/change-payment-method", verifyToken, changePaymentMethod);
+router.put("/change-payment-method", verifyToken, changePaymentMethod);
 router.post("/cancel-subscription", verifyToken, cancelSubscription);
 router.post("/renew-subscription", verifyToken, renewSubscription);
 
