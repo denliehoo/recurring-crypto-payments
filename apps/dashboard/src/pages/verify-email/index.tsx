@@ -2,9 +2,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import CentrePage from '../../components/UI/CentrePage';
 import { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import axios from 'axios';
 import LoadingOverlay from '@components/loading-overlay';
 import { handleApiError } from '@core/utils';
+import { apiVerifyEmail } from '@dashboard/api/login/verify-email';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -15,20 +15,14 @@ const VerifyEmail = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const verifyEmail = async () => {
-      const headers = {
-        Authorization: token,
-      };
-
-      // TODO: Refactor all APIs to a function
+      if (!token) {
+        return;
+      }
       try {
-        await axios.post(`${apiUrl}/vendors/verify-email`, null, {
-          headers,
-        });
-
+        await apiVerifyEmail(token);
         setIsVerified(true);
       } catch (err) {
         const { message } = handleApiError(err);

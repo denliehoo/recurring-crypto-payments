@@ -1,9 +1,9 @@
 import { CssBaseline, ThemeProvider, Grid } from '@mui/material';
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import CheckoutPage from './pages/checkout-page';
 import { createTheme } from '@mui/material/styles';
 import { useSubcriptionDetail } from './store';
+import { apiGetSubscriptionDetails } from './api/get-subscription-details';
 
 const defaultTheme = createTheme({
   components: {
@@ -31,32 +31,28 @@ const App = () => {
   const encodedAuthToken = searchParams.get('authToken');
 
   const authToken = encodedAuthToken?.replace(/~/g, '.');
+  localStorage.setItem('JWT', authToken || '');
   setAuthToken(authToken || '');
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const apiUrl = process.env.REACT_APP_API_URL;
-
   useEffect(() => {
-    setIsLoading(true);
     const getData = async () => {
-      console.log(`url: ${apiUrl}/externalPage/get-subscription-page-details`);
+      setIsLoading(true);
       try {
-        const headers = {
-          Authorization: authToken,
-        };
-        const res = await axios.get(`${apiUrl}/externalPage/get-subscription-page-details`, {
-          headers,
-        });
+        const { data } = await apiGetSubscriptionDetails();
 
-        setDetails(res.data);
+        setDetails(data);
         setIsLoading(false);
       } catch (err) {
         console.log(err);
         setIsLoading(false);
       }
     };
-    getData();
+
+    if (authToken) {
+      getData();
+    }
 
     // sample url: http://localhost:3032/?authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9~eyJ2ZW5kb3IiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwOWYiLCJ2ZW5kb3JDbGllbnQiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwYTEiLCJleHAiOjE3NDc3NTQ1NjUsImlhdCI6MTc0NzY2ODE2NX0~W5Ck1wmOr2iZy1tb1BcYWBGeKypO-8JivYXM-4vG9Cc
     // simulate got this from call API
@@ -66,7 +62,7 @@ const App = () => {
 
     // setDetails(sampleData);
     // setIsLoading(false);
-  }, [refreshData]);
+  }, [refreshData, authToken]);
 
   const isShowLoader = isLoading || !details || !authToken;
 

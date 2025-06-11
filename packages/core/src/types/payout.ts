@@ -17,3 +17,11 @@ export interface GetPayoutsApiResponse {
   pendingBalance: string;
   owner: string;
 }
+
+export interface RequestPayoutParams {
+  amount: number;
+  tokenAddress: string;
+  userAddress: string;
+  token: string;
+  hash: string;
+}

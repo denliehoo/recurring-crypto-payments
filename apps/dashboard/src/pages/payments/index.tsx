@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { apiCallAuth } from '../../api/api-request';
 import PaymentsTable from '../../components/shared/PaymentsTable';
 import { ScheduledPayment } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';
+import { apiGetPayments } from '@dashboard/api/payments/get-payments';
 
 const Payments = () => {
   const [rows, setRows] = useState<ScheduledPayment[]>([]);
@@ -12,7 +12,7 @@ const Payments = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const { data } = await apiCallAuth<ScheduledPayment[]>('get', `/payments/get-all-payments`);
+        const { data } = await apiGetPayments();
 
         setRows(data);
         setIsLoading(false);

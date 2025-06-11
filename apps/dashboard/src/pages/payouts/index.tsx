@@ -8,6 +8,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderAmount, renderDate } from '../../utils/renderTableCell';
 import { GetPayoutsApiResponse, Payout, Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
+import { apiGetPayouts } from '@dashboard/api/payouts/get-payouts';
 
 const columns: GridColDef<Payout>[] = [
   {
@@ -59,10 +60,7 @@ const Payouts = () => {
   useEffect(() => {
     const getDetails = async () => {
       try {
-        const { data } = await apiCallAuth<GetPayoutsApiResponse>(
-          'get',
-          '/payments/get-payouts-details'
-        );
+        const { data } = await apiGetPayouts();
 
         const { payouts, pendingBalance, owner, vendor } = data;
         setOwner(owner);

@@ -12,3 +12,14 @@ export interface Vendor {
   isVerified?: boolean;
   _id: string;
 }
+
+export interface UpdateVendor {
+  name: string;
+  webhookUrl: string;
+  returnUrl: string;
+  tokenAddress: string;
+  amount: number;
+  plan: string;
+  vendorContract: string;
+  id: string;
+}

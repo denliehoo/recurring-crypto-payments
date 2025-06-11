@@ -1,11 +1,12 @@
-import { Vendor } from '@core/types';
 import { PASSWORD_REGEX, EMAIL_REGEX, handleApiError } from '@core/utils';
 import { addVendorDetails } from '@dashboard/slices/vendorDetailsSlice';
 import { useAppDispatch } from '@dashboard/store';
-import { apiCallAuth } from '@dashboard/api/api-request';
-import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiPostLogin } from '@dashboard/api/login/post-login';
+import { apiGetVendorDetails } from '@dashboard/api/vendor/get-details';
+import { apiResendVerification } from '@dashboard/api/login/resend-verification';
+import { apiRegister } from '@dashboard/api/login/register';
 
 type TInputChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -45,9 +46,7 @@ export const useLogin = () => {
   const handleResendVerification = async () => {
     setResendButtonLoading(true);
     try {
-      await axios.post(`${apiUrl}/vendors/resend-verification`, {
-        email: username,
-      });
+      await apiResendVerification({ email: username });
 
       setVerificationSent(true);
       setError('');
@@ -58,7 +57,7 @@ export const useLogin = () => {
   };
 
   const setVendorDetails = async () => {
-    const { data } = await apiCallAuth<Vendor>('get', '/vendors/getVendorByToken');
+    const { data } = await apiGetVendorDetails();
 
     const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } = data;
     dispatch(
@@ -80,10 +79,7 @@ export const useLogin = () => {
     setRegLogButtonLoading(true);
     if (isLogin) {
       try {
-        const { data } = await axios.post<{ token: string }>(`${apiUrl}/vendors/login`, {
-          email: username,
-          password: password,
-        });
+        const { data } = await apiPostLogin({ email: username, password });
 
         // Redirect to dashboard upon successful login
         localStorage.setItem('JWT', data.token);
@@ -118,10 +114,7 @@ export const useLogin = () => {
       }
 
       try {
-        await axios.post(`${apiUrl}/vendors`, {
-          email: username,
-          password: password,
-        });
+        await apiRegister({ email: username, password });
 
         setVerificationSent(true);
       } catch (err) {

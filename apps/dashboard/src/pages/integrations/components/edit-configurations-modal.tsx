@@ -6,7 +6,10 @@ import CustomButton from '@components/button';
 import CustomModal from '@components/modal';
 import { validateForm } from '@core/utils/form';
 import { Vendor } from '@core/types';
-import { apiCallAuth } from '@dashboard/api/api-request';
+import {
+  apiUpdateConfigurations,
+  IUpdateConfigurations,
+} from '@dashboard/api/vendor/update-configurations';
 
 interface IEditConfigurationsModal {
   editModalOpen: boolean;
@@ -38,7 +41,6 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
     planName: vendor.plan,
   });
 
-  console.log(vendorDetails);
   const [validationErrors, setValidationErrors] = useState({});
   const [addressError, setAddressError] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -54,29 +56,30 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
 
   const handleEdit = async () => {
     setButtonLoading(true);
+
     if (
       !validateForm(vendorDetails, fieldsTypes, setValidationErrors) ||
-      vendorDetails?.tokenAddress
+      !vendorDetails?.tokenAddress
     ) {
-      if (vendorDetails?.tokenAddress) {
+      if (!vendorDetails?.tokenAddress) {
         setAddressError(true);
       }
       setButtonLoading(false);
       return;
     }
-    const bodyData = {
-      name: vendorDetails?.businessName,
-      webhookUrl: vendorDetails?.webhookUrl,
-      returnUrl: vendorDetails?.returnUrl,
-      tokenAddress: vendorDetails?.tokenAddress,
+    const bodyData: IUpdateConfigurations = {
+      name: vendorDetails?.businessName || '',
+      webhookUrl: vendorDetails?.webhookUrl || '',
+      returnUrl: vendorDetails?.returnUrl || '',
+      tokenAddress: vendorDetails?.tokenAddress || '',
       // When form value is edited, it will be a string even if it is an integer
       amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
-      plan: vendorDetails?.planName,
-      vendorContract: vendor.vendorContract,
+      plan: vendorDetails?.planName || '',
+      vendorContract: vendor.vendorContract || '',
       id: vendorId,
     };
     try {
-      await apiCallAuth('put', '/vendors', bodyData);
+      await apiUpdateConfigurations(bodyData);
 
       setButtonLoading(false);
       refreshData();

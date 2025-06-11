@@ -1,5 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-// TODO: Delete
+export const testRequest = () => {
+  console.log('url is:', process.env.REACT_APP_API_URL);
+};
+
+import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
+
 class ApiCallError extends Error {
   public responseStatus: number;
 
@@ -9,26 +13,42 @@ class ApiCallError extends Error {
   }
 }
 
-export const apiCallAuth = async <T>(
-  method: 'get' | 'post' | 'put' | 'patch' | 'delete',
-  subUrl: string,
-  data: any = null
-): Promise<AxiosResponse<T>> => {
+interface IAxiosHeaders {
+  Authorization?: string;
+}
+
+export interface IApiRequest {
+  method: 'get' | 'post' | 'put' | 'patch' | 'delete';
+  subPath: string;
+  data?: any; // as in body data
+  params?: any; // as in query params
+  headers?: IAxiosHeaders;
+}
+
+export const apiRequest = async <T>({
+  method,
+  subPath,
+  data = null,
+  params,
+  headers,
+}: IApiRequest): Promise<AxiosResponse<T>> => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem('JWT');
 
-  try {
-    if (!token) throw new ApiCallError('JWT Token does not exist', 401);
+  console.log('try call api with', apiUrl, subPath, token);
 
-    const headers = {
+  try {
+    const axiosHeaders = {
       Authorization: token,
+      ...headers,
     };
 
     const config: AxiosRequestConfig = {
       method,
-      url: `${apiUrl}${subUrl}`,
-      headers,
+      url: `${apiUrl}${subPath}`,
+      headers: axiosHeaders,
       data,
+      params,
     };
 
     const res = await axios(config);
@@ -36,7 +56,8 @@ export const apiCallAuth = async <T>(
   } catch (err: any) {
     if (axios.isAxiosError(err)) {
       if (err.response?.status === 401) {
-        window.location.href = '/login';
+        window.location.href = '/';
+        localStorage.removeItem('JWT');
       }
 
       throw err;

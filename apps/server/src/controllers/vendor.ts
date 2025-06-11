@@ -10,6 +10,7 @@ import { findVendorByEmail, findVendorById } from "../utility/findFromDb";
 import { CustomRequest } from "../types/requests";
 import { sendEmail } from "../utility/sendEmail";
 import { generateJWT } from "../utility/generateJWT";
+import { UpdateVendor } from "@core/types";
 const jwt = require("jsonwebtoken");
 
 // aka register
@@ -126,8 +127,7 @@ export const getVendorById = async (req: Request, res: Response) => {
   return res.send(vendor);
 };
 
-export const updateVendor = async (req: Request, res: Response) => {
-  //
+export const updateVendor = async (req: Request<{},{},UpdateVendor>, res: Response) => {
   try {
     const {
       name,

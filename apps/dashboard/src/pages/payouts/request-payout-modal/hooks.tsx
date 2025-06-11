@@ -2,7 +2,8 @@ import { connectWallet, handleApiError } from '@core/utils';
 import { apiCallAuth } from '@dashboard/api/api-request';
 import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
-import { Vendor } from '@core/types';
+import { RequestPayoutParams, Vendor } from '@core/types';
+import { apiRequestPayout } from '@dashboard/api/payouts/request-payout';
 
 export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   const steps = ['Connect Wallet', 'Check Address', 'Request Payout'];
@@ -70,12 +71,12 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
 
         const bodyData = {
           amount: parseInt(withdraw.events.VendorWithdraw.returnValues.amount), // parseInt first
-          tokenAddress: vendor.tokenAddress,
+          tokenAddress: vendor.tokenAddress || '',
           userAddress: address,
           token: 'USDT', // hard code to USDT for now
           hash: withdraw.transactionHash,
         };
-        await apiCallAuth('post', `/payments/create-payout/${vendor._id.toString()}`, bodyData);
+        await apiRequestPayout(vendor._id.toString(), bodyData);
 
         setButtonLoading(false);
       } catch (err) {

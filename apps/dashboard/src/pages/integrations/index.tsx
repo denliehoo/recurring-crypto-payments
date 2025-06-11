@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { apiCallAuth } from '../../api/api-request';
 
 import ConfigureIntegrations from './components/configure-integrations';
 import ConfiguredIntergrations from './components/configured-integrations';
 import { Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
+import { apiGetVendorDetails } from '@dashboard/api/vendor/get-details';
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -12,8 +12,8 @@ const Integrations = () => {
   const [vendorId, setVendorId] = useState('');
   const [refreshData, setRefreshData] = useState(false);
   useEffect(() => {
-    const getVendorDetails = async () => {
-      const { data } = await apiCallAuth<Vendor>('get', '/vendors/getVendorByToken');
+    const getAndSetVendorDetails = async () => {
+      const { data } = await apiGetVendorDetails();
 
       const {
         name,
@@ -42,7 +42,7 @@ const Integrations = () => {
       setVendorId(id);
       setIsLoading(false);
     };
-    getVendorDetails();
+    getAndSetVendorDetails();
   }, [refreshData]);
 
   return (

@@ -11,6 +11,7 @@ import { apiCallAuth } from '@dashboard/api/api-request';
 import { DashboardApiResponse } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';
+import { apiGetDashboard } from '@dashboard/api/dashboard/get-dashboard';
 
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(undefined);
@@ -29,10 +30,7 @@ const Dashboard = () => {
     const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
     const getDashboard = async () => {
       try {
-        const { data } = await apiCallAuth<DashboardApiResponse>(
-          'get',
-          `/payments/get-dashboard?utc=${clientTimezone}`
-        );
+        const { data } = await apiGetDashboard({ utc: clientTimezone });
         setDashboard(data);
       } catch (err) {
         handleApiError(err);

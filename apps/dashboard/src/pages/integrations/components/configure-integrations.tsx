@@ -1,4 +1,3 @@
-import { apiCallAuth } from '../../../api/api-request';
 import { FC, useState } from 'react';
 
 import { Box, Button, Typography, Stepper, Step, StepLabel } from '@mui/material';
@@ -11,6 +10,10 @@ import CustomButton from '@components/button';
 import { validateForm } from '@core/utils/form';
 import { useAppDispatch } from '@dashboard/store';
 import { IVendorDetails } from './edit-configurations-modal';
+import {
+  apiUpdateConfigurations,
+  IUpdateConfigurations,
+} from '@dashboard/api/vendor/update-configurations';
 
 interface ConfigureIntegrationsProps {
   vendorId: string;
@@ -93,17 +96,17 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
         const vendorContractCreated =
           createContract.events.VendorContractCreated.returnValues.contractAddress;
         // update the vendor entity
-        const bodyData = {
-          name: vendorDetails.businessName,
-          webhookUrl: vendorDetails.webhookUrl,
-          returnUrl: vendorDetails.returnUrl,
-          tokenAddress: vendorDetails.tokenAddress,
+        const bodyData: IUpdateConfigurations = {
+          name: vendorDetails.businessName || '',
+          webhookUrl: vendorDetails.webhookUrl || '',
+          returnUrl: vendorDetails.returnUrl || '',
+          tokenAddress: vendorDetails.tokenAddress || '',
           amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
-          plan: vendorDetails.planName,
+          plan: vendorDetails.planName || '',
           vendorContract: vendorContractCreated,
           id: vendorId,
         };
-        await apiCallAuth('put', '/vendors', bodyData);
+        await apiUpdateConfigurations(bodyData);
 
         dispatch(
           addVendorDetails({

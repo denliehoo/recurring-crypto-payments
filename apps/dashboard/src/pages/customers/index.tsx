@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { renderStatus } from '../../utils/renderTableCell';
 import { VendorClient } from '@core/types/VendorClient';
-import { apiCallAuth } from '@dashboard/api/api-request';
 import PageLayout from '@dashboard/components/layout/page-layout';
+import { apiGetCustomers } from '@dashboard/api/customers/get-customers';
+import { handleApiError } from '@core/utils';
 
 const columns: GridColDef<VendorClient>[] = [
   {
@@ -48,15 +49,12 @@ const Customers = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const { data } = await apiCallAuth<VendorClient[]>(
-          'get',
-          `/vendorclients/get-vendor-clients-by-vendor`
-        );
+        const { data } = await apiGetCustomers();
 
         setRows(data);
         setIsLoading(false);
       } catch (err) {
-        console.log(err);
+        handleApiError(err);
         setIsLoading(false);
       }
     };
