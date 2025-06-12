@@ -2,6 +2,7 @@ import { useSubcriptionDetail } from '@checkout/store';
 import { connectWallet } from '@core/utils';
 import { useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
+import Web3 from 'web3';
 
 export const useAddAllowanceContent = () => {
   const details = useSubcriptionDetail((state) => state.details);
@@ -21,7 +22,7 @@ export const useAddAllowanceContent = () => {
   ]);
   const [stepsButtonText, setStepsButtonText] = useState(['Connect Wallet', 'Add Allowance']);
   const [activeStep, setActiveStep] = useState(0);
-  const [web3, setWeb3] = useState<any>(null);
+  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [address, setAddress] = useState('');

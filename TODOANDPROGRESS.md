@@ -1,5 +1,12 @@
 # Todo:
 
+- Proper typing for contracts
+- HTTP-only cookie instead of local storage for JWT
+- Re-do API routes properly
+- Clean up APIs
+- Build and deploy (test)
+- GraphQL layer
+
 - Give options for network and tokens; tokens available should be based of network
 - Need get ABI data from API
 

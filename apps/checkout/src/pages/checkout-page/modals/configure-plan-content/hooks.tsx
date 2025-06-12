@@ -7,6 +7,7 @@ import { handleApiError } from '@core/utils';
 import { apiInitiateSubscription } from '@checkout/api/initiate-subscription';
 import { apiChangePaymentMethod } from '@checkout/api/change-payment-method';
 import { apiRenewSubscription } from '@checkout/api/renew-subscription';
+import Web3 from 'web3';
 
 export const useConfigurePlanContent = () => {
   const details = useSubcriptionDetail((state) => state.details);
@@ -50,7 +51,7 @@ export const useConfigurePlanContent = () => {
   ]);
 
   const [activeStep, setActiveStep] = useState(0);
-  const [web3, setWeb3] = useState<any>(null);
+  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -105,7 +106,7 @@ export const useConfigurePlanContent = () => {
       }
 
       const abi: any = USDTABI.abi;
-      const usdt: any = new w3.eth.Contract(abi, tokenAddress);
+      const usdt = new w3.eth.Contract(abi, tokenAddress);
       setContract(usdt);
       let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
       userBalance = parseInt(userBalance);
@@ -172,7 +173,7 @@ export const useConfigurePlanContent = () => {
             });
 
           let newAllowance = approveToken.events.Approval.returnValues.value;
-          const receipt = await web3.eth.getTransactionReceipt(approveToken.transactionHash);
+          const receipt = await web3?.eth.getTransactionReceipt(approveToken.transactionHash);
 
           if (parseInt(newAllowance) > amount) {
             allowanceIsSufficient = true;

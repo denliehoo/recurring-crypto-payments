@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
 import { Vendor } from '@core/types';
 import { apiRequestPayout } from '@dashboard/api/payouts/request-payout';
+import Web3 from 'web3';
 
 export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   const steps = ['Connect Wallet', 'Check Address', 'Request Payout'];
@@ -14,7 +15,7 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   ]);
   const stepsButtonText = ['Connect Wallet', 'Continue', 'Confirm'];
   const [activeStep, setActiveStep] = useState(0);
-  const [web3, setWeb3] = useState<any>(null);
+  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
