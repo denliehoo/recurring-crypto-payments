@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   createVendorClient,
   deleteVendorClient,
@@ -6,21 +6,21 @@ import {
   getVendorClientById,
   getVendorClientsByVendor,
   updateVendorClient,
-} from "../controllers/vendorClient";
-import { verifyToken } from "../middleware/verifyToken";
+} from '../controllers/vendorClient';
+import { verifyToken } from '../middleware/verifyToken';
 const router = Router();
 
 router.get(
-  "/get-vendor-clients-by-vendor",
+  '/get-vendor-clients-by-vendor',
   verifyToken,
-  getVendorClientsByVendor
+  getVendorClientsByVendor,
 );
-router.post("/create/:id", createVendorClient);
+router.post('/create/:id', createVendorClient);
 
 // for testing (so far)
-router.get("/getAll", getAllVendorClients);
-router.get("/getById/:id", getVendorClientById);
-router.put("/update/:id", updateVendorClient);
-router.delete("/delete/:id", deleteVendorClient);
+router.get('/getAll', getAllVendorClients);
+router.get('/getById/:id', getVendorClientById);
+router.put('/update/:id', updateVendorClient);
+router.delete('/delete/:id', deleteVendorClient);
 
 export default router;

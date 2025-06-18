@@ -1,11 +1,11 @@
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import CustomButton from '@components/button';
 
 import { Box, Typography } from '@mui/material';
 import CustomFormFields from '@components/form-field';
 import { validateForm } from '@core/utils/form';
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
-import { BillingInfo } from '@core/types';
+import type { BillingInfo } from '@core/types';
 import { apiUpdateBillingInfo } from '@checkout/api/update-billing-info';
 import { handleApiError } from '@core/utils';
 
@@ -17,7 +17,9 @@ const UpdateBillingInfoModal: FC = () => {
 
   const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
 
-  const [detailsToSubmit, setDetailsToSubmit] = useState<BillingInfo>(billingInfo!);
+  const [detailsToSubmit, setDetailsToSubmit] = useState<BillingInfo>(
+    billingInfo!,
+  );
   const [validationErrors, setValidationErrors] = useState({});
   const fieldsTypes = {
     address: 'text',
@@ -28,7 +30,8 @@ const UpdateBillingInfoModal: FC = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!validateForm(detailsToSubmit, fieldsTypes, setValidationErrors)) return;
+    if (!validateForm(detailsToSubmit, fieldsTypes, setValidationErrors))
+      return;
     setButtonLoading(true);
 
     try {
@@ -57,7 +60,12 @@ const UpdateBillingInfoModal: FC = () => {
         fieldsTypes={fieldsTypes}
       />
       <Box sx={{ mt: 2 }}>
-        <CustomButton loading={buttonLoading} text="Confirm" fullWidth onClick={handleSubmit} />
+        <CustomButton
+          loading={buttonLoading}
+          text="Confirm"
+          fullWidth
+          onClick={handleSubmit}
+        />
       </Box>
     </>
   );

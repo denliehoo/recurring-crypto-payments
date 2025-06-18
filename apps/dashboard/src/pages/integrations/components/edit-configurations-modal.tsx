@@ -1,14 +1,14 @@
 import { Typography } from '@mui/material';
-import { FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import IntegrationFormFields from './integration-form-fields';
 
 import CustomButton from '@components/button';
 import CustomModal from '@components/modal';
 import { validateForm } from '@core/utils/form';
-import { Vendor } from '@core/types';
+import type { Vendor } from '@core/types';
 import {
   apiUpdateConfigurations,
-  IUpdateConfigurations,
+  type IUpdateConfigurations,
 } from '@dashboard/api/vendor/update-configurations';
 
 interface IEditConfigurationsModal {
@@ -32,7 +32,9 @@ export interface IVendorDetails {
 const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
   const { editModalOpen, closeModal, vendor, vendorId, refreshData } = props;
   const { amount: vendorAmount = 0 } = vendor;
-  const [vendorDetails, setVendorDetails] = useState<IVendorDetails | undefined>({
+  const [vendorDetails, setVendorDetails] = useState<
+    IVendorDetails | undefined
+  >({
     tokenAddress: vendor.tokenAddress,
     monthlySubscriptionPrice: vendorAmount / 10 ** 6,
     businessName: vendor.name,
@@ -73,7 +75,9 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
       returnUrl: vendorDetails?.returnUrl || '',
       tokenAddress: vendorDetails?.tokenAddress || '',
       // When form value is edited, it will be a string even if it is an integer
-      amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
+      amount: Math.ceil(
+        Number.parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6,
+      ),
       plan: vendorDetails?.planName || '',
       vendorContract: vendor.vendorContract || '',
       id: vendorId,
@@ -95,7 +99,8 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
       vendorDetails?.webhookUrl === vendor.webhookUrl &&
       vendorDetails?.returnUrl === vendor.returnUrl &&
       vendorDetails?.tokenAddress === vendor.tokenAddress &&
-      vendorDetails?.monthlySubscriptionPrice.toString() === (vendorAmount / 10 ** 6).toString() &&
+      vendorDetails?.monthlySubscriptionPrice.toString() ===
+        (vendorAmount / 10 ** 6).toString() &&
       vendorDetails?.planName === vendor.plan
     ) {
       setFormChanged(false);

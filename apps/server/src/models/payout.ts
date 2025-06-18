@@ -1,5 +1,5 @@
-import { Payout } from '@core/types';
-import mongoose, { Schema, Document } from 'mongoose';
+import type { Payout } from '@core/types';
+import mongoose, { Schema, type Document } from 'mongoose';
 
 export interface IPayout extends Document, Omit<Payout, 'vendorId' | '_id'> {}
 
@@ -13,7 +13,7 @@ export const payoutSchema: Schema = new Schema(
     hash: { type: String, required: true },
     vendorId: { type: Schema.Types.ObjectId, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<IPayout>('Payout', payoutSchema);

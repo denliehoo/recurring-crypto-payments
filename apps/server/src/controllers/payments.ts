@@ -1,12 +1,16 @@
-import { Request, Response } from 'express';
-import { findVendorByEmail, findVendorById, findVendorClientById } from '../utility/findFromDb';
+import type { Request, Response } from 'express';
+import {
+  findVendorByEmail,
+  findVendorById,
+  findVendorClientById,
+} from '../utility/findFromDb';
 import models from '../models';
 const Web3 = require('web3');
 import RecurringPaymentsVendor from '../contractABIs/RecurringPaymentsVendor.json';
-import { CustomRequest } from '../types/requests';
-import { IScheduledPayment } from '../models/scheduledPayment';
-import { ICompletedPayment } from '../models/completedPayment';
-import { IPayout } from '../models/payout';
+import type { CustomRequest } from '../types/requests';
+import type { IScheduledPayment } from '../models/scheduledPayment';
+import type { ICompletedPayment } from '../models/completedPayment';
+import type { IPayout } from '../models/payout';
 const jwt = require('jsonwebtoken');
 import moment from 'moment';
 import {
@@ -19,11 +23,12 @@ import {
   deleteScheduledPayment,
 } from '../utility/payments';
 import { sendWebHook } from '../utility/sendWebhook';
-import { IPendingEndSubscription } from '../models/pendingEndSubscription';
+import type { IPendingEndSubscription } from '../models/pendingEndSubscription';
 import { deletePendingEndSubscription } from '../utility/pendingEndSubscription';
-import { DashboardChartData } from '@core/types';
+import type { DashboardChartData } from '@core/types';
 
-const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } = models;
+const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } =
+  models;
 
 // change payment method of client
 
@@ -34,7 +39,8 @@ export const cronApi = async (req: Request, res: Response) => {
 
   console.log('CRON API Called');
 
-  if (auth !== cronApiKey) return res.status(401).json({ error: 'You are unauthorized' });
+  if (auth !== cronApiKey)
+    return res.status(401).json({ error: 'You are unauthorized' });
   // Get the date 60 minutes into the future
   const futureDate = new Date(new Date().getTime() + 60 * 60000);
   // filter to see all the scheduled payments that are due in less than 60 mins
@@ -54,7 +60,7 @@ export const cronApi = async (req: Request, res: Response) => {
 
   // loop through to reduce the user balances...
   if (paymentsDue.length > 0) {
-    for (let p of paymentsDue) {
+    for (const p of paymentsDue) {
       let isSuccessful = false;
       const paymentDetails = {
         vendorContract: p.vendorContract,
@@ -70,19 +76,20 @@ export const cronApi = async (req: Request, res: Response) => {
 
       if (!v || !c) continue;
 
-      const [sufficientAllowance, sufficientBalance] = await isAllowanceAndBalanceSufficient(
-        p.userAddress,
-        p.tokenAddress,
-        p.vendorContract,
-        p.amount
-      );
+      const [sufficientAllowance, sufficientBalance] =
+        await isAllowanceAndBalanceSufficient(
+          p.userAddress,
+          p.tokenAddress,
+          p.vendorContract,
+          p.amount,
+        );
 
       if (sufficientAllowance && sufficientBalance) {
         // only if successful, change isSuccessful to true
         const transactionHash = await sendReduceUserBalanceTransactionasync(
           p.vendorContract,
           p.userAddress,
-          p.amount.toString()
+          p.amount.toString(),
         );
 
         if (transactionHash) {
@@ -98,7 +105,8 @@ export const cronApi = async (req: Request, res: Response) => {
             status: 'paid',
             hash: transactionHash,
           });
-          const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
+          const isCompletedPaymentAdded =
+            await addCompletedPayment(newCompletedPayment);
           if (!isCompletedPaymentAdded) continue;
 
           // delete the data for that in scheduledPayment
@@ -110,7 +118,8 @@ export const cronApi = async (req: Request, res: Response) => {
             ...paymentDetails,
             paymentDate: nextDate,
           });
-          const isNewScheduledPaymentAdded = await addScheduledPayment(newScheduledPayment);
+          const isNewScheduledPaymentAdded =
+            await addScheduledPayment(newScheduledPayment);
           if (!isNewScheduledPaymentAdded) continue;
 
           // Send a webhook to vendor that it is paid
@@ -122,7 +131,7 @@ export const cronApi = async (req: Request, res: Response) => {
               vendorId: v._id,
               vendorClientId: c._id,
               nextDate: nextDate,
-            }
+            },
           );
 
           const successfulPaymentWebhook = await sendWebHook(
@@ -133,10 +142,11 @@ export const cronApi = async (req: Request, res: Response) => {
               ...paymentDetails,
               paymentDate: currentDate,
               hash: transactionHash,
-            }
+            },
           );
 
-          if (!subscriptionContinuedWebhook || !successfulPaymentWebhook) continue;
+          if (!subscriptionContinuedWebhook || !successfulPaymentWebhook)
+            continue;
         }
       }
       if (!isSuccessful) {
@@ -153,7 +163,8 @@ export const cronApi = async (req: Request, res: Response) => {
           status: 'failed',
           remarks: remarks,
         });
-        const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
+        const isCompletedPaymentAdded =
+          await addCompletedPayment(newCompletedPayment);
         if (!isCompletedPaymentAdded) continue;
 
         // delete the data for that in scheduledPayments
@@ -161,7 +172,9 @@ export const cronApi = async (req: Request, res: Response) => {
         if (!isScheduledPaymentDeleted) continue;
 
         // Update that client entity status to "cancelled" (we take it as they cancel if they failed to pay)
-        let vendorClient = await findVendorClientById(p.vendorClientId.toString());
+        const vendorClient = await findVendorClientById(
+          p.vendorClientId.toString(),
+        );
         if (!vendorClient) continue;
         vendorClient.status = 'ended';
         try {
@@ -179,13 +192,18 @@ export const cronApi = async (req: Request, res: Response) => {
           {
             vendorId: v._id,
             vendorClientId: c._id,
-          }
+          },
         );
 
-        const failedPaymentWebhook = await sendWebHook(v.apiKey!, v.webhookUrl!, 'FAILED_PAYMENT', {
-          vendorId: v._id,
-          vendorClientId: c._id,
-        });
+        const failedPaymentWebhook = await sendWebHook(
+          v.apiKey!,
+          v.webhookUrl!,
+          'FAILED_PAYMENT',
+          {
+            vendorId: v._id,
+            vendorClientId: c._id,
+          },
+        );
 
         if (!subscriptionCancelledWebhook || !failedPaymentWebhook) continue;
       }
@@ -193,8 +211,8 @@ export const cronApi = async (req: Request, res: Response) => {
   }
   // loop through to end the subscriptions of users who have cancelled and subscription term has come to an end
   if (pendingEndSubscriptionsToDelete.length > 0) {
-    for (let p of pendingEndSubscriptionsToDelete) {
-      let c = await findVendorClientById(p.vendorClientId.toString());
+    for (const p of pendingEndSubscriptionsToDelete) {
+      const c = await findVendorClientById(p.vendorClientId.toString());
       const v = await findVendorById(p.vendorId.toString());
       if (!c || !v) continue;
 
@@ -215,7 +233,7 @@ export const cronApi = async (req: Request, res: Response) => {
         {
           vendorId: p.vendorId.toString(),
           vendorClientId: p.vendorClientId.toString(),
-        }
+        },
       );
 
       if (!subscriptionEndedWebhook) continue;
@@ -239,7 +257,10 @@ export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
     });
 
     const web3 = new Web3(process.env.WEB3_PROVIDER!);
-    const contract = new web3.eth.Contract(RecurringPaymentsVendor.abi, vendor.vendorContract);
+    const contract = new web3.eth.Contract(
+      RecurringPaymentsVendor.abi,
+      vendor.vendorContract,
+    );
 
     const balance: string = await contract.methods.balance().call();
     const owner: string = await contract.methods.owner().call();
@@ -290,7 +311,10 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
       hash: null as string | null,
     }))
     .concat(completedPayments)
-    .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
 
   return res.send(results);
 };
@@ -298,7 +322,7 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
 export const getDashboard = async (req: CustomRequest, res: Response) => {
   const { email, vendorId } = req.decoded;
   const { utc } = req.query;
-  const timezone = parseInt(utc as string);
+  const timezone = Number.parseInt(utc as string);
 
   let totalDaily = 0;
 
@@ -312,7 +336,7 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
   };
 
   const transformData = (data: PaymentData[], timezoneOffset: number) => {
-    let amounts: DashboardChartData[] = [
+    const amounts: DashboardChartData[] = [
       { time: '00:00', amount: 0 },
       { time: '03:00', amount: 0 },
       { time: '06:00', amount: 0 },
@@ -324,8 +348,8 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       { time: '24:00', amount: 0 },
     ];
 
-    for (let d of data) {
-      let date = new Date(d.paymentDate);
+    for (const d of data) {
+      const date = new Date(d.paymentDate);
       date.setHours(date.getHours() + timezoneOffset); // Apply the timezone offset
       let indx = Math.ceil(date.getHours() / 3);
       if (indx === 0) indx = 1;
@@ -337,7 +361,7 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     if (currentHourIndex < 0) currentHourIndex += 8;
 
     for (let i = 1; i < currentHourIndex + 1; i++) {
-      amounts[i]!.amount! += amounts[i - 1]!.amount!;
+      amounts[i]!.amount! += amounts[i - 1]!.amount;
     }
 
     if (currentHourIndex === 8) return amounts;
@@ -368,7 +392,9 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       },
     });
   } catch {
-    return res.status(500).json({ error: 'Error in fetching daily completed payments' });
+    return res
+      .status(500)
+      .json({ error: 'Error in fetching daily completed payments' });
   }
 
   // const data = generateSampleData();
@@ -384,24 +410,31 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
       .sort({ paymentDate: -1 }) // Sort by paymentDate in descending order (most recent first)
       .limit(5); // Limit the result to 5 documents
   } catch {
-    return res.status(500).json({ error: 'Error in fetching recent completed payments' });
+    return res
+      .status(500)
+      .json({ error: 'Error in fetching recent completed payments' });
   }
 
   let pendingBalance;
   try {
     const web3 = new Web3(process.env.WEB3_PROVIDER!);
     if (!vendor) return res.status(404).json({ error: 'Vendor not found' });
-    const contract = new web3.eth.Contract(RecurringPaymentsVendor.abi, vendor.vendorContract);
+    const contract = new web3.eth.Contract(
+      RecurringPaymentsVendor.abi,
+      vendor.vendorContract,
+    );
 
     pendingBalance = await contract.methods.balance().call();
   } catch {
-    return res.status(500).json({ error: 'Error in fetching pending balance from contract' });
+    return res
+      .status(500)
+      .json({ error: 'Error in fetching pending balance from contract' });
   }
   return res.send({
     chartData: transformed,
     recentPayments: recentCompletedPayments,
     totalDaily: totalDaily,
-    pendingBalance: parseInt(pendingBalance),
+    pendingBalance: Number.parseInt(pendingBalance),
   });
 };
 
@@ -454,7 +487,10 @@ export const getCompletedPayments = async (req: Request, res: Response) => {
   }
 };
 
-export const getPendingEndSubscriptions = async (req: Request, res: Response) => {
+export const getPendingEndSubscriptions = async (
+  req: Request,
+  res: Response,
+) => {
   try {
     const pendingEndSubscriptions = await PendingEndSubscription.find({});
     res.json(pendingEndSubscriptions);

@@ -1,7 +1,7 @@
 import { useSubcriptionDetail } from '@checkout/store';
 import { KeyboardBackspace } from '@mui/icons-material';
 import { useMediaQuery, Grid, Box, Typography } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const SideBar: FC = () => {
   const isSmOrUp = useMediaQuery('(min-width:600px)');
@@ -44,7 +44,11 @@ const SideBar: FC = () => {
             justifyContent: 'flex-start',
           }}
         >
-          {isSmOrUp && <Typography variant="h5">Manage your {vendor} Billing Settings</Typography>}
+          {isSmOrUp && (
+            <Typography variant="h5">
+              Manage your {vendor} Billing Settings
+            </Typography>
+          )}
           <Box
             sx={{
               display: 'flex',
@@ -56,7 +60,9 @@ const SideBar: FC = () => {
             <KeyboardBackspace />
             <Typography>Return to {vendor}</Typography>
           </Box>
-          {isSmOrUp && <Typography sx={{ mt: 'auto' }}>Powered by RecurCrypt</Typography>}
+          {isSmOrUp && (
+            <Typography sx={{ mt: 'auto' }}>Powered by RecurCrypt</Typography>
+          )}
         </Box>
       </Box>
     </Grid>

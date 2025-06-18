@@ -1,13 +1,13 @@
-import mongoose from "mongoose";
-import Vendor from "./vendor";
-import VendorClient from "./vendorClient";
-import ScheduledPayment from "./scheduledPayment";
-import CompletedPayment from "./completedPayment";
-import Payout from "./payout";
-import PendingEndSubscription from "./pendingEndSubscription";
+import mongoose from 'mongoose';
+import Vendor from './vendor';
+import VendorClient from './vendorClient';
+import ScheduledPayment from './scheduledPayment';
+import CompletedPayment from './completedPayment';
+import Payout from './payout';
+import PendingEndSubscription from './pendingEndSubscription';
 
 const dbUrl =
-  process.env.DB_URL || "mongodb://127.0.0.1:27017/recurring-crypto-payments";
+  process.env.DB_URL || 'mongodb://127.0.0.1:27017/recurring-crypto-payments';
 
 const connectDb = () => {
   console.log(`connected through db: ${dbUrl}`);

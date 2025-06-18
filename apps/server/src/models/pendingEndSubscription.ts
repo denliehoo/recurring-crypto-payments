@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, type Document } from 'mongoose';
 
 export interface IPendingEndSubscription extends Document {
   endDate: Date;
@@ -12,10 +12,10 @@ export const pendingEndSubcriptionSchema: Schema = new Schema(
     vendorId: { type: Schema.Types.ObjectId, required: true },
     vendorClientId: { type: Schema.Types.ObjectId, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<IPendingEndSubscription>(
-  "PendingEndSubscription",
-  pendingEndSubcriptionSchema
+  'PendingEndSubscription',
+  pendingEndSubcriptionSchema,
 );

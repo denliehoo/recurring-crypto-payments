@@ -1,1 +1,1 @@
-export * from "./manageSubscriptionExternalSampleDatas";
+export * from './manageSubscriptionExternalSampleDatas';

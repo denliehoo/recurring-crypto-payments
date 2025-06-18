@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
@@ -6,7 +7,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import Tooltip from '@mui/material/Tooltip';
-import { SxProps } from '@mui/material';
+import type { SxProps } from '@mui/material';
 
 interface DisplayFieldProps {
   label: string;
@@ -15,7 +16,12 @@ interface DisplayFieldProps {
   sx?: SxProps;
 }
 
-const DisplayField: React.FC<DisplayFieldProps> = ({ label, text = '', hideOption, sx }) => {
+const DisplayField: React.FC<DisplayFieldProps> = ({
+  label,
+  text = '',
+  hideOption,
+  sx,
+}) => {
   const [showKeys, setShowKeys] = useState(!hideOption); // Show the keys by default if hideOption is false
   const [isCopied, setIsCopied] = useState(false);
 
@@ -34,7 +40,7 @@ const DisplayField: React.FC<DisplayFieldProps> = ({ label, text = '', hideOptio
       },
       (error) => {
         console.error('Failed to copy text: ', error);
-      }
+      },
     );
   };
 

@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { useConfigurePlanContent } from './hooks';
 
 const ConfigurePlanModalHeader: FC = () => {
@@ -17,7 +17,9 @@ const ConfigurePlanModalHeader: FC = () => {
         },
       }}
     >
-      <span>{status === 'active' ? 'Change Payment Method' : 'Start Plan'}</span>
+      <span>
+        {status === 'active' ? 'Change Payment Method' : 'Start Plan'}
+      </span>
       {address && (
         <span>{`${address.substring(0, 4)}...${address.substring(address.length - 4)}`}</span>
       )}

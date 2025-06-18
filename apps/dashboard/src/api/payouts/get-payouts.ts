@@ -1,6 +1,6 @@
 import { apiRequest } from '@core/api';
 import { API_URL } from '@core/constants';
-import { GetPayoutsApiResponse } from '@core/types';
+import type { GetPayoutsApiResponse } from '@core/types';
 
 export const apiGetPayouts = () =>
   apiRequest<GetPayoutsApiResponse>({

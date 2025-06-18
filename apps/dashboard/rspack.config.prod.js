@@ -5,4 +5,9 @@ const extraAliases = {
   '@dashboard': path.resolve(__dirname, 'src'),
 };
 
-module.exports = baseConfig({ appDir: __dirname, port: 3031, mode: 'production', extraAliases });
+module.exports = baseConfig({
+  appDir: __dirname,
+  port: 3031,
+  mode: 'production',
+  extraAliases,
+});

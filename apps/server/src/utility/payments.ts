@@ -1,11 +1,11 @@
-import models from "../models";
-import { ICompletedPayment } from "../models/completedPayment";
-import { IScheduledPayment } from "../models/scheduledPayment";
+import models from '../models';
+import type { ICompletedPayment } from '../models/completedPayment';
+import type { IScheduledPayment } from '../models/scheduledPayment';
 
 const { ScheduledPayment, CompletedPayment } = models;
 export const findScheduledPayment = async (
   vendorId: string,
-  vendorClientId: string
+  vendorClientId: string,
 ): Promise<IScheduledPayment | null> => {
   try {
     // Find the scheduled payment with matching vendorId and vendorClientId
@@ -17,7 +17,7 @@ export const findScheduledPayment = async (
     // Return the scheduled payment or null if not found
     return scheduledPayment;
   } catch (error) {
-    console.error("Error finding scheduled payment:", error);
+    console.error('Error finding scheduled payment:', error);
 
     // Return null if there was an error
     return null;
@@ -25,28 +25,28 @@ export const findScheduledPayment = async (
 };
 
 export const addScheduledPayment = async (
-  scheduledPayment: IScheduledPayment
+  scheduledPayment: IScheduledPayment,
 ): Promise<boolean> => {
   try {
     await scheduledPayment.save();
 
     return true;
   } catch (error) {
-    console.error("Error adding scheduled payment:", error);
+    console.error('Error adding scheduled payment:', error);
 
     return false;
   }
 };
 
 export const deleteScheduledPayment = async (
-  scheduledPayment: IScheduledPayment
+  scheduledPayment: IScheduledPayment,
 ): Promise<boolean> => {
   try {
     await scheduledPayment.deleteOne();
 
     return true;
   } catch (error) {
-    console.error("Error deleting scheduled payment:", error);
+    console.error('Error deleting scheduled payment:', error);
 
     return false;
   }
@@ -55,7 +55,7 @@ export const deleteScheduledPayment = async (
 // generally only used for changing payment method, hence just change userAddress
 export const updateScheduledPayment = async (
   scheduledPayment: IScheduledPayment,
-  userAddress: string
+  userAddress: string,
 ): Promise<boolean> => {
   try {
     // Update the userAddress field
@@ -65,21 +65,21 @@ export const updateScheduledPayment = async (
 
     return true;
   } catch (error) {
-    console.error("Error updating scheduled payment:", error);
+    console.error('Error updating scheduled payment:', error);
 
     return false;
   }
 };
 
 export const addCompletedPayment = async (
-  completedPayment: ICompletedPayment
+  completedPayment: ICompletedPayment,
 ): Promise<boolean> => {
   try {
     await completedPayment.save();
 
     return true;
   } catch (error) {
-    console.error("Error adding completed payment:", error);
+    console.error('Error adding completed payment:', error);
 
     return false;
   }

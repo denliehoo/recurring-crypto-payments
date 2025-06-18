@@ -1,6 +1,6 @@
 import { splitTextByCaps } from '@core/utils/text';
 import { Grid, TextField } from '@mui/material';
-import { ChangeEvent, FC } from 'react';
+import type { ChangeEvent, FC } from 'react';
 /* 
     required from parent component:
 

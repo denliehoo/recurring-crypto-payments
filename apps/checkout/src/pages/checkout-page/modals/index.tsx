@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import AddAllowanceContent from './add-allowance-content';
 import CancelPlanContent from './cancel-plan-content';
 import ConfigurePlanContent from './configure-plan-content';

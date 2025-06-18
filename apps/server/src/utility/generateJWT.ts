@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
 export const generateJWT = (
   data: any,
-  expirationInSeconds: number = 3155693000 // if not specific, this amt of seconds is 100 years (meaning doesnt expire)
+  expirationInSeconds = 3155693000, // if not specific, this amt of seconds is 100 years (meaning doesnt expire)
 ) => {
   // Set the expiration time for the JWT token (e.g., 1 hour from now)
   // if want to change the time, change the 3600 (which is 60s * 60 min = 3600s = 1 hr)

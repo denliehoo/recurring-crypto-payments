@@ -1,5 +1,12 @@
-import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
-import React, { FC } from 'react';
+import {
+  Box,
+  Button,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography,
+} from '@mui/material';
+import React, { type FC } from 'react';
 import CustomButton from '@components/button';
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import { useAddAllowanceContent } from './hooks';

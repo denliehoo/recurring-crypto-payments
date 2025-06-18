@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 // Replace with your actual Gmail credentials
 const gmailCredentials = {
@@ -8,7 +8,7 @@ const gmailCredentials = {
 
 // Create a transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: gmailCredentials.user,
     pass: gmailCredentials.pass,
@@ -35,7 +35,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     const info = await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error('Error sending email:', error);
     return false;
   }
 }

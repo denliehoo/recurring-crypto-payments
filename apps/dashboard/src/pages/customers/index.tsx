@@ -2,9 +2,9 @@ import TableContainer from '@mui/material/TableContainer';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { renderStatus } from '../../utils/renderTableCell';
-import { VendorClient } from '@core/types/VendorClient';
+import type { VendorClient } from '@core/types/VendorClient';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetCustomers } from '@dashboard/api/customers/get-customers';
 import { handleApiError } from '@core/utils';

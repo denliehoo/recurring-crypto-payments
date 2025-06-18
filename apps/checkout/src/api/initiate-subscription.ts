@@ -1,6 +1,6 @@
 import { apiRequest } from '@core/api';
 import { API_URL } from '@core/constants';
-import { InitiateSubscription } from '@core/types/checkout';
+import type { InitiateSubscription } from '@core/types/checkout';
 
 export const apiInitiateSubscription = (params: InitiateSubscription) =>
   apiRequest({

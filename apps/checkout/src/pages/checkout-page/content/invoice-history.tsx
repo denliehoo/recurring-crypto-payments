@@ -2,7 +2,7 @@ import { useSubcriptionDetail } from '@checkout/store';
 import { TagRounded } from '@mui/icons-material';
 import { Typography, Divider, Box, IconButton } from '@mui/material';
 import { formatDate } from '@core/utils';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const InvoiceHistory: FC = () => {
   const details = useSubcriptionDetail((state) => state.details);

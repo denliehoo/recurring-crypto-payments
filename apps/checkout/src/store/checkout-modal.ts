@@ -14,7 +14,9 @@ interface ICheckoutModalAction {
   setModal: (modal: ECheckoutModal | undefined) => void;
 }
 
-export const useCheckoutModal = create<ICheckoutModalState & ICheckoutModalAction>((set) => ({
+export const useCheckoutModal = create<
+  ICheckoutModalState & ICheckoutModalAction
+>((set) => ({
   modal: undefined,
   setModal: (modal) => set(() => ({ modal })),
 }));

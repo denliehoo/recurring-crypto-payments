@@ -1,12 +1,15 @@
 import { Stepper, Step, StepLabel } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 interface IRequestPayoutModalStepper {
   activeStep: number;
   steps: string[];
 }
 
-const RequestPayoutModalStepper: FC<IRequestPayoutModalStepper> = ({ activeStep, steps }) => {
+const RequestPayoutModalStepper: FC<IRequestPayoutModalStepper> = ({
+  activeStep,
+  steps,
+}) => {
   return (
     <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
       {steps.map((label, index) => {

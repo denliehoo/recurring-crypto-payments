@@ -2,12 +2,17 @@ import { useSubcriptionDetail } from '@checkout/store';
 import { connectWallet } from '@core/utils';
 import { useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
-import Web3 from 'web3';
+import type Web3 from 'web3';
 
 export const useAddAllowanceContent = () => {
   const details = useSubcriptionDetail((state) => state.details);
 
-  const { tokenAddress, amount = 0, vendorContract, paymentMethod } = details || {};
+  const {
+    tokenAddress,
+    amount = 0,
+    vendorContract,
+    paymentMethod,
+  } = details || {};
 
   const { wallet: currentWallet = '' } = paymentMethod || {};
 
@@ -20,7 +25,10 @@ export const useAddAllowanceContent = () => {
       minAmountText * 12
     } to ensure a smooth subscription`,
   ]);
-  const [stepsButtonText, setStepsButtonText] = useState(['Connect Wallet', 'Add Allowance']);
+  const [stepsButtonText, setStepsButtonText] = useState([
+    'Connect Wallet',
+    'Add Allowance',
+  ]);
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
   const [contract, setContract] = useState<any>(null);
@@ -70,8 +78,8 @@ export const useAddAllowanceContent = () => {
             console.log(hash);
           });
 
-        let newAllowance = approveToken.events.Approval.returnValues.value;
-        setNewAllowance(parseInt(newAllowance) / 10 ** 6);
+        const newAllowance = approveToken.events.Approval.returnValues.value;
+        setNewAllowance(Number.parseInt(newAllowance) / 10 ** 6);
       } catch (err) {
         console.log(err);
         setButtonLoading(false);

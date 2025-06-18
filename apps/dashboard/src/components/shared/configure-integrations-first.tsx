@@ -7,7 +7,9 @@ const ConfigureIntegrationsFirst = () => {
   return (
     <div>
       <div>Please complete integrations configurations first</div>
-      <Button onClick={() => navigate('/integrations')}>Go to configurations</Button>
+      <Button onClick={() => navigate('/integrations')}>
+        Go to configurations
+      </Button>
     </div>
   );
 };

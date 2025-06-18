@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import type { FC, ReactNode } from 'react';
 import ConfigureIntegrationsFirst from '../shared/configure-integrations-first';
 import { useAppSelector } from '@dashboard/store';
 import LoadingOverlay from '@components/loading-overlay';

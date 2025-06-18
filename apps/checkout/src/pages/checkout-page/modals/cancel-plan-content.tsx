@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material';
 import CustomButton from '@components/button';
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import { apiCancelSubscription } from '@checkout/api/cancel-subscription';
 
@@ -30,8 +30,16 @@ const CancelPlanContent: FC = () => {
         Cancel Plan
       </Typography>
       <Typography>Are you sure you want to cancel your plan?</Typography>
-      <CustomButton text="confirm" loading={buttonLoading} onClick={handleCancelPlan} />
-      <Button variant="outlined" onClick={() => setModal(undefined)} sx={{ ml: 2 }}>
+      <CustomButton
+        text="confirm"
+        loading={buttonLoading}
+        onClick={handleCancelPlan}
+      />
+      <Button
+        variant="outlined"
+        onClick={() => setModal(undefined)}
+        sx={{ ml: 2 }}
+      >
         No
       </Button>
     </>

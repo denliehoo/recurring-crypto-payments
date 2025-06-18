@@ -1,4 +1,8 @@
-import { BillingInfo, Invoice, PaymentMethod } from './VendorClientSubscriptionDetails';
+import type {
+  BillingInfo,
+  Invoice,
+  PaymentMethod,
+} from './VendorClientSubscriptionDetails';
 
 // TODO: Refactor types properly (reusability), status should be enum
 export interface VendorClient {

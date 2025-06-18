@@ -1,13 +1,13 @@
 import { useSubcriptionDetail } from '@checkout/store';
 import { connectWallet } from '@core/utils/wallet';
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 import { FakeUSDT as USDTABI } from '@core/abi/FakeUSDT';
 import { formatDate } from '@core/utils/text';
 import { handleApiError } from '@core/utils';
 import { apiInitiateSubscription } from '@checkout/api/initiate-subscription';
 import { apiChangePaymentMethod } from '@checkout/api/change-payment-method';
 import { apiRenewSubscription } from '@checkout/api/renew-subscription';
-import Web3 from 'web3';
+import type Web3 from 'web3';
 
 export const useConfigurePlanContent = () => {
   const details = useSubcriptionDetail((state) => state.details);
@@ -96,7 +96,10 @@ export const useConfigurePlanContent = () => {
       const accounts = await w3.eth.getAccounts();
       setAddress(accounts[0]);
 
-      if (status === 'active' && accounts[0].toLowerCase() === currentWallet.toLowerCase()) {
+      if (
+        status === 'active' &&
+        accounts[0].toLowerCase() === currentWallet.toLowerCase()
+      ) {
         const temp = [...stepsText];
         temp[0] = `You are connected to the wallet address: ${accounts[0]}. To proceed with changing payment method
         please change to a different wallet address`;
@@ -109,9 +112,11 @@ export const useConfigurePlanContent = () => {
       const usdt = new w3.eth.Contract(abi, tokenAddress);
       setContract(usdt);
       let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
-      userBalance = parseInt(userBalance);
-      let userAllowance = await usdt.methods.allowance(accounts[0], vendorContract).call();
-      userAllowance = parseInt(userAllowance);
+      userBalance = Number.parseInt(userBalance);
+      let userAllowance = await usdt.methods
+        .allowance(accounts[0], vendorContract)
+        .call();
+      userAllowance = Number.parseInt(userAllowance);
 
       const balanceIsSufficient = userBalance > amount;
       const allowanceIsSufficient = userAllowance > amount;
@@ -146,7 +151,7 @@ export const useConfigurePlanContent = () => {
         tempStepsText[3] = `Please confirm your change. Subsequently, we will be deducting ${minAmountText} USDT monthly starting from this address.`;
       } else if (status === 'cancelled') {
         tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly from your wallet ${formatDate(
-          nextDate
+          nextDate,
         )} if you confirm your renewal.`;
       } else if (status === 'ended') {
         tempStepsText[3] = `Please confirm your subscription renewal. We will be deducting ${minAmountText} USDT monthly starting from now if you confirm your subscription.`;
@@ -172,15 +177,17 @@ export const useConfigurePlanContent = () => {
               console.log(hash);
             });
 
-          let newAllowance = approveToken.events.Approval.returnValues.value;
-          const receipt = await web3?.eth.getTransactionReceipt(approveToken.transactionHash);
+          const newAllowance = approveToken.events.Approval.returnValues.value;
+          const receipt = await web3?.eth.getTransactionReceipt(
+            approveToken.transactionHash,
+          );
 
-          if (parseInt(newAllowance) > amount) {
+          if (Number.parseInt(newAllowance) > amount) {
             allowanceIsSufficient = true;
             setUserToken({
               ...userToken,
               allowanceSufficient: true,
-              allowance: parseInt(newAllowance),
+              allowance: Number.parseInt(newAllowance),
             });
           } else {
             // insufficient allowance was given
@@ -188,7 +195,7 @@ export const useConfigurePlanContent = () => {
             setUserToken({
               ...userToken,
               allowanceSufficient: false,
-              allowance: parseInt(newAllowance),
+              allowance: Number.parseInt(newAllowance),
             });
           }
         } catch (err) {

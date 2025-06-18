@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import ConfigureIntegrations from './components/configure-integrations';
 import ConfiguredIntergrations from './components/configured-integrations';
-import { Vendor } from '@core/types';
+import type { Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetVendorDetails } from '@dashboard/api/vendor/get-details';
 

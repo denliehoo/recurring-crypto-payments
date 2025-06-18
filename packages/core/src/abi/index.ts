@@ -1,1 +1,1 @@
-export * from "./FakeUSDT";
+export * from './FakeUSDT';

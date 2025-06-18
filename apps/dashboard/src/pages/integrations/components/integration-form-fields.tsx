@@ -1,11 +1,20 @@
-import React, { FC } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import type React from 'react';
+import type { FC } from 'react';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+} from '@mui/material';
 import CustomFormFields from '@components/form-field';
-import { IVendorDetails } from './edit-configurations-modal';
+import type { IVendorDetails } from './edit-configurations-modal';
 
 interface IntegrationFormFieldsProps {
   vendorDetails: IVendorDetails | undefined;
-  setVendorDetails: React.Dispatch<React.SetStateAction<IVendorDetails | undefined>>;
+  setVendorDetails: React.Dispatch<
+    React.SetStateAction<IVendorDetails | undefined>
+  >;
   validationErrors: any;
   setValidationErrors: React.Dispatch<React.SetStateAction<any>>;
   fieldsTypes: any;
@@ -33,19 +42,24 @@ const IntegrationFormFields: FC<IntegrationFormFieldsProps> = ({
           onChange={(e) => {
             setVendorDetails({
               ...vendorDetails,
-              monthlySubscriptionPrice: vendorDetails?.monthlySubscriptionPrice ?? '',
+              monthlySubscriptionPrice:
+                vendorDetails?.monthlySubscriptionPrice ?? '',
               tokenAddress: e.target.value,
             });
             setAddressError(false);
           }}
         >
-          <MenuItem value={'0xc9606fea595ed3a94b4c8548ca0c2252c7856e89'}>USDT (Sepolia)</MenuItem>
+          <MenuItem value={'0xc9606fea595ed3a94b4c8548ca0c2252c7856e89'}>
+            USDT (Sepolia)
+          </MenuItem>
           {/*
           <MenuItem value={20}>Twenty</MenuItem>
           <MenuItem value={30}>Thirty</MenuItem> 
           */}
         </Select>
-        {addressError && <FormHelperText>Token Address field cannot be empty</FormHelperText>}
+        {addressError && (
+          <FormHelperText>Token Address field cannot be empty</FormHelperText>
+        )}
       </FormControl>
       {/* other fields */}
       <CustomFormFields

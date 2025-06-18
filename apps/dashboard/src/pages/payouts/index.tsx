@@ -1,11 +1,18 @@
-import { Box, Divider, IconButton, Paper, TableContainer, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  TableContainer,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import CustomButton from '@components/button';
 import RequestPayoutModal from './request-payout-modal';
 import TagIcon from '@mui/icons-material/Tag';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { renderAmount, renderDate } from '../../utils/renderTableCell';
-import { GetPayoutsApiResponse, Payout, Vendor } from '@core/types';
+import type { Payout, Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetPayouts } from '@dashboard/api/payouts/get-payouts';
 
@@ -53,7 +60,9 @@ const Payouts = () => {
   const [rows, setRows] = useState<Payout[]>([]);
   const [owner, setOwner] = useState('');
   const [pendingBalance, setPendingBalance] = useState('0');
-  const [vendorDetails, setVendorDetails] = useState<Vendor | undefined>(undefined);
+  const [vendorDetails, setVendorDetails] = useState<Vendor | undefined>(
+    undefined,
+  );
   const [refreshData, setRefreshData] = useState(true);
 
   useEffect(() => {
@@ -77,7 +86,9 @@ const Payouts = () => {
   return (
     <PageLayout isLoading={isLoading}>
       <Typography variant="h5">Payouts</Typography>
-      <Typography>You currently have {parseInt(pendingBalance) / 10 ** 6} USDT Pending</Typography>
+      <Typography>
+        You currently have {Number.parseInt(pendingBalance) / 10 ** 6} USDT Pending
+      </Typography>
       <CustomButton
         variant="contained"
         onClick={() => setRequestPayoutModal(true)}

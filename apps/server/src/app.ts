@@ -1,35 +1,35 @@
-require("dotenv").config();
+require('dotenv').config();
 
-import express, { Request, Response } from "express";
-import routes from "./routes";
-import models, { connectDb } from "./models";
-import { hashPassword } from "./utility/credentials";
-import mongoose from "mongoose";
-const cors = require("cors");
+import express, { type Request, type Response } from 'express';
+import routes from './routes';
+import models, { connectDb } from './models';
+import { hashPassword } from './utility/credentials';
+import mongoose from 'mongoose';
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.use("/vendors", routes.vendor);
-app.use("/vendorclients", routes.vendorClient);
-app.use("/payments", routes.payments);
-app.use("/externalPage", routes.externalPage);
+app.use('/vendors', routes.vendor);
+app.use('/vendorclients', routes.vendorClient);
+app.use('/payments', routes.payments);
+app.use('/externalPage', routes.externalPage);
 
 const port = process.env.PORT || 3030;
 
-app.get("/", async (req: Request, res: Response) => {
-  res.send("RecurCrypt Server");
+app.get('/', async (req: Request, res: Response) => {
+  res.send('RecurCrypt Server');
 });
 
-console.log("Running on Environment:", process.env.ENV);
+console.log('Running on Environment:', process.env.ENV);
 
 connectDb().then(async () => {
   // change to true/false if want to reset and seed db
   if (false) {
-    if (process.env.ENV === "DEV") {
-      console.log("Re-seeding database!");
+    if (process.env.ENV === 'DEV') {
+      console.log('Re-seeding database!');
       // drops all collection
       // dropAllCollections();
 
@@ -41,9 +41,9 @@ connectDb().then(async () => {
       //   models.ScheduledPayment.deleteMany({}),
       // ]);
       // await seedDataBase();
-    } else if (process.env.ENV === "PROD") {
+    } else if (process.env.ENV === 'PROD') {
       console.log(
-        "You're attempting to re-seed production database. If you are sure, you can change the if statement at the top to change from DEV to PROD"
+        "You're attempting to re-seed production database. If you are sure, you can change the if statement at the top to change from DEV to PROD",
       );
     }
   }
@@ -52,21 +52,21 @@ connectDb().then(async () => {
 });
 
 const seedDataBase = async () => {
-  const testPassword = await hashPassword("Testing1234!");
+  const testPassword = await hashPassword('Testing1234!');
   const testApiKeys =
-    "sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b";
+    'sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b';
   const testVendor = new models.Vendor({
-    name: "Test Company",
-    email: "test@test.com",
+    name: 'Test Company',
+    email: 'test@test.com',
     isVerified: true,
     password: testPassword,
     apiKey: testApiKeys,
-    tokenAddress: "0xc9606fea595ed3a94b4c8548ca0c2252c7856e89",
-    vendorContract: "0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4",
+    tokenAddress: '0xc9606fea595ed3a94b4c8548ca0c2252c7856e89',
+    vendorContract: '0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4',
     amount: 15000000, // 15 USDT
-    plan: "Testing Company Premium Plan",
-    webhookUrl: "http://localhost:3001/payments/recurcrypt/webhook",
-    returnUrl: "http://localhost:3000/billing",
+    plan: 'Testing Company Premium Plan',
+    webhookUrl: 'http://localhost:3001/payments/recurcrypt/webhook',
+    returnUrl: 'http://localhost:3000/billing',
   });
 
   await testVendor.save();
@@ -115,8 +115,8 @@ const dropAllCollections = async () => {
       console.log(`Dropped collection: ${collectionName}`);
     }
 
-    console.log("All collections dropped successfully");
+    console.log('All collections dropped successfully');
   } catch (error) {
-    console.error("Error dropping collections:", error);
+    console.error('Error dropping collections:', error);
   }
 };

@@ -1,6 +1,13 @@
-import { FC, useState } from 'react';
+import { type FC, useState } from 'react';
 
-import { Box, Button, Typography, Stepper, Step, StepLabel } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  Stepper,
+  Step,
+  StepLabel,
+} from '@mui/material';
 import React from 'react';
 import { connectWallet } from '@core/utils/wallet';
 import RecurringPayments from '../../../truffle_abis/RecurringPayments.json';
@@ -9,10 +16,10 @@ import { addVendorDetails } from '../../../slices/vendorDetailsSlice';
 import CustomButton from '@components/button';
 import { validateForm } from '@core/utils/form';
 import { useAppDispatch } from '@dashboard/store';
-import { IVendorDetails } from './edit-configurations-modal';
+import type { IVendorDetails } from './edit-configurations-modal';
 import {
   apiUpdateConfigurations,
-  IUpdateConfigurations,
+  type IUpdateConfigurations,
 } from '@dashboard/api/vendor/update-configurations';
 
 interface ConfigureIntegrationsProps {
@@ -20,8 +27,13 @@ interface ConfigureIntegrationsProps {
   refreshData: () => void;
 }
 
-const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refreshData }) => {
-  const [vendorDetails, setVendorDetails] = useState<IVendorDetails | undefined>(undefined);
+const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({
+  vendorId,
+  refreshData,
+}) => {
+  const [vendorDetails, setVendorDetails] = useState<
+    IVendorDetails | undefined
+  >(undefined);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [activeStep, setActiveStep] = useState(0);
@@ -61,7 +73,10 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
       setWalletAddress(accounts[0]);
 
       const abi: any = RecurringPayments.abi;
-      const master: any = new w3.eth.Contract(abi, '0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7');
+      const master: any = new w3.eth.Contract(
+        abi,
+        '0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7',
+      );
       setContract(master);
       setButtonLoading(false);
     }
@@ -94,14 +109,18 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
           });
 
         const vendorContractCreated =
-          createContract.events.VendorContractCreated.returnValues.contractAddress;
+          createContract.events.VendorContractCreated.returnValues
+            .contractAddress;
         // update the vendor entity
         const bodyData: IUpdateConfigurations = {
           name: vendorDetails.businessName || '',
           webhookUrl: vendorDetails.webhookUrl || '',
           returnUrl: vendorDetails.returnUrl || '',
           tokenAddress: vendorDetails.tokenAddress || '',
-          amount: Math.ceil(parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6),
+          amount: Math.ceil(
+            Number.parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) *
+              10 ** 6,
+          ),
           plan: vendorDetails.planName || '',
           vendorContract: vendorContractCreated,
           id: vendorId,
@@ -113,7 +132,7 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
             vendorContract: vendorContractCreated,
             tokenAddress: vendorDetails.tokenAddress,
             id: vendorId,
-          })
+          }),
         );
         setButtonLoading(false);
       } catch {
@@ -139,7 +158,7 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
         <span>Configure Integrations</span>
         {walletAddress && (
           <span>{`${walletAddress.substring(0, 4)}...${walletAddress.substring(
-            walletAddress.length - 4
+            walletAddress.length - 4,
           )}`}</span>
         )}
       </Typography>
@@ -170,7 +189,9 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({ vendorId, refre
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>{stepsText[activeStep]}</Typography>
+            <Typography sx={{ mt: 2, mb: 1 }}>
+              {stepsText[activeStep]}
+            </Typography>
             {/* form fields for fill details step */}
             {activeStep === 1 && (
               <IntegrationFormFields

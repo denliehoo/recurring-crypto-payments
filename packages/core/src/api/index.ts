@@ -2,7 +2,7 @@ export const testRequest = () => {
   console.log('url is:', process.env.REACT_APP_API_URL);
 };
 
-import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 class ApiCallError extends Error {
   public responseStatus: number;

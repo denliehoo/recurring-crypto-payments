@@ -1,6 +1,6 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Button, ButtonProps } from '@mui/material';
-import { FC } from 'react';
+import { Button, type ButtonProps } from '@mui/material';
+import type { FC } from 'react';
 
 interface ICustomButtonProps extends ButtonProps {
   loading?: boolean;

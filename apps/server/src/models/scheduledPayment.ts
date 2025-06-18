@@ -1,5 +1,5 @@
-import { ScheduledPayment } from '@core/types';
-import mongoose, { Schema, Document } from 'mongoose';
+import type { ScheduledPayment } from '@core/types';
+import mongoose, { Schema, type Document } from 'mongoose';
 
 export interface IScheduledPayment
   extends Omit<ScheduledPayment, 'vendorId' | 'vendorClientId' | '_id'>,
@@ -23,10 +23,13 @@ export const scheduledPaymentSchema: Schema = new Schema(
     vendorId: { type: Schema.Types.ObjectId, required: true },
     vendorClientId: { type: Schema.Types.ObjectId, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // index paymentDate to improve performance since it will be queried frequently
 scheduledPaymentSchema.index({ paymentDate: 1 });
 
-export default mongoose.model<IScheduledPayment>('ScheduledPayment', scheduledPaymentSchema);
+export default mongoose.model<IScheduledPayment>(
+  'ScheduledPayment',
+  scheduledPaymentSchema,
+);

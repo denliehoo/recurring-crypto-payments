@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 import CustomModal from '@components/modal';
 import { useRequestPayoutModal } from './hooks';
-import { Vendor } from '@core/types';
+import type { Vendor } from '@core/types';
 import RequestPayoutModalStepper from './stepper';
 import RequestPayoutModalStepperContent from './step-context';
 

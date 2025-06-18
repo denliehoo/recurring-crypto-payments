@@ -1,5 +1,5 @@
-import { Vendor } from '@core/types/Vendor';
-import mongoose, { Schema, Document } from 'mongoose';
+import type { Vendor } from '@core/types/Vendor';
+import mongoose, { Schema, type Document } from 'mongoose';
 
 export interface IVendor extends Document, Omit<Vendor, '_id'> {}
 // for now we assume that it is a monthly basis
@@ -19,7 +19,7 @@ const VendorSchema: Schema = new Schema(
     plan: { type: String },
     isVerified: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<IVendor>('Vendor', VendorSchema);

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
+import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
 import {
   LineChart,
   Line,
@@ -7,7 +7,7 @@ import {
   YAxis,
   Label,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 
 // const data = [
 //   { time: "00:00", amount: 0 },
@@ -49,7 +49,7 @@ export default function DashboardLineChart(props: any) {
               angle={270}
               position="left"
               style={{
-                textAnchor: "middle",
+                textAnchor: 'middle',
                 fill: theme.palette.text.primary,
                 ...theme.typography.body1,
               }}

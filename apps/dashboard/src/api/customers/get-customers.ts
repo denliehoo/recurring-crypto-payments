@@ -1,6 +1,6 @@
 import { apiRequest } from '@core/api';
 import { API_URL } from '@core/constants';
-import { VendorClient } from '@core/types';
+import type { VendorClient } from '@core/types';
 
 export const apiGetCustomers = () =>
   apiRequest<VendorClient[]>({

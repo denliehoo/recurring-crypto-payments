@@ -3,7 +3,12 @@ const rspack = require('@rspack/core');
 require('dotenv').config();
 const { ProgressPlugin } = require('@rspack/core');
 
-module.exports = ({ appDir, port, mode = 'development', extraAliases = {} }) => ({
+module.exports = ({
+  appDir,
+  port,
+  mode = 'development',
+  extraAliases = {},
+}) => ({
   mode,
   entry: path.resolve(appDir, 'src/index.tsx'),
   output: {
@@ -49,7 +54,9 @@ module.exports = ({ appDir, port, mode = 'development', extraAliases = {} }) => 
       template: path.resolve(appDir, 'public/index.html'),
     }),
     new rspack.DefinePlugin({
-      'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL),
+      'process.env.REACT_APP_API_URL': JSON.stringify(
+        process.env.REACT_APP_API_URL,
+      ),
       'process.env.REACT_APP_ENV': JSON.stringify(process.env.REACT_APP_ENV),
     }),
     new ProgressPlugin(),

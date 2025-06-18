@@ -1,4 +1,4 @@
-import { CompletedPayment } from './payments';
+import type { CompletedPayment } from './payments';
 
 export interface DashboardChartData {
   time: string;

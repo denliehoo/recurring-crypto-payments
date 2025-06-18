@@ -1,5 +1,5 @@
-import { Box, Modal, ModalOwnProps, SxProps } from '@mui/material';
-import { FC, ReactNode } from 'react';
+import { Box, Modal, type ModalOwnProps, type SxProps } from '@mui/material';
+import type { FC, ReactNode } from 'react';
 
 interface ICustomModalProps {
   open: boolean;
@@ -26,10 +26,14 @@ const CustomModal: FC<ICustomModalProps> = ({
     onClose();
   };
   return (
-    <Modal open={open} onClose={handleClose} BackdropProps={{ invisible: true }}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      BackdropProps={{ invisible: true }}
+    >
       <Box
         sx={{
-          position: 'absolute' as 'absolute',
+          position: 'absolute' as const,
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',

@@ -1,9 +1,9 @@
 import { connectWallet, handleApiError } from '@core/utils';
 import { useState, useRef, useEffect } from 'react';
 import RecurringPaymentsVendor from '../../../truffle_abis/RecurringPaymentsVendor.json';
-import { Vendor } from '@core/types';
+import type { Vendor } from '@core/types';
 import { apiRequestPayout } from '@dashboard/api/payouts/request-payout';
-import Web3 from 'web3';
+import type Web3 from 'web3';
 
 export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   const steps = ['Connect Wallet', 'Check Address', 'Request Payout'];
@@ -70,7 +70,7 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
           });
 
         const bodyData = {
-          amount: parseInt(withdraw.events.VendorWithdraw.returnValues.amount), // parseInt first
+          amount: Number.parseInt(withdraw.events.VendorWithdraw.returnValues.amount), // parseInt first
           tokenAddress: vendor.tokenAddress || '',
           userAddress: address,
           token: 'USDT', // hard code to USDT for now
@@ -112,7 +112,10 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
     // Clean up the event listener when the component unmounts
     return () => {
       if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener(
+          'accountsChanged',
+          handleAccountsChanged,
+        );
       }
     };
   }, []);

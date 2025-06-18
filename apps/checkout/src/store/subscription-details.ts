@@ -1,4 +1,4 @@
-import { VendorClientSubscriptionDetails } from '@core/types';
+import type { VendorClientSubscriptionDetails } from '@core/types';
 import { create } from 'zustand';
 
 interface ISubscriptionDetailState {
@@ -10,11 +10,12 @@ interface ISubscriptionDetailAction {
   setDetails: (details: VendorClientSubscriptionDetails) => void;
 }
 
-export const useSubcriptionDetail = create<ISubscriptionDetailState & ISubscriptionDetailAction>(
-  (set) => ({
-    details: undefined,
-    refreshData: false,
-    setRefreshData: () => set(({ refreshData }) => ({ refreshData: !refreshData })),
-    setDetails: (details) => set(() => ({ details })),
-  })
-);
+export const useSubcriptionDetail = create<
+  ISubscriptionDetailState & ISubscriptionDetailAction
+>((set) => ({
+  details: undefined,
+  refreshData: false,
+  setRefreshData: () =>
+    set(({ refreshData }) => ({ refreshData: !refreshData })),
+  setDetails: (details) => set(() => ({ details })),
+}));

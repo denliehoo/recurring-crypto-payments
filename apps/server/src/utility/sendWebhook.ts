@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
 type WebHookEvent =
-  | "SUBSCRIPTION_BEGUN"
-  | "SUBSCRIPTION_CANCELLED"
-  | "SUBSCRIPTION_RENEWED"
-  | "SUBSCRIPTION_ENDED"
-  | "SUBSCRIPTION_CONTINUED"
-  | "SUCCESSFUL_PAYMENT"
-  | "FAILED_PAYMENT";
+  | 'SUBSCRIPTION_BEGUN'
+  | 'SUBSCRIPTION_CANCELLED'
+  | 'SUBSCRIPTION_RENEWED'
+  | 'SUBSCRIPTION_ENDED'
+  | 'SUBSCRIPTION_CONTINUED'
+  | 'SUCCESSFUL_PAYMENT'
+  | 'FAILED_PAYMENT';
 
 // find a way to refactor repeated parts(vendorId and client)
 type WebHookEventData = {
@@ -62,7 +62,7 @@ export async function sendWebHook<T extends WebHookEvent>(
   auth: string,
   url: string,
   event: T,
-  data: WebHookEventData[T]
+  data: WebHookEventData[T],
 ): Promise<boolean> {
   try {
     const headers = {

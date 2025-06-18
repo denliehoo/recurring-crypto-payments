@@ -15,8 +15,12 @@ import {
 } from '@mui/material';
 import ETHLogo from '@checkout/assets/images/ETHLogo.png';
 import USDTLogo from '@checkout/assets/images/USDTLogo.png';
-import { FC } from 'react';
-import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
+import type { FC } from 'react';
+import {
+  ECheckoutModal,
+  useCheckoutModal,
+  useSubcriptionDetail,
+} from '@checkout/store';
 
 const PaymentMethod: FC = () => {
   const details = useSubcriptionDetail((state) => state.details);
@@ -50,13 +54,24 @@ const PaymentMethod: FC = () => {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <TextWithTooltip text={details!.paymentMethod!.wallet} shortened={true} />
+                  <TextWithTooltip
+                    text={details!.paymentMethod!.wallet}
+                    shortened={true}
+                  />
                 </TableCell>
                 <TableCell>
-                  {details!.paymentMethod!.sufficientAllowance ? <CheckCircle /> : <Cancel />}
+                  {details!.paymentMethod!.sufficientAllowance ? (
+                    <CheckCircle />
+                  ) : (
+                    <Cancel />
+                  )}
                 </TableCell>
                 <TableCell>
-                  {details!.paymentMethod!.sufficientBalance ? <CheckCircle /> : <Cancel />}
+                  {details!.paymentMethod!.sufficientBalance ? (
+                    <CheckCircle />
+                  ) : (
+                    <Cancel />
+                  )}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -66,7 +81,10 @@ const PaymentMethod: FC = () => {
         )}
         {details!.status !== 'inactive' && (
           <Box>
-            <Button variant="contained" onClick={() => setModal(ECheckoutModal.CONFIGURE_PLAN)}>
+            <Button
+              variant="contained"
+              onClick={() => setModal(ECheckoutModal.CONFIGURE_PLAN)}
+            >
               Change Method
             </Button>
 

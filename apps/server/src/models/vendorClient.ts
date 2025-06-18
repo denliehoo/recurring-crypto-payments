@@ -1,7 +1,9 @@
-import { VendorClient } from '@core/types';
-import mongoose, { Schema, Document } from 'mongoose';
+import type { VendorClient } from '@core/types';
+import mongoose, { Schema, type Document } from 'mongoose';
 
-export interface IVendorClient extends Omit<VendorClient, 'vendor' | '_id'>, Document {
+export interface IVendorClient
+  extends Omit<VendorClient, 'vendor' | '_id'>,
+    Document {
   vendor: mongoose.Types.ObjectId; // Reference to the Vendor model
 }
 /*
@@ -44,7 +46,10 @@ const vendorClientSchema: Schema = new Schema(
       default: 'inactive',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model<IVendorClient>('VendorClient', vendorClientSchema);
+export default mongoose.model<IVendorClient>(
+  'VendorClient',
+  vendorClientSchema,
+);

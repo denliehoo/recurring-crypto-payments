@@ -60,8 +60,8 @@ function Login() {
           {verificationSent && (
             <Grid item xs={12}>
               <Typography sx={{ ml: 2 }}>
-                A verification link has been sent to your email. Please click on it to verify your
-                email
+                A verification link has been sent to your email. Please click on
+                it to verify your email
               </Typography>
             </Grid>
           )}

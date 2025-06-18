@@ -1,7 +1,13 @@
 import { useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
 import CustomButton from '@components/button';
-import { Box, Button, Grid, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
-import { FC } from 'react';
+import {
+  Box,
+  Button,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
+import type { FC } from 'react';
 import { useConfigurePlanContent } from './hooks';
 
 const ConfigurePlanModalContent: FC = () => {

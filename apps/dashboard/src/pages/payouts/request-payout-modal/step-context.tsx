@@ -1,6 +1,6 @@
 import CustomButton from '@components/button';
 import { Typography, Box, Button } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 interface IRequestPayoutModalStepperContent {
   activeStep: number;
@@ -14,7 +14,9 @@ interface IRequestPayoutModalStepperContent {
   buttonDisabled: boolean;
 }
 
-export const RequestPayoutModalStepperContent: FC<IRequestPayoutModalStepperContent> = ({
+export const RequestPayoutModalStepperContent: FC<
+  IRequestPayoutModalStepperContent
+> = ({
   activeStep,
   steps,
   closeRequestPayoutModal,
@@ -28,7 +30,9 @@ export const RequestPayoutModalStepperContent: FC<IRequestPayoutModalStepperCont
   if (activeStep === steps.length) {
     return (
       <>
-        <Typography sx={{ mt: 2, mb: 1 }}>Your payout has been processed</Typography>
+        <Typography sx={{ mt: 2, mb: 1 }}>
+          Your payout has been processed
+        </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
           <Box sx={{ flex: '1 1 auto' }} />
           <Button

@@ -1,4 +1,4 @@
-import { Vendor } from './Vendor';
+import type { Vendor } from './Vendor';
 
 export interface Payout {
   _id: string;

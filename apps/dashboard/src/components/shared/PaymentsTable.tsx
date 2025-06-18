@@ -1,7 +1,11 @@
-import React from 'react';
+import type React from 'react';
 import { Paper, TableContainer } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { renderAmount, renderDate, renderStatus } from '../../utils/renderTableCell';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import {
+  renderAmount,
+  renderDate,
+  renderStatus,
+} from '../../utils/renderTableCell';
 
 interface Row {
   _id: string;

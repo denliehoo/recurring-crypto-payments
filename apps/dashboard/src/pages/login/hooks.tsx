@@ -1,14 +1,16 @@
 import { PASSWORD_REGEX, EMAIL_REGEX, handleApiError } from '@core/utils';
 import { addVendorDetails } from '@dashboard/slices/vendorDetailsSlice';
 import { useAppDispatch } from '@dashboard/store';
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiPostLogin } from '@dashboard/api/login/post-login';
 import { apiGetVendorDetails } from '@dashboard/api/vendor/get-details';
 import { apiResendVerification } from '@dashboard/api/login/resend-verification';
 import { apiRegister } from '@dashboard/api/login/register';
 
-type TInputChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
+type TInputChangeEvent = React.ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement
+>;
 
 export const useLogin = () => {
   const [username, setUsername] = useState('');
@@ -59,7 +61,8 @@ export const useLogin = () => {
   const setVendorDetails = async () => {
     const { data } = await apiGetVendorDetails();
 
-    const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } = data;
+    const { name, email, apiKey, plan, vendorContract, tokenAddress, _id } =
+      data;
     dispatch(
       addVendorDetails({
         name,
@@ -69,7 +72,7 @@ export const useLogin = () => {
         vendorContract,
         tokenAddress,
         id: _id,
-      })
+      }),
     );
   };
 
@@ -101,7 +104,8 @@ export const useLogin = () => {
             'Enter a stronger password. Password must be at least 8 alphanumeric characters with one capitalized and non-capitalized and one special character',
         });
 
-      if (!validEmail) setFieldErrors({ ...fieldErrors, email: 'Enter a valid email' });
+      if (!validEmail)
+        setFieldErrors({ ...fieldErrors, email: 'Enter a valid email' });
 
       if (!validEmail || !validPassword) {
         setFieldErrors({

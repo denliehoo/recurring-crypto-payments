@@ -7,13 +7,15 @@ import DashboardLineChart from './components/dashboard-line-chart';
 import { Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DashboardApiResponse } from '@core/types';
+import type { DashboardApiResponse } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';
 import { apiGetDashboard } from '@dashboard/api/dashboard/get-dashboard';
 
 const Dashboard = () => {
-  const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(undefined);
+  const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(
+    undefined,
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -70,7 +72,9 @@ const Dashboard = () => {
             </Box>
             <Typography variant="h5">Pending</Typography>
             <Box>
-              <Typography variant="h6">{pendingBalance / 10 ** 6} USDT</Typography>
+              <Typography variant="h6">
+                {pendingBalance / 10 ** 6} USDT
+              </Typography>
             </Box>
             <Button variant="contained" onClick={() => navigate('/payouts')}>
               Claim

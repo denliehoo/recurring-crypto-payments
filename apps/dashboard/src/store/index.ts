@@ -2,14 +2,17 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // Local storage or session storage
 import vendorDetailsReducer from '../slices/vendorDetailsSlice';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 const persistConfig = {
   key: 'root', // Key to be used in local storage or session storage
   storage,
 };
 
-const persistedVendorDetailsReducer = persistReducer(persistConfig, vendorDetailsReducer);
+const persistedVendorDetailsReducer = persistReducer(
+  persistConfig,
+  vendorDetailsReducer,
+);
 
 export const store = configureStore({
   reducer: {

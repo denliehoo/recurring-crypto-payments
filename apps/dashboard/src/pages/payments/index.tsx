@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import PaymentsTable from '../../components/shared/PaymentsTable';
-import { ScheduledPayment } from '@core/types';
+import type { ScheduledPayment } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';
 import { apiGetPayments } from '@dashboard/api/payments/get-payments';

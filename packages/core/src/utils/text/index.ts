@@ -3,7 +3,9 @@ export const splitTextByCaps = (text: string) => {
   const words = text.split(/(?=[A-Z])/);
 
   // Capitalize the first letter of each word
-  const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
+  const capitalizedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1),
+  );
 
   // Join the words back together with spaces
   const transformedText = capitalizedWords.join(' ');
@@ -15,7 +17,9 @@ export const formatDate = (dateString: Date | null | undefined) => {
   const date = new Date(dateString || new Date());
 
   const day = date.getDate();
-  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date);
+  const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+    date,
+  );
   const year = date.getFullYear();
 
   return `${day} ${month} ${year}`;

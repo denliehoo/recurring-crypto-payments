@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { CustomRequest } from '../types/requests';
+import type { Request, Response } from 'express';
+import type { CustomRequest } from '../types/requests';
 import models from '../models';
 import { findVendorById, findVendorClientById } from '../utility/findFromDb';
 import moment from 'moment';
-import { ICompletedPayment } from '../models/completedPayment';
-import { IScheduledPayment } from '../models/scheduledPayment';
+import type { ICompletedPayment } from '../models/completedPayment';
+import type { IScheduledPayment } from '../models/scheduledPayment';
 import {
   isAllowanceAndBalanceSufficient,
   sendReduceUserBalanceTransactionasync,
@@ -24,13 +24,18 @@ import {
   deletePendingEndSubscription,
   findPendingEndSubscription,
 } from '../utility/pendingEndSubscription';
-import { IPendingEndSubscription } from '../models/pendingEndSubscription';
-import { VendorClientSubscriptionDetails } from '@core/types/VendorClientSubscriptionDetails';
-import { InitiateSubscription } from '@core/types/checkout';
+import type { IPendingEndSubscription } from '../models/pendingEndSubscription';
+import type { VendorClientSubscriptionDetails } from '@core/types/VendorClientSubscriptionDetails';
+import type { InitiateSubscription } from '@core/types/checkout';
 
 // import sendWebHook from "../utility/sendWebhook";
 
-const { VendorClient, ScheduledPayment, CompletedPayment, PendingEndSubscription } = models;
+const {
+  VendorClient,
+  ScheduledPayment,
+  CompletedPayment,
+  PendingEndSubscription,
+} = models;
 
 export const manageSubscription = async (req: Request, res: Response) => {
   // should mandate that the API is called with some sort of token
@@ -49,13 +54,19 @@ export const manageSubscription = async (req: Request, res: Response) => {
 
   const { vendor, vendorClient } = req.body;
   if (!vendor || !vendorClient)
-    return res.status(401).json({ error: 'Please ensure to provide vendor and vendorClient' });
+    return res
+      .status(401)
+      .json({ error: 'Please ensure to provide vendor and vendorClient' });
 
   const v = await findVendorById(vendor);
   const c = await findVendorClientById(vendorClient);
-  if (!v || !c) return res.status(404).json({ error: 'Error, vendor or vendorClient not found' });
+  if (!v || !c)
+    return res
+      .status(404)
+      .json({ error: 'Error, vendor or vendorClient not found' });
 
-  if (auth !== v.apiKey) return res.status(401).json({ error: 'Incorrect API Key' });
+  if (auth !== v.apiKey)
+    return res.status(401).json({ error: 'Incorrect API Key' });
 
   const data = { vendor: vendor, vendorClient: vendorClient };
   // ----
@@ -68,8 +79,12 @@ export const manageSubscription = async (req: Request, res: Response) => {
   });
 };
 
-export const initiateSubscription = async (req: CustomRequest, res: Response) => {
-  const { billingInfo, paymentMethod, userAddress } = req.body as InitiateSubscription;
+export const initiateSubscription = async (
+  req: CustomRequest,
+  res: Response,
+) => {
+  const { billingInfo, paymentMethod, userAddress } =
+    req.body as InitiateSubscription;
 
   const decoded = req.decoded;
   const vendorId = decoded.vendor;
@@ -88,10 +103,11 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
   const transactionHash = await sendReduceUserBalanceTransactionasync(
     vendorContract,
     userAddress,
-    amount
+    amount,
   );
 
-  if (!transactionHash) return res.status(400).json({ error: 'Deduction failed' });
+  if (!transactionHash)
+    return res.status(400).json({ error: 'Deduction failed' });
 
   // 2. update vendorClient
   const nextDate = moment().add(1, 'months').toDate();
@@ -120,7 +136,7 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
   const paymentDetails = {
     vendorContract: vendorContract,
     userAddress: userAddress,
-    amount: parseInt(amount),
+    amount: Number.parseInt(amount),
     tokenAddress: vendor!.tokenAddress!,
     paymentDate: currentDate,
     vendorId: vendorId,
@@ -133,7 +149,8 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
     status: 'paid',
     hash: transactionHash,
   });
-  const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
+  const isCompletedPaymentAdded =
+    await addCompletedPayment(newCompletedPayment);
   if (!isCompletedPaymentAdded)
     return res.status(500).json({ error: 'Failed to add completed payment' });
   // 4. schedule next payment
@@ -141,7 +158,8 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
     ...paymentDetails,
     paymentDate: nextDate,
   });
-  const isScheduledPaymentAdded = await addScheduledPayment(newScheduledPayment);
+  const isScheduledPaymentAdded =
+    await addScheduledPayment(newScheduledPayment);
   if (!isScheduledPaymentAdded)
     return res.status(500).json({ error: 'Failed to update VendorClient' });
 
@@ -156,14 +174,14 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
       vendorClientId: vendorClientId,
       begun: currentDate,
       nextDate: nextDate,
-    }
+    },
   );
 
   const successfulPaymentWebhook = await sendWebHook(
     vendor.apiKey,
     vendor.webhookUrl!,
     'SUCCESSFUL_PAYMENT',
-    { ...paymentDetails, hash: transactionHash }
+    { ...paymentDetails, hash: transactionHash },
   );
 
   // if (!subscriptionBegunWebHook || !successfulPaymentWebhook)
@@ -173,24 +191,29 @@ export const initiateSubscription = async (req: CustomRequest, res: Response) =>
   return res.send(vendorClient);
 };
 
-export const getSubscriptionPageDetails = async (req: CustomRequest, res: Response) => {
+export const getSubscriptionPageDetails = async (
+  req: CustomRequest,
+  res: Response,
+) => {
   const decoded = req.decoded;
   const vendorId = decoded.vendor;
   const clientId = decoded.vendorClient;
   const v = await findVendorById(vendorId);
-  let c = await findVendorClientById(clientId);
+  const c = await findVendorClientById(clientId);
 
-  if (!v || !c) return res.status(401).json({ error: 'Vendor or client id not found' });
+  if (!v || !c)
+    return res.status(401).json({ error: 'Vendor or client id not found' });
 
   let paymentMethod;
   if (c?.paymentMethod?.wallet) {
     const userAddress = c.paymentMethod.wallet;
-    const [sufficientAllowance, sufficientBalance] = await isAllowanceAndBalanceSufficient(
-      userAddress,
-      v.tokenAddress!,
-      v.vendorContract!,
-      v.amount!
-    );
+    const [sufficientAllowance, sufficientBalance] =
+      await isAllowanceAndBalanceSufficient(
+        userAddress,
+        v.tokenAddress!,
+        v.vendorContract!,
+        v.amount!,
+      );
     if (
       c.paymentMethod.sufficientAllowance !== sufficientAllowance ||
       c.paymentMethod.sufficientBalance !== sufficientBalance
@@ -206,7 +229,9 @@ export const getSubscriptionPageDetails = async (req: CustomRequest, res: Respon
       try {
       } catch (err) {
         console.log(err);
-        return res.status(400).json({ error: 'an error occured in updating the client' });
+        return res
+          .status(400)
+          .json({ error: 'an error occured in updating the client' });
       }
     } else {
       paymentMethod = c.paymentMethod;
@@ -233,12 +258,18 @@ export const getSubscriptionPageDetails = async (req: CustomRequest, res: Respon
   return res.send(data);
 };
 
-export const changePaymentMethod = async (req: CustomRequest, res: Response) => {
+export const changePaymentMethod = async (
+  req: CustomRequest,
+  res: Response,
+) => {
   // update the new payment method in vendorclient
   // look for the given vendor id and client id in scheduledPayments entity
   // update the scheduledPayment to deduct from the new address
   const { newAddress } = req.body;
-  if (!newAddress) return res.status(401).json({ error: 'User Address field cannot be empty' });
+  if (!newAddress)
+    return res
+      .status(401)
+      .json({ error: 'User Address field cannot be empty' });
 
   const decoded = req.decoded;
   const vendorId = decoded.vendor;
@@ -246,21 +277,32 @@ export const changePaymentMethod = async (req: CustomRequest, res: Response) => 
   const v = await findVendorById(vendorId);
   let c = await findVendorClientById(clientId);
 
-  if (!v || !c) return res.status(404).json({ error: 'Vendor or client id not found' });
+  if (!v || !c)
+    return res.status(404).json({ error: 'Vendor or client id not found' });
   if (!c?.paymentMethod?.wallet)
-    return res.status(401).json({ error: 'The user does not have a current payment method' });
+    return res
+      .status(401)
+      .json({ error: 'The user does not have a current payment method' });
   const sp = await findScheduledPayment(vendorId, clientId);
-  if (!sp) return res.status(404).json({ error: 'Unable to find scheduled payment' });
+  if (!sp)
+    return res.status(404).json({ error: 'Unable to find scheduled payment' });
 
-  const isScheduledPaymentUpdated = await updateScheduledPayment(sp, newAddress);
+  const isScheduledPaymentUpdated = await updateScheduledPayment(
+    sp,
+    newAddress,
+  );
   if (!isScheduledPaymentUpdated)
-    return res.status(500).json({ error: 'An error occured in updating the scheduled payment' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured in updating the scheduled payment' });
 
   c!.paymentMethod!.wallet = newAddress;
   try {
     c = await c.save();
   } catch {
-    return res.status(500).json({ error: 'An error occured in updating the vendor client' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured in updating the vendor client' });
   }
   return res.send(c);
 };
@@ -270,17 +312,21 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
   const vendorId = decoded.vendor;
   const clientId = decoded.vendorClient;
   const v = await findVendorById(vendorId);
-  let c = await findVendorClientById(clientId);
+  const c = await findVendorClientById(clientId);
 
-  if (!v || !c) return res.status(404).json({ error: 'Vendor or client id not found' });
+  if (!v || !c)
+    return res.status(404).json({ error: 'Vendor or client id not found' });
 
   const sp = await findScheduledPayment(vendorId, clientId);
-  if (!sp) return res.status(404).json({ error: 'Unable to find scheduled payment' });
+  if (!sp)
+    return res.status(404).json({ error: 'Unable to find scheduled payment' });
 
   const isScheduledPaymentDeleted = await deleteScheduledPayment(sp);
 
   if (!isScheduledPaymentDeleted)
-    return res.status(500).json({ error: 'An error occured in deleting the scheduled payment' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured in deleting the scheduled payment' });
 
   const newCompletedPayment: ICompletedPayment = new CompletedPayment({
     vendorContract: sp.vendorContract,
@@ -293,25 +339,33 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
     status: 'cancelled',
     remarks: 'Cancelled Plan',
   });
-  const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
+  const isCompletedPaymentAdded =
+    await addCompletedPayment(newCompletedPayment);
 
   if (!isCompletedPaymentAdded)
-    return res.status(500).json({ error: 'An error occured in adding the completed payment' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured in adding the completed payment' });
 
   c.status = 'cancelled';
 
   try {
     await c.save();
   } catch {
-    return res.status(500).json({ error: 'An error occured in updating the vendor client entity' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured in updating the vendor client entity' });
   }
 
-  const newPendingEndSubscription: IPendingEndSubscription = new PendingEndSubscription({
-    endDate: c.nextDate!,
-    vendorId: v._id.toString(),
-    vendorClientId: c._id.toString(),
-  });
-  const addedPendingEndSubscription = await addPendingEndSubscription(newPendingEndSubscription);
+  const newPendingEndSubscription: IPendingEndSubscription =
+    new PendingEndSubscription({
+      endDate: c.nextDate!,
+      vendorId: v._id.toString(),
+      vendorClientId: c._id.toString(),
+    });
+  const addedPendingEndSubscription = await addPendingEndSubscription(
+    newPendingEndSubscription,
+  );
 
   if (!addedPendingEndSubscription)
     return res.status(500).json({
@@ -323,7 +377,7 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
     v.apiKey,
     v.webhookUrl!,
     'SUBSCRIPTION_CANCELLED',
-    { vendorId: v._id, vendorClientId: c._id, endDate: c.nextDate! }
+    { vendorId: v._id, vendorClientId: c._id, endDate: c.nextDate! },
   );
 
   // if (!cancelSubscriptionWebhook)
@@ -334,7 +388,8 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
 
 export const renewSubscription = async (req: CustomRequest, res: Response) => {
   const { wallet } = req.body;
-  if (!wallet) return res.status(401).json({ error: 'Wallet field cannot be empty' });
+  if (!wallet)
+    return res.status(401).json({ error: 'Wallet field cannot be empty' });
 
   const decoded = req.decoded;
   const vendorId = decoded.vendor;
@@ -344,7 +399,8 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
 
   let transactionHash;
 
-  if (!v || !c) return res.status(404).json({ error: 'Vendor or client id not found' });
+  if (!v || !c)
+    return res.status(404).json({ error: 'Vendor or client id not found' });
 
   const paymentDetails = {
     vendorContract: v.vendorContract!,
@@ -363,21 +419,28 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
     schedluledPaymentDate = c.nextDate;
     const pendingEndSubscriptionToDelete = await findPendingEndSubscription(
       v._id.toString(),
-      c._id.toString()
+      c._id.toString(),
     );
     if (!pendingEndSubscriptionToDelete)
-      return res.status(404).json({ error: 'Pending End Subscription not found' });
-    const isDeleted = await deletePendingEndSubscription(pendingEndSubscriptionToDelete);
+      return res
+        .status(404)
+        .json({ error: 'Pending End Subscription not found' });
+    const isDeleted = await deletePendingEndSubscription(
+      pendingEndSubscriptionToDelete,
+    );
     if (!isDeleted)
-      return res.status(500).json({ error: 'Unable to delete Pending End Subscription' });
+      return res
+        .status(500)
+        .json({ error: 'Unable to delete Pending End Subscription' });
   } else {
     // means subscription has expired
-    const [sufficientAllowance, sufficientBalance] = await isAllowanceAndBalanceSufficient(
-      wallet,
-      v.tokenAddress!,
-      v.vendorContract!,
-      v.amount!
-    );
+    const [sufficientAllowance, sufficientBalance] =
+      await isAllowanceAndBalanceSufficient(
+        wallet,
+        v.tokenAddress!,
+        v.vendorContract!,
+        v.amount!,
+      );
 
     if (!sufficientAllowance || !sufficientBalance)
       return res.status(401).json({
@@ -387,10 +450,11 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
     transactionHash = await sendReduceUserBalanceTransactionasync(
       v.vendorContract!,
       wallet,
-      v.amount!.toString()
+      v.amount!.toString(),
     );
 
-    if (!transactionHash) return res.status(400).json({ error: 'Deduction failed' });
+    if (!transactionHash)
+      return res.status(400).json({ error: 'Deduction failed' });
 
     schedluledPaymentDate = moment().add(1, 'months').toDate();
 
@@ -409,7 +473,8 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       status: 'paid',
       hash: transactionHash,
     });
-    const isCompletedPaymentAdded = await addCompletedPayment(newCompletedPayment);
+    const isCompletedPaymentAdded =
+      await addCompletedPayment(newCompletedPayment);
     if (!isCompletedPaymentAdded)
       return res.status(500).json({ error: 'Failed to add completed payment' });
   }
@@ -419,9 +484,12 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
     ...paymentDetails,
     paymentDate: schedluledPaymentDate,
   });
-  const isNewScheduledPaymentAdded = await addScheduledPayment(newScheduledPayment);
+  const isNewScheduledPaymentAdded =
+    await addScheduledPayment(newScheduledPayment);
   if (!isNewScheduledPaymentAdded)
-    return res.status(500).json({ error: 'An error occured while adding the scheduled payment' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured while adding the scheduled payment' });
 
   // update vendor client
   c.status = 'active';
@@ -429,7 +497,9 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
   try {
     c = await c.save();
   } catch (err) {
-    return res.status(500).json({ error: 'An error occured while updating vendor client' });
+    return res
+      .status(500)
+      .json({ error: 'An error occured while updating vendor client' });
   }
   // send webhook that user renew plan....
   const subscriptionRenewalWebhook = await sendWebHook(
@@ -440,14 +510,14 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       vendorId: v._id,
       vendorClientId: c._id,
       nextDate: c.nextDate!,
-    }
+    },
   );
 
   const successfulPaymentWebhook = await sendWebHook(
     v.apiKey,
     v.webhookUrl!,
     'SUCCESSFUL_PAYMENT',
-    { ...paymentDetails, paymentDate: currentDate, hash: transactionHash! }
+    { ...paymentDetails, paymentDate: currentDate, hash: transactionHash! },
   );
 
   // if (!subscriptionRenewalWebhook || !successfulPaymentWebhook)
@@ -455,14 +525,18 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
   return res.send(c);
 };
 
-export const updateVendorClientPaymentMethod = async (req: CustomRequest, res: Response) => {
+export const updateVendorClientPaymentMethod = async (
+  req: CustomRequest,
+  res: Response,
+) => {
   try {
     const clientId = req.decoded.vendorClient;
 
     const billingInfo = req.body;
 
     let vendorClient = await VendorClient.findById(clientId);
-    if (!vendorClient) return res.status(404).json({ error: 'Vendor Client not found' });
+    if (!vendorClient)
+      return res.status(404).json({ error: 'Vendor Client not found' });
     if (!billingInfo.name || !billingInfo.address || !billingInfo.email)
       return res.status(400).json({ error: 'Cannot be empty' });
 

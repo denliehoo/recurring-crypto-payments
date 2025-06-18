@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   cronApi,
   getScheduledPayments,
@@ -8,21 +8,21 @@ import {
   getAllPayments,
   getDashboard,
   getPendingEndSubscriptions,
-} from "../controllers/payments";
-import { verifyToken } from "../middleware/verifyToken";
+} from '../controllers/payments';
+import { verifyToken } from '../middleware/verifyToken';
 const router = Router();
 
-router.post("/cron-api", cronApi);
-router.get("/get-all-payments", verifyToken, getAllPayments);
+router.post('/cron-api', cronApi);
+router.get('/get-all-payments', verifyToken, getAllPayments);
 
-router.get("/get-dashboard", verifyToken, getDashboard);
+router.get('/get-dashboard', verifyToken, getDashboard);
 
-router.post("/create-payout/:vendorId", verifyToken, createPayout);
-router.get("/get-payouts-details", verifyToken, getPayoutsDetails);
+router.post('/create-payout/:vendorId', verifyToken, createPayout);
+router.get('/get-payouts-details', verifyToken, getPayoutsDetails);
 
 // for testing
-router.get("/scheduled-payments", getScheduledPayments);
-router.get("/completed-payments", getCompletedPayments);
-router.get("/pending-end-subscriptions", getPendingEndSubscriptions);
+router.get('/scheduled-payments', getScheduledPayments);
+router.get('/completed-payments', getCompletedPayments);
+router.get('/pending-end-subscriptions', getPendingEndSubscriptions);
 
 export default router;

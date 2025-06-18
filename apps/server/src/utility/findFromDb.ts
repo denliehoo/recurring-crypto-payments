@@ -1,4 +1,4 @@
-import models from "../models";
+import models from '../models';
 const { Vendor, VendorClient } = models;
 
 const findVendorByEmail = async (email: string) => {
@@ -28,4 +28,4 @@ const findVendorClientById = async (id: string) => {
   }
 };
 
-export { findVendorByEmail, findVendorById , findVendorClientById};
+export { findVendorByEmail, findVendorById, findVendorClientById };

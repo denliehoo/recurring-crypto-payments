@@ -1,6 +1,10 @@
-import { ECheckoutModal, useCheckoutModal, useSubcriptionDetail } from '@checkout/store';
+import {
+  ECheckoutModal,
+  useCheckoutModal,
+  useSubcriptionDetail,
+} from '@checkout/store';
 import { Typography, Divider, Box, Button } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 const BillingInfo: FC = () => {
   const details = useSubcriptionDetail((state) => state.details);
@@ -16,7 +20,10 @@ const BillingInfo: FC = () => {
           <Box>
             <Box>Name: {details!.billingInfo!.name}</Box>
             <Box>Billing Address: {details!.billingInfo!.address}</Box>
-            <Button variant="contained" onClick={() => setModal(ECheckoutModal.UPDATE_BILLING)}>
+            <Button
+              variant="contained"
+              onClick={() => setModal(ECheckoutModal.UPDATE_BILLING)}
+            >
               Update
             </Button>
           </Box>

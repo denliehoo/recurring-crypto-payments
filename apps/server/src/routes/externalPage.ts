@@ -1,6 +1,6 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import { verifyToken } from "../middleware/verifyToken";
+import { verifyToken } from '../middleware/verifyToken';
 import {
   cancelSubscription,
   changePaymentMethod,
@@ -9,25 +9,25 @@ import {
   manageSubscription,
   renewSubscription,
   updateVendorClientPaymentMethod,
-} from "../controllers/externalPage";
+} from '../controllers/externalPage';
 const router = Router();
 
-router.post("/manage-subscription", manageSubscription);
-router.post("/initiate-subscription", verifyToken, initiateSubscription);
+router.post('/manage-subscription', manageSubscription);
+router.post('/initiate-subscription', verifyToken, initiateSubscription);
 router.get(
-  "/get-subscription-page-details",
+  '/get-subscription-page-details',
   verifyToken,
-  getSubscriptionPageDetails
+  getSubscriptionPageDetails,
 );
 
-router.put("/change-payment-method", verifyToken, changePaymentMethod);
-router.post("/cancel-subscription", verifyToken, cancelSubscription);
-router.post("/renew-subscription", verifyToken, renewSubscription);
+router.put('/change-payment-method', verifyToken, changePaymentMethod);
+router.post('/cancel-subscription', verifyToken, cancelSubscription);
+router.post('/renew-subscription', verifyToken, renewSubscription);
 
 router.put(
-  "/update-vendor-client-billing-info",
+  '/update-vendor-client-billing-info',
   verifyToken,
-  updateVendorClientPaymentMethod
+  updateVendorClientPaymentMethod,
 );
 
 export default router;

@@ -1,5 +1,5 @@
-import { Step, StepLabel, Stepper, Typography } from '@mui/material';
-import { FC } from 'react';
+import { Step, StepLabel, Stepper, } from '@mui/material';
+import type { FC } from 'react';
 import { useConfigurePlanContent } from './hooks';
 
 const ConfigurePlanModalStepper: FC = () => {

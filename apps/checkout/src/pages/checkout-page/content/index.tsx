@@ -1,5 +1,5 @@
 import { Grid, Paper, Box, useMediaQuery } from '@mui/material';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 import CurrentPlan from './current-plan';
 import PaymentMethod from './payment-method';

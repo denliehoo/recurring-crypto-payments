@@ -17,7 +17,8 @@ export const API_URL = {
   // CHECKOUT
   EXTERNAL_PAGE_DETAILS: '/externalPage/get-subscription-page-details',
   EXTERNAL_PAGE_CANCEL: '/externalPage/cancel-subscription',
-  EXTERNAL_PAGE_UPDATE_BILLING: '/externalPage/update-vendor-client-billing-info',
+  EXTERNAL_PAGE_UPDATE_BILLING:
+    '/externalPage/update-vendor-client-billing-info',
   EXTERNAL_PAGE_INITIATE_SUBSCRIPTION: '/externalPage/initiate-subscription',
   EXTERNAL_PAGE_CHANGE_PAYMENT_METHOD: '/externalPage/change-payment-method',
   EXTERNAL_PAGE_RENEW: '/externalPage/renew-subscription',

@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Box } from '@mui/material';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface MenuItemObject {
   item: ReactNode;
@@ -15,7 +15,10 @@ interface DropDownMenuProps {
   menuItems: MenuItemObject[];
 }
 
-export default function DropDownMenu({ menuLabel, menuItems }: DropDownMenuProps) {
+export default function DropDownMenu({
+  menuLabel,
+  menuItems,
+}: DropDownMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
