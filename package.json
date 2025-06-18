@@ -13,10 +13,9 @@
         "build:dashboard": "pnpm --filter dashboard build",
         "build:checkout": "pnpm --filter checkout build",
         "prod:server": "pnpm --filter server prod",
-        "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-        "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-        "format": "prettier --check .",
-        "format:fix": "prettier --write ."
+        "format:write" : "pnpm exec biome format --write",
+        "lint:read": "pnpm exec biome lint",
+        "lint:write": "pnpm exec biome lint --write"
     },
     "dependencies": {
         "@emotion/react": "^11.11.1",
@@ -30,16 +29,8 @@
         "web3": "^1.8.1"
     },
     "devDependencies": {
+        "@biomejs/biome": "1.9.4",
         "@types/react": "^18.2.14",
-        "@types/react-dom": "^18.2.7",
-        "@typescript-eslint/eslint-plugin": "^8.32.1",
-        "@typescript-eslint/parser": "^8.32.1",
-        "eslint": "^9.27.0",
-        "eslint-config-prettier": "^10.1.5",
-        "eslint-plugin-node": "^11.1.0",
-        "eslint-plugin-prettier": "^5.4.0",
-        "eslint-plugin-react": "^7.37.5",
-        "eslint-plugin-react-hooks": "^5.2.0",
-        "prettier": "^3.5.3"
+        "@types/react-dom": "^18.2.7"
     }
 }
