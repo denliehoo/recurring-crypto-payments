@@ -16,10 +16,10 @@ const BillingInfo: FC = () => {
       </Typography>
       <Divider />
       <Box sx={{ mt: 1 }}>
-        {details!.status !== 'inactive' ? (
+        {details?.status !== 'inactive' ? (
           <Box>
-            <Box>Name: {details!.billingInfo!.name}</Box>
-            <Box>Billing Address: {details!.billingInfo!.address}</Box>
+            <Box>Name: {details?.billingInfo?.name}</Box>
+            <Box>Billing Address: {details?.billingInfo?.address}</Box>
             <Button
               variant="contained"
               onClick={() => setModal(ECheckoutModal.UPDATE_BILLING)}

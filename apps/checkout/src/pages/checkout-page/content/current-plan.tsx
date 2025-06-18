@@ -67,7 +67,7 @@ const CurrentPlan: FC = () => {
           onClick={() =>
             // if active, cancel plan modal, if inactive/cancelled, configure plan
             setModal(
-              details!.status === 'active'
+              details?.status === 'active'
                 ? ECheckoutModal.CANCEL_PLAN
                 : ECheckoutModal.CONFIGURE_PLAN,
             )

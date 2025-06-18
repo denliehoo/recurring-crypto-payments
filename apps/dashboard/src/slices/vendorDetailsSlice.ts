@@ -1,18 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const vendorDetailsSlice = createSlice({
-  name: 'vendorDetails',
+  name: "vendorDetails",
   initialState: {
-    name: '',
-    email: '',
-    apiKey: '',
-    plan: '',
-    vendorContract: '',
-    tokenAddress: '',
-    id: '',
+    name: "",
+    email: "",
+    apiKey: "",
+    plan: "",
+    vendorContract: "",
+    tokenAddress: "",
+    id: "",
   },
   reducers: {
-    addVendorDetails(state, action) {
+    addVendorDetails(_state, action) {
       return { ...action.payload };
     },
   },

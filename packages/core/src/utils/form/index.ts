@@ -14,7 +14,7 @@ const validateForm = (
   };
 
   const numberValidator = (field: any) => {
-    if (!detailsToSubmit[field] || isNaN(detailsToSubmit[field])) {
+    if (!detailsToSubmit[field] || Number.isNaN(detailsToSubmit[field])) {
       errors[field] = `${splitTextByCaps(
         field,
       )} field cannot be empty and must be a number`;

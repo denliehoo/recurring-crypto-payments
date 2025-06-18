@@ -168,7 +168,7 @@ export const useConfigurePlanContent = () => {
         // just go to next step
       } else {
         setButtonLoading(true);
-        let allowanceIsSufficient;
+        let allowanceIsSufficient: boolean;
         try {
           const approveToken = await contract.methods
             .approve(vendorContract, '1000000000000000')
@@ -178,6 +178,7 @@ export const useConfigurePlanContent = () => {
             });
 
           const newAllowance = approveToken.events.Approval.returnValues.value;
+          // biome-ignore lint/correctness/noUnusedVariables: <log this to get receipt. maybe remove if not needed>
           const receipt = await web3?.eth.getTransactionReceipt(
             approveToken.transactionHash,
           );

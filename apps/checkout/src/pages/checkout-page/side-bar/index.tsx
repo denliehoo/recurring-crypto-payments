@@ -55,7 +55,11 @@ const SideBar: FC = () => {
               alignItems: 'center',
               '&:hover': { color: 'lightgray', cursor: 'pointer' },
             }}
-            onClick={() => (window.location.href = returnUrl!)}
+            onClick={() => {
+              if (returnUrl) {
+                window.location.href = returnUrl;
+              }
+            }}
           >
             <KeyboardBackspace />
             <Typography>Return to {vendor}</Typography>

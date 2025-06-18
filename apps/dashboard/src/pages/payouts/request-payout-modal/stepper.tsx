@@ -12,7 +12,7 @@ const RequestPayoutModalStepper: FC<IRequestPayoutModalStepper> = ({
 }) => {
   return (
     <Stepper activeStep={activeStep} sx={{ mt: 1 }}>
-      {steps.map((label, index) => {
+      {steps.map((label, _index) => {
         const stepProps: { completed?: boolean } = {};
         const labelProps: {
           optional?: React.ReactNode;

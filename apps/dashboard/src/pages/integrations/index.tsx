@@ -11,6 +11,8 @@ const Integrations = () => {
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [vendorId, setVendorId] = useState('');
   const [refreshData, setRefreshData] = useState(false);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const getAndSetVendorDetails = async () => {
       const { data } = await apiGetVendorDetails();
@@ -47,7 +49,7 @@ const Integrations = () => {
 
   return (
     <PageLayout isLoading={isLoading}>
-      {vendor && vendor.plan ? (
+      {vendor?.plan ? (
         <ConfiguredIntergrations
           vendorId={vendorId}
           vendor={vendor}

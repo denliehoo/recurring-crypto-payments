@@ -24,6 +24,9 @@
       "correctness": {
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "error"
       }
     }
   },

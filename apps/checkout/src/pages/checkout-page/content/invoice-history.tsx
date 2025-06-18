@@ -18,7 +18,7 @@ const InvoiceHistory: FC = () => {
           <Box>You have no invoices </Box>
         ) : (
           invoices.map((i) => (
-            <Box>
+            <Box key={i.hash}>
               {formatDate(i.date)}
               <IconButton>
                 <a href={i.hash} target="_blank" rel="noreferrer">

@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const rspack = require('@rspack/core');
 require('dotenv').config();
 const { ProgressPlugin } = require('@rspack/core');

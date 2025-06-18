@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const baseConfig = require('../../packages/config/rspack.base');
 
 const extraAliases = {

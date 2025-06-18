@@ -53,6 +53,7 @@ export default function DropDownMenu({
       >
         {menuItems.map((i, index) => (
           <MenuItem
+            // biome-ignore lint/suspicious/noArrayIndexKey: <fine to use index in this case>
             key={index}
             onClick={() => {
               handleClose();

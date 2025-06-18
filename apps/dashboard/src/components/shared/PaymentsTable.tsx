@@ -22,10 +22,6 @@ interface Row {
   };
 }
 
-interface Props {
-  rows: Row[];
-}
-
 const columns: GridColDef[] = [
   {
     field: 'updatedAt',

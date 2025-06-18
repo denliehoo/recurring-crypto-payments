@@ -8,6 +8,6 @@ export const apiRequestPayout = (
 ) =>
   apiRequest({
     method: 'post',
-    subPath: API_URL.PAYMENT_CREATE_PAYOUT + `/${vendorId}`,
+    subPath: `${API_URL.PAYMENT_CREATE_PAYOUT}/${vendorId}`,
     data: params,
   });

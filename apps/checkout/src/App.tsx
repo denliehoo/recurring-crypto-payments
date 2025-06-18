@@ -34,6 +34,7 @@ const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <refreshData required to refresh list>
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);

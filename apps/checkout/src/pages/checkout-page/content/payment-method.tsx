@@ -36,8 +36,8 @@ const PaymentMethod: FC = () => {
           <TableContainer>
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
+                <TableCell />
+                <TableCell />
                 <TableCell>Allowance</TableCell>
                 <TableCell>Balance</TableCell>
               </TableRow>
@@ -50,24 +50,24 @@ const PaymentMethod: FC = () => {
                     <Avatar src={ETHLogo} />
                   </AvatarGroup>
                   <span style={{ marginLeft: '10px' }}>
-                    {details!.paymentMethod!.token} (ERC20)
+                    {details?.paymentMethod?.token} (ERC20)
                   </span>
                 </TableCell>
                 <TableCell>
                   <TextWithTooltip
-                    text={details!.paymentMethod!.wallet}
+                    text={details?.paymentMethod?.wallet}
                     shortened={true}
                   />
                 </TableCell>
                 <TableCell>
-                  {details!.paymentMethod!.sufficientAllowance ? (
+                  {details?.paymentMethod?.sufficientAllowance ? (
                     <CheckCircle />
                   ) : (
                     <Cancel />
                   )}
                 </TableCell>
                 <TableCell>
-                  {details!.paymentMethod!.sufficientBalance ? (
+                  {details?.paymentMethod?.sufficientBalance ? (
                     <CheckCircle />
                   ) : (
                     <Cancel />
@@ -79,7 +79,7 @@ const PaymentMethod: FC = () => {
         ) : (
           <Box>You have no payment methods</Box>
         )}
-        {details!.status !== 'inactive' && (
+        {details?.status !== 'inactive' && (
           <Box>
             <Button
               variant="contained"

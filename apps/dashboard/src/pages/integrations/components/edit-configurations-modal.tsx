@@ -76,7 +76,8 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
       tokenAddress: vendorDetails?.tokenAddress || '',
       // When form value is edited, it will be a string even if it is an integer
       amount: Math.ceil(
-        Number.parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) * 10 ** 6,
+        Number.parseFloat(String(vendorDetails?.monthlySubscriptionPrice)) *
+          10 ** 6,
       ),
       plan: vendorDetails?.planName || '',
       vendorContract: vendor.vendorContract || '',
@@ -93,6 +94,7 @@ const EditConfigurationsModal: FC<IEditConfigurationsModal> = (props) => {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (
       vendorDetails?.businessName === vendor.name &&
