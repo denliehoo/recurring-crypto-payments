@@ -165,3 +165,27 @@ REACT_APP_API_URL=URL_OF_DEPLOYED_SERVER
 - Master (0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7): https://sepolia.etherscan.io/address/0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7#code
 - VendorContract (0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4): https://sepolia.etherscan.io/address/0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4#code
 - FakeUSDT (0xC9606fea595Ed3a94B4c8548ca0C2252C7856E89): https://sepolia.etherscan.io/address/0xc9606fea595ed3a94b4c8548ca0c2252c7856e89#code
+
+# Linting and Formatting
+
+This project uses [Biome](https://biomejs.dev/) for code formatting and linting.  
+For the best experience, install the Biome extension in your code editor.
+
+**Common commands:**
+
+- **Format all files:**
+
+  ```sh
+  pnpm format:write
+  ```
+
+- **Check for linting issues:**
+
+  ```sh
+  pnpm lint:read
+  ```
+
+- **Automatically fix linting issues:**
+  ```sh
+  pnpm lint:write
+  ```
