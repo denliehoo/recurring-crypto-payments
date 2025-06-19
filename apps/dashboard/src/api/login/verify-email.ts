@@ -9,4 +9,5 @@ export const apiVerifyEmail = (token: string) =>
     headers: {
       Authorization: token,
     },
+    useLocalStorageToken: true,
   });

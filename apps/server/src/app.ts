@@ -5,12 +5,20 @@ import routes from './routes';
 import models, { connectDb } from './models';
 import { hashPassword } from './utility/credentials';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+
 const cors = require('cors');
 
 const app = express();
-
+app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    // TODO: Use env variables instead so can factor for prod and local dev
+    origin: ['http://localhost:3031', 'http://localhost:3032'],
+    credentials: true,
+  }),
+);
 
 app.use('/vendors', routes.vendor);
 app.use('/vendorclients', routes.vendorClient);

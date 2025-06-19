@@ -10,4 +10,5 @@ export const apiRenewSubscription = (params: IRenewSubscription) =>
     method: 'post',
     subPath: API_URL.EXTERNAL_PAGE_RENEW,
     data: params,
+    useLocalStorageToken: true,
   });

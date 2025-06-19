@@ -361,9 +361,13 @@ export const getDashboard = async (req: CustomRequest, res: Response) => {
     if (currentHourIndex < 0) currentHourIndex += 8;
 
     for (let i = 1; i < currentHourIndex + 1; i++) {
-      amounts[i]!.amount! += amounts[i - 1]!.amount;
-    }
+      const current = amounts[i];
+      const previous = amounts[i - 1];
 
+      if (current && previous && current.amount && previous.amount) {
+        current.amount += previous.amount;
+      }
+    }
     if (currentHourIndex === 8) return amounts;
     for (let i = currentHourIndex + 1; i < amounts.length; i++) {
       amounts[i].amount = undefined;

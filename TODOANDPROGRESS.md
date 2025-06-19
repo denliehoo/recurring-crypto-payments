@@ -1,6 +1,7 @@
 # Todo:
 
 - HTTP-only cookie instead of local storage for JWT
+- Set up domain e.g. checkout. and dashboard. locally, this is because cookies in localhost is shared throughout and will cause issue. it also is better cause it simulates the real end result
 - Re-do API routes properly
 - Clean up APIs
 - Build and deploy (test)

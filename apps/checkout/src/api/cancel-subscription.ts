@@ -5,4 +5,5 @@ export const apiCancelSubscription = () =>
   apiRequest({
     method: 'post',
     subPath: API_URL.EXTERNAL_PAGE_CANCEL,
+    useLocalStorageToken: true,
   });

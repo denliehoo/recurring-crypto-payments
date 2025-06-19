@@ -6,12 +6,8 @@ interface IApiPostLogin {
   password: string;
 }
 
-interface IApiPostLoginRes {
-  token: string;
-}
-
 export const apiPostLogin = (params: IApiPostLogin) =>
-  apiRequest<IApiPostLoginRes>({
+  apiRequest({
     method: 'post',
     subPath: API_URL.VENDORS_LOGIN,
     data: params,

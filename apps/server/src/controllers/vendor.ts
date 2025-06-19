@@ -52,6 +52,7 @@ export const createVendor = async (req: Request, res: Response) => {
   }
 };
 
+// TODO: Remove the verifytoken middleware and accept it as a param instead
 export const verifyEmail = async (req: CustomRequest, res: Response) => {
   const { email, vendorId } = req.decoded;
   let v = await findVendorById(vendorId);
@@ -111,7 +112,16 @@ export const login = async (req: Request, res: Response) => {
     { email: email, vendorId: vendor._id.toString() },
     86400,
   );
-  return res.send({ token: token });
+
+  // Set the token as an HttpOnly cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.ENV === 'PROD', // only over HTTPS in production
+    sameSite: 'lax', // TODO: Change to strict eventually
+    maxAge: 86400 * 1000, // in milliseconds
+  });
+
+  return res.status(200).json({ message: 'Login successful' });
 };
 
 export const getVendorByEmail = async (req: Request, res: Response) => {

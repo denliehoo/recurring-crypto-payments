@@ -6,4 +6,5 @@ export const apiGetSubscriptionDetails = () =>
   apiRequest<VendorClientSubscriptionDetails>({
     method: 'get',
     subPath: API_URL.EXTERNAL_PAGE_DETAILS,
+    useLocalStorageToken: true,
   });

@@ -10,4 +10,5 @@ export const apiChangePaymentMethod = (params: IApiChangePaymentMethod) =>
     method: 'put',
     subPath: API_URL.EXTERNAL_PAGE_CHANGE_PAYMENT_METHOD,
     data: params,
+    useLocalStorageToken: true,
   });

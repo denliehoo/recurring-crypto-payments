@@ -11,7 +11,9 @@
     "baseUrl": ".",
     "paths": {
       "@core": ["../../packages/core/src"],
-      "@core/*": ["../../packages/core/src/*"]
+      "@core/*": ["../../packages/core/src/*"],
+      "@src": ["./src"],
+      "@src/*": ["./src/*"]
     }
   },
   "include": ["src", "../../packages/core"],

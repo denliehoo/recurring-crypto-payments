@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "env-cmd -f .env.prod npx ts-node src/app.ts",
-    "dev": "env-cmd -f .env.dev nodemon --exec npx ts-node src/app.ts",
+    "prod": "env-cmd -f .env.prod ts-node -r tsconfig-paths/register src/app.ts",
+    "dev": "env-cmd -f .env.dev nodemon --exec ts-node -r tsconfig-paths/register src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
     "@types/express": "^4.17.17",
     "axios": "^1.4.0",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "env-cmd": "^10.1.0",
@@ -23,10 +24,12 @@
     "moment": "^2.29.4",
     "mongoose": "^7.3.4",
     "nodemailer": "^6.9.4",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
     "@types/mongodb": "^4.0.7",
     "@types/nodemailer": "^6.4.9",
     "@types/uuid": "^9.0.2",

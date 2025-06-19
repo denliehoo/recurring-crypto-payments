@@ -24,7 +24,6 @@ export const useLogin = () => {
 
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API_URL;
   const dispatch = useAppDispatch();
 
   const handleUsernameChange = (event: TInputChangeEvent) => {
@@ -82,10 +81,9 @@ export const useLogin = () => {
     setRegLogButtonLoading(true);
     if (isLogin) {
       try {
-        const { data } = await apiPostLogin({ email: username, password });
+        await apiPostLogin({ email: username, password });
 
         // Redirect to dashboard upon successful login
-        localStorage.setItem('JWT', data.token);
         await setVendorDetails();
         navigate('/dashboard');
       } catch (err) {

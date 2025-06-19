@@ -23,6 +23,7 @@ export interface IApiRequest {
   data?: any; // body data
   params?: any; // query params
   headers?: IAxiosHeaders;
+  useLocalStorageToken?: boolean;
 }
 
 export const apiRequest = async <T>({
@@ -31,16 +32,25 @@ export const apiRequest = async <T>({
   data = null,
   params,
   headers,
+  useLocalStorageToken = false,
 }: IApiRequest): Promise<AxiosResponse<T>> => {
   const apiUrl = process.env.REACT_APP_API_URL;
-  const token = localStorage.getItem('JWT');
 
-  console.log('try call api with', apiUrl, subPath, token);
+  const nonCookieToken = useLocalStorageToken
+    ? localStorage.getItem('JWT')
+    : undefined;
 
   try {
+    // TODO: Remove usage of useLocalStorageToken once checkout and verify email no longer needs it
+
+    const nonCookieTokenHeaders = nonCookieToken
+      ? {
+          Authorization: nonCookieToken,
+        }
+      : {};
     const axiosHeaders = {
-      Authorization: token,
       ...headers,
+      ...nonCookieTokenHeaders,
     };
 
     const config: AxiosRequestConfig = {
@@ -49,11 +59,12 @@ export const apiRequest = async <T>({
       headers: axiosHeaders,
       data,
       params,
+      withCredentials: useLocalStorageToken ? undefined : true,
     };
 
     const res = await axios(config);
     return res;
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
       if (err.response?.status === 401) {
         window.location.href = '/';
@@ -63,7 +74,7 @@ export const apiRequest = async <T>({
       throw err;
     }
 
-    throw new Error('Unexpected error during API call: ' + err?.message);
+    throw new Error(`Unexpected error during API call: ${err?.message}`);
   }
 };
 
