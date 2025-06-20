@@ -11,7 +11,7 @@ import type { CustomRequest } from '../types/requests';
 import { sendEmail } from '../utility/sendEmail';
 import { generateJWT } from '../utility/generateJWT';
 import type { UpdateVendor } from '@core/types';
-const jwt = require('jsonwebtoken');
+import { DOMAIN_TOKEN_MAPPING, ESubdomain } from '@src/constants/cookies';
 
 // aka register
 export const createVendor = async (req: Request, res: Response) => {
@@ -114,7 +114,7 @@ export const login = async (req: Request, res: Response) => {
   );
 
   // Set the token as an HttpOnly cookie
-  res.cookie('token', token, {
+  res.cookie(DOMAIN_TOKEN_MAPPING[ESubdomain.DASHBOARD], token, {
     httpOnly: true,
     secure: process.env.ENV === 'PROD', // only over HTTPS in production
     sameSite: 'lax', // TODO: Change to strict eventually

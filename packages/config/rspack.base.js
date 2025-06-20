@@ -8,6 +8,7 @@ module.exports = ({
   port,
   mode = 'development',
   extraAliases = {},
+  subdomain,
 }) => ({
   mode,
   entry: path.resolve(appDir, 'src/index.tsx'),
@@ -78,7 +79,9 @@ module.exports = ({
   },
   devServer: {
     hot: true,
+    host: `${subdomain}.recurcrypt.localhost`,
     port,
+    allowedHosts: 'all', // Allow custom domain in dev
     historyApiFallback: true,
     open: true,
   },

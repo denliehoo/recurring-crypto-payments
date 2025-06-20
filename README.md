@@ -74,6 +74,14 @@ This project requires the following dependencies:
   - `npm install -g nodemon`
 - Mongodb (TODO: Instructions)
 
+- Add local subdomains to your `/etc/hosts`:
+
+```sh
+127.0.0.1 dashboard.recurcrypt.localhost
+127.0.0.1 checkout.recurcrypt.localhost
+127.0.0.1 api.recurcrypt.localhost
+```
+
 To install: `pnpm install`
 
 ### Client
@@ -115,8 +123,8 @@ WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_SEPOLIA
 OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
 OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
 CRON_API_KEY=RECUR_CRYPT_CRON_API_KEY_HERE
-FRONT_END_URL=http://localhost:3031
-FRONT_END_CHECKOUT_URL=http://localhost:3032
+FRONT_END_URL=http://dashboard.recurcrypt.localhost:3031
+FRONT_END_CHECKOUT_URL=http://checkout.recurcrypt.localhost:3032
 MAILER_EMAIL=YOUR_MAILER_EMAIL
 MAILER_PASSWORD=YOUR_MAILER_PASSWORD
 MAILER_APP_PASSWORD=YOUR_MAILER_APP_PASSWORD
@@ -150,7 +158,7 @@ ENV=PROD
 
 ```Javascript
 REACT_APP_ENV=DEV
-REACT_APP_API_URL=http://localhost:3030
+REACT_APP_API_URL=http://api.recurcrypt.localhost:3030
 ```
 
 - .env.prod

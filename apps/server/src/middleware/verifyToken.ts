@@ -3,14 +3,31 @@ const jwt = require('jsonwebtoken');
 
 import type { CustomRequest } from '../types/requests';
 import { clearTokenFromCookies } from '@src/utility/cookies';
+import { DOMAIN_TOKEN_MAPPING, type ESubdomain } from '@src/constants/cookies';
+
+const getToken = (req: CustomRequest) => {
+  const origin = req.headers.origin;
+  const parsedUrl = new URL(origin || '');
+  const hostname = parsedUrl.hostname;
+  const subdomain = hostname.split('.')[0] as ESubdomain;
+
+  const tokenName = DOMAIN_TOKEN_MAPPING[subdomain];
+
+  // TODO: Change only to cookies once checkout and email verify has been updated
+  const cookieToken = req.cookies?.[tokenName];
+
+  if (cookieToken) {
+    return cookieToken;
+  }
+  return req.headers.authorization;
+};
 
 export const verifyToken = (
   req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  // TODO: Change only to cookies once checkout and email verify has been updated
-  const token = req.cookies?.token || req.headers.authorization;
+  const token = getToken(req);
 
   if (!token) {
     clearTokenFromCookies(res);

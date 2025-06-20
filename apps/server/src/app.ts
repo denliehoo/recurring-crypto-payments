@@ -12,10 +12,11 @@ const cors = require('cors');
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+
+// For cookies
 app.use(
   cors({
-    // TODO: Use env variables instead so can factor for prod and local dev
-    origin: ['http://localhost:3031', 'http://localhost:3032'],
+    origin: [process.env.FRONT_END_URL, process.env.FRONT_END_CHECKOUT_URL],
     credentials: true,
   }),
 );
@@ -56,7 +57,11 @@ connectDb().then(async () => {
     }
   }
 
-  app.listen(port, () => console.log(`Server listening on port ${port}!`));
+  const hostname = 'api.recurcrypt.localhost';
+
+  app.listen(port, () => {
+    console.log(`Server listening on http://${hostname}:${port}`);
+  });
 });
 
 const seedDataBase = async () => {
