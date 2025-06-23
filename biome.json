@@ -20,6 +20,9 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": {
+        "useImportType": "off"
+      },
       "recommended": true,
       "correctness": {
         "noUnusedImports": "warn",

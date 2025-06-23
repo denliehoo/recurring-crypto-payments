@@ -1,14 +1,10 @@
 import { apiRequest } from '@core/api';
 import { API_URL } from '@core/constants';
-
-interface IApiPostLogin {
-  email: string;
-  password: string;
-}
+import type { IApiPostLogin } from '@core/types/auth';
 
 export const apiPostLogin = (params: IApiPostLogin) =>
   apiRequest({
     method: 'post',
-    subPath: API_URL.VENDORS_LOGIN,
+    subPath: API_URL.AUTH.LOGIN,
     data: params,
   });

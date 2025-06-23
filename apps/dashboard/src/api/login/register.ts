@@ -1,14 +1,10 @@
 import { apiRequest } from '@core/api';
 import { API_URL } from '@core/constants';
+import { IApiPostRegister } from '@core/types/auth';
 
-interface IApiRegister {
-  email: string;
-  password: string;
-}
-
-export const apiRegister = (params: IApiRegister) =>
+export const apiRegister = (params: IApiPostRegister) =>
   apiRequest({
     method: 'post',
-    subPath: API_URL.VENDOR,
+    subPath: API_URL.AUTH.REGISTER,
     data: params,
   });

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { generateJWT } from './generateJWT';
 
 // Replace with your actual Gmail credentials
 const gmailCredentials = {
@@ -32,7 +33,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       html: options.html,
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
     console.error('Error sending email:', error);
@@ -51,3 +52,23 @@ const emailOptions: EmailOptions = {
 
 sendEmail(emailOptions);
 */
+
+export const sendVerificationEmailHelper = async (
+  email: string,
+  vendorId: string,
+) => {
+  const token = generateJWT({
+    email: email,
+    vendorId: vendorId,
+  });
+  const encodedToken = token.replace(/\./g, '~');
+  const verificationUrl = `${process.env.FRONT_END_URL}/verify-email?token=${encodedToken}`;
+  const isEmailSent = await sendEmail({
+    to: email,
+    subject: '[RecurCrypt] Please Verify Your Email',
+    text: 'Verify Email',
+    html: `<p>Hey there! <br /> Welcome to RecurCrypt! Before you get started, please verify your email by clicking on the this link: ${verificationUrl} </p>`,
+  });
+
+  return isEmailSent;
+};

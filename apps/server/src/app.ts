@@ -19,6 +19,7 @@ app.use(
   }),
 );
 
+app.use('/auth', routes.auth);
 app.use('/vendors', routes.vendor);
 app.use('/vendorclients', routes.vendorClient);
 app.use('/payments', routes.payments);
