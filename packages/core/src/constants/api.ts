@@ -16,9 +16,7 @@ export const API_URL = {
   VENDOR_CLIENTS: {
     LIST: '/vendorclients/list',
   },
-
   VENDOR: '/vendors',
-  VENDOR_BY_TOKEN: '/vendors/getVendorByToken',
 
   // CHECKOUT
   EXTERNAL_PAGE_DETAILS: '/externalPage/get-subscription-page-details',

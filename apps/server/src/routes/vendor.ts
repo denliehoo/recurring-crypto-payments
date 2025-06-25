@@ -9,13 +9,11 @@ import {
 } from '../controllers/vendor';
 import { verifyToken } from '../middleware/verifyToken';
 
-// TODO: Remove all vendor routes eventually...
-
 router.put('/', verifyToken, updateVendor);
-router.get('/getVendorByToken', verifyToken, getVendorByToken);
+router.get('/', verifyToken, getVendorByToken);
 
 // for testing
-router.get('/', getVendors);
+router.get('/getAllVendors', getVendors);
 router.get('/getVendorByEmail', getVendorByEmail);
 router.get('/getVendorById', getVendorById);
 
