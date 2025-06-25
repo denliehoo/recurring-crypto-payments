@@ -8,10 +8,10 @@ export const API_URL = {
     VERIFY_EMAIL: '/auth/verify-email',
     RESEND_VERIFICATION: '/auth/resend-verification',
   },
+  DASHBOARD: '/dashboard',
 
   // DASHBOARD
   GET_VENDOR_CLIENTS: '/vendorclients/get-vendor-clients-by-vendor',
-  PAYMENTS_DASHBOARD: '/payments/get-dashboard',
   VENDOR: '/vendors',
   VENDOR_BY_TOKEN: '/vendors/getVendorByToken',
   PAYMENTS_ALL: '/payments/get-all-payments',

@@ -1,7 +1,13 @@
 import type { Request } from 'express';
 
-export interface CustomRequest<ReqBody = unknown>
+// biome-ignore lint/suspicious/noExplicitAny: <TODO: Fix>
+export interface CustomRequest<ReqBody = any>
   extends Request<never, never, ReqBody> {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO: Fix>
   decoded?: any;
+}
+
+export interface IDecodedAuthToken {
+  email: string;
+  vendorId: string;
 }

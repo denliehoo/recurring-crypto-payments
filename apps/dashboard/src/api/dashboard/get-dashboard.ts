@@ -9,6 +9,6 @@ interface IGetDashboard {
 export const apiGetDashboard = (params: IGetDashboard) =>
   apiRequest<DashboardApiResponse>({
     method: 'get',
-    subPath: API_URL.PAYMENTS_DASHBOARD,
+    subPath: API_URL.DASHBOARD,
     params,
   });
