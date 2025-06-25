@@ -9,14 +9,13 @@ export const API_URL = {
     RESEND_VERIFICATION: '/auth/resend-verification',
   },
   DASHBOARD: '/dashboard',
+  PAYOUT: '/payout',
 
   // DASHBOARD
   GET_VENDOR_CLIENTS: '/vendorclients/get-vendor-clients-by-vendor',
   VENDOR: '/vendors',
   VENDOR_BY_TOKEN: '/vendors/getVendorByToken',
   PAYMENTS_ALL: '/payments/get-all-payments',
-  PAYMENT_PAYOUT_DETAILS: '/payments/get-payouts-details',
-  PAYMENT_CREATE_PAYOUT: '/payments/create-payout',
 
   // CHECKOUT
   EXTERNAL_PAGE_DETAILS: '/externalPage/get-subscription-page-details',

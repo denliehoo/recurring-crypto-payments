@@ -2,7 +2,10 @@
   "contractName": "RecurringPayments",
   "abi": [
     {
-      "inputs": [],
+      "inputs": [
+        { "internalType": "address", "name": "_token", "type": "address" },
+        { "internalType": "address", "name": "_owner", "type": "address" }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -12,8 +15,33 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "vendor",
+          "name": "user",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "SuccessfulPayment",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         },
         {
           "indexed": false,
@@ -22,102 +50,50 @@
           "type": "address"
         }
       ],
-      "name": "VendorContractCreated",
+      "name": "VendorWithdraw",
       "type": "event"
     },
     {
       "inputs": [],
+      "name": "balance",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "master",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
+        { "internalType": "address", "name": "_user", "type": "address" },
+        { "internalType": "uint256", "name": "_amount", "type": "uint256" }
       ],
-      "name": "vendorContracts",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        }
-      ],
-      "name": "createVendorContract",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawProfits",
+      "name": "reduceUserBalance",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_vendor",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_user",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "reduceUserBalance",
+      "inputs": [],
+      "name": "token",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -2817,18 +2793,10 @@
   "ast": {
     "absolutePath": "project:/src/contracts/RecurringPayments.sol",
     "exportedSymbols": {
-      "IERC20": [
-        76
-      ],
-      "IRecurringPaymentsVendor": [
-        199
-      ],
-      "RecurringPayments": [
-        191
-      ],
-      "RecurringPaymentsVendor": [
-        354
-      ]
+      "IERC20": [76],
+      "IRecurringPaymentsVendor": [199],
+      "RecurringPayments": [191],
+      "RecurringPaymentsVendor": [354]
     },
     "id": 200,
     "license": "UNLICENSED",
@@ -2836,12 +2804,7 @@
     "nodes": [
       {
         "id": 78,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "39:23:1"
       },
@@ -2870,15 +2833,11 @@
       {
         "abstract": false,
         "baseContracts": [],
-        "contractDependencies": [
-          354
-        ],
+        "contractDependencies": [354],
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 191,
-        "linearizedBaseContracts": [
-          191
-        ],
+        "linearizedBaseContracts": [191],
         "name": "RecurringPayments",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -3132,9 +3091,7 @@
               "src": "498:325:1",
               "statements": [
                 {
-                  "assignments": [
-                    110
-                  ],
+                  "assignments": [110],
                   "declarations": [
                     {
                       "constant": false,
@@ -4175,10 +4132,7 @@
                       "id": 180,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        4294967278,
-                        4294967278
-                      ],
+                      "overloadedDeclarations": [4294967278, 4294967278],
                       "referencedDeclaration": 4294967278,
                       "src": "1215:7:1",
                       "typeDescriptions": {
@@ -4236,9 +4190,7 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "id": 199,
-        "linearizedBaseContracts": [
-          199
-        ],
+        "linearizedBaseContracts": [199],
         "name": "IRecurringPaymentsVendor",
         "nodeType": "ContractDefinition",
         "nodes": [

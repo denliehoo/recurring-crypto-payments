@@ -1,17 +1,9 @@
 import type { Request, Response } from 'express';
-import {
-  findVendorByEmail,
-  findVendorById,
-  findVendorClientById,
-} from '../utility/findFromDb';
+import { findVendorById, findVendorClientById } from '../utility/findFromDb';
 import models from '../models';
-const Web3 = require('web3');
-import RecurringPaymentsVendor from '../contractABIs/RecurringPaymentsVendor.json';
 import type { CustomRequest } from '../types/requests';
 import type { IScheduledPayment } from '../models/scheduledPayment';
 import type { ICompletedPayment } from '../models/completedPayment';
-import type { IPayout } from '../models/payout';
-const jwt = require('jsonwebtoken');
 import moment from 'moment';
 import {
   isAllowanceAndBalanceSufficient,
@@ -25,10 +17,8 @@ import {
 import { sendWebHook } from '../utility/sendWebhook';
 import type { IPendingEndSubscription } from '../models/pendingEndSubscription';
 import { deletePendingEndSubscription } from '../utility/pendingEndSubscription';
-import type { DashboardChartData } from '@core/types';
 
-const { PendingEndSubscription, ScheduledPayment, CompletedPayment, Payout } =
-  models;
+const { PendingEndSubscription, ScheduledPayment, CompletedPayment } = models;
 
 // change payment method of client
 
@@ -245,58 +235,6 @@ export const cronApi = async (req: Request, res: Response) => {
   return res.send('all done');
 };
 
-export const getPayoutsDetails = async (req: CustomRequest, res: Response) => {
-  const decoded = req.decoded;
-  const { email } = decoded;
-  try {
-    const vendor = await findVendorByEmail(email);
-    if (!vendor) return res.status(404).json({ error: "Vendor doesn't exist" });
-
-    const payouts: IPayout[] = await Payout.find({
-      vendorId: vendor._id.toString(),
-    });
-
-    const web3 = new Web3(process.env.WEB3_PROVIDER!);
-    const contract = new web3.eth.Contract(
-      RecurringPaymentsVendor.abi,
-      vendor.vendorContract,
-    );
-
-    const balance: string = await contract.methods.balance().call();
-    const owner: string = await contract.methods.owner().call();
-
-    return res.send({
-      payouts: payouts,
-      vendor: vendor,
-      pendingBalance: balance,
-      owner: owner,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: 'Failed to get payouts.', error });
-  }
-};
-
-export const createPayout = async (req: Request, res: Response) => {
-  const { vendorId } = req.params;
-  const { amount, tokenAddress, userAddress, token, hash } = req.body;
-
-  try {
-    const newPayout: IPayout = new Payout({
-      payoutDate: new Date(),
-      amount,
-      tokenAddress,
-      userAddress,
-      token,
-      hash,
-      vendorId,
-    });
-    await newPayout.save();
-    return res.send(newPayout);
-  } catch (error) {
-    return res.status(500).json({ message: 'Failed to create payout.', error });
-  }
-};
 export const getAllPayments = async (req: CustomRequest, res: Response) => {
   const decoded = req.decoded;
   const { vendorId } = decoded;

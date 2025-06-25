@@ -3,8 +3,6 @@ import {
   cronApi,
   getScheduledPayments,
   getCompletedPayments,
-  createPayout,
-  getPayoutsDetails,
   getAllPayments,
   getPendingEndSubscriptions,
 } from '../controllers/payments';
@@ -13,9 +11,6 @@ const router = Router();
 
 router.post('/cron-api', cronApi);
 router.get('/get-all-payments', verifyToken, getAllPayments);
-
-router.post('/create-payout/:vendorId', verifyToken, createPayout);
-router.get('/get-payouts-details', verifyToken, getPayoutsDetails);
 
 // for testing
 router.get('/scheduled-payments', getScheduledPayments);

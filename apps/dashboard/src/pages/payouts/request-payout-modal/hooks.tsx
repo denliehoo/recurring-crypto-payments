@@ -70,13 +70,15 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
           });
 
         const bodyData = {
-          amount: Number.parseInt(withdraw.events.VendorWithdraw.returnValues.amount), // parseInt first
+          amount: Number.parseInt(
+            withdraw.events.VendorWithdraw.returnValues.amount,
+          ), // parseInt first
           tokenAddress: vendor.tokenAddress || '',
           userAddress: address,
           token: 'USDT', // hard code to USDT for now
           hash: withdraw.transactionHash,
         };
-        await apiRequestPayout(vendor._id.toString(), bodyData);
+        await apiRequestPayout(bodyData);
 
         setButtonLoading(false);
       } catch (err) {

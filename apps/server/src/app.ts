@@ -21,6 +21,7 @@ app.use(
 
 app.use('/auth', routes.auth);
 app.use('/dashboard', routes.dashboard);
+app.use('/payout', routes.payout);
 app.use('/vendors', routes.vendor);
 app.use('/vendorclients', routes.vendorClient);
 app.use('/payments', routes.payments);

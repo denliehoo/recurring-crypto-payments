@@ -4,6 +4,7 @@ import payments from './payments';
 import externalPage from './externalPage';
 import auth from './auth';
 import dashboard from './dashboard';
+import payout from './payout';
 
 export default {
   auth,
@@ -12,4 +13,5 @@ export default {
   vendorClient,
   payments,
   externalPage,
+  payout,
 };
