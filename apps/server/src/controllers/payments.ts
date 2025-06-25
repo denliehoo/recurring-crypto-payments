@@ -56,7 +56,7 @@ export const cronApi = async (req: Request, res: Response) => {
         vendorContract: p.vendorContract,
         userAddress: p.userAddress,
         amount: p.amount,
-        tokenAddress: p.tokenAddress!,
+        tokenAddress: p.tokenAddress,
         vendorId: p.vendorId.toString(),
         vendorClientId: p.vendorClientId.toString(),
       };
@@ -77,7 +77,6 @@ export const cronApi = async (req: Request, res: Response) => {
       if (sufficientAllowance && sufficientBalance) {
         // only if successful, change isSuccessful to true
         const transactionHash = await sendReduceUserBalanceTransactionasync(
-          p.vendorContract,
           p.userAddress,
           p.amount.toString(),
         );
@@ -114,8 +113,8 @@ export const cronApi = async (req: Request, res: Response) => {
 
           // Send a webhook to vendor that it is paid
           const subscriptionContinuedWebhook = await sendWebHook(
-            v.apiKey!,
-            v.webhookUrl!,
+            v.apiKey,
+            v?.webhookUrl || '',
             'SUBSCRIPTION_CONTINUED',
             {
               vendorId: v._id,
@@ -125,8 +124,8 @@ export const cronApi = async (req: Request, res: Response) => {
           );
 
           const successfulPaymentWebhook = await sendWebHook(
-            v.apiKey!,
-            v.webhookUrl!,
+            v.apiKey,
+            v?.webhookUrl || '',
             'SUCCESSFUL_PAYMENT',
             {
               ...paymentDetails,
@@ -176,8 +175,8 @@ export const cronApi = async (req: Request, res: Response) => {
         // Send a webhook to vendor that payment failed and cancelled subscription;
         // change to end subscription webhook
         const subscriptionCancelledWebhook = await sendWebHook(
-          v.apiKey!,
-          v.webhookUrl!,
+          v.apiKey,
+          v.webhookUrl || '',
           'SUBSCRIPTION_ENDED',
           {
             vendorId: v._id,
@@ -186,8 +185,8 @@ export const cronApi = async (req: Request, res: Response) => {
         );
 
         const failedPaymentWebhook = await sendWebHook(
-          v.apiKey!,
-          v.webhookUrl!,
+          v.apiKey,
+          v.webhookUrl || '',
           'FAILED_PAYMENT',
           {
             vendorId: v._id,
@@ -217,8 +216,8 @@ export const cronApi = async (req: Request, res: Response) => {
       if (!isDeleted) continue;
 
       const subscriptionEndedWebhook = await sendWebHook(
-        v.apiKey!,
-        v.webhookUrl!,
+        v.apiKey,
+        v.webhookUrl || '',
         'SUBSCRIPTION_ENDED',
         {
           vendorId: p.vendorId.toString(),
@@ -250,7 +249,7 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
     }))
     .concat(completedPayments)
     .sort(
-      (a: any, b: any) =>
+      (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
     );
 
@@ -258,7 +257,7 @@ export const getAllPayments = async (req: CustomRequest, res: Response) => {
 };
 
 // for testing:
-export const getScheduledPayments = async (req: Request, res: Response) => {
+export const getScheduledPayments = async (_req: Request, res: Response) => {
   try {
     const scheduledPayments = await ScheduledPayment.find({});
     res.json(scheduledPayments);
@@ -268,7 +267,7 @@ export const getScheduledPayments = async (req: Request, res: Response) => {
   }
 };
 
-export const getCompletedPayments = async (req: Request, res: Response) => {
+export const getCompletedPayments = async (_req: Request, res: Response) => {
   try {
     const completedPayments = await CompletedPayment.find({});
     res.json(completedPayments);
@@ -279,7 +278,7 @@ export const getCompletedPayments = async (req: Request, res: Response) => {
 };
 
 export const getPendingEndSubscriptions = async (
-  req: Request,
+  _req: Request,
   res: Response,
 ) => {
   try {

@@ -5,5 +5,5 @@ import type { ScheduledPayment } from '@core/types';
 export const apiGetPayments = () =>
   apiRequest<ScheduledPayment[]>({
     method: 'get',
-    subPath: API_URL.PAYMENTS_ALL,
+    subPath: API_URL.PAYMENTS.LIST,
   });

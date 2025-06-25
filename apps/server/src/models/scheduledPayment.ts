@@ -11,6 +11,9 @@ export interface IScheduledPayment
   paymentDate: Date;
   vendorId: mongoose.Types.ObjectId;
   vendorClientId: mongoose.Types.ObjectId;
+  // Manually input field for type completion created by {timestamps: true}
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const scheduledPaymentSchema: Schema = new Schema(

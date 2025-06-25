@@ -3,13 +3,12 @@ import RecurringPayments from '../contractABIs/RecurringPayments.json';
 import FakeUSDT from '../contractABIs/FakeUSDT.json';
 
 export const sendReduceUserBalanceTransactionasync = async (
-  vendorAddress: string,
   userAddress: string,
   amount: string,
 ): Promise<string | null> => {
   try {
     // Create a Web3 instance connected to a provider (e.g., Infura)
-    const web3 = new Web3(process.env.WEB3_PROVIDER!);
+    const web3 = new Web3(process.env.WEB3_PROVIDER || '');
 
     // Contract address and ABI of master contract
     const contractAddress = '0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7';
@@ -18,11 +17,10 @@ export const sendReduceUserBalanceTransactionasync = async (
       contractAddress,
     );
 
-    const senderAddress = process.env.OWNER_WALLET_ADDRESS!;
-    const senderPrivateKey = process.env.OWNER_PRIVATE_KEY!;
+    const senderAddress = process.env.OWNER_WALLET_ADDRESS || '';
+    const senderPrivateKey = process.env.OWNER_PRIVATE_KEY || '';
 
     const contractMethod = contract.methods.reduceUserBalance(
-      vendorAddress,
       userAddress,
       amount,
     );
@@ -55,22 +53,22 @@ export const sendReduceUserBalanceTransactionasync = async (
     // wait for up to 100 blocks (default 50); this is to prevent error from being thrown
     // however still need to handle the problem properly in the future
     // e.g. leave it as pending
-    const receipt = await web3.eth
-      .sendSignedTransaction(signedTransaction!.rawTransaction!)
-      .on('transactionHash', (hash: any) => {
-        // can get the hash even if transaction times out
-        // might be useful for edge case
-        // console.log(hash);
-      });
+    const receipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction || '',
+    );
+    // .on('transactionHash', (hash: any) => {
+    //   // can get the hash even if transaction times out
+    //   // might be useful for edge case
+    //   // console.log(hash);
+    // });
 
     console.log('Transaction receipt:', receipt);
 
     // Check if the transaction was successful
     if (receipt.status === true) {
       return receipt.transactionHash;
-    } else {
-      return null;
     }
+    return null;
   } catch (error) {
     console.error('Error:', error);
     return null;
@@ -83,7 +81,7 @@ export const isAllowanceAndBalanceSufficient = async (
   vendorContractAddress: string,
   amount: number,
 ): Promise<[boolean, boolean]> => {
-  const web3 = new Web3(process.env.WEB3_PROVIDER!);
+  const web3 = new Web3(process.env.WEB3_PROVIDER || '');
   const tokenContract = new web3.eth.Contract(
     FakeUSDT.abi as any,
     vendorTokenAddress,

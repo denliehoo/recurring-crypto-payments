@@ -10,7 +10,7 @@ import { verifyToken } from '../middleware/verifyToken';
 const router = Router();
 
 router.post('/cron-api', cronApi);
-router.get('/get-all-payments', verifyToken, getAllPayments);
+router.get('/list', verifyToken, getAllPayments);
 
 // for testing
 router.get('/scheduled-payments', getScheduledPayments);

@@ -10,12 +10,14 @@ export const API_URL = {
   },
   DASHBOARD: '/dashboard',
   PAYOUT: '/payout',
+  PAYMENTS: {
+    LIST: '/payments/list',
+  },
 
   // DASHBOARD
   GET_VENDOR_CLIENTS: '/vendorclients/get-vendor-clients-by-vendor',
   VENDOR: '/vendors',
   VENDOR_BY_TOKEN: '/vendors/getVendorByToken',
-  PAYMENTS_ALL: '/payments/get-all-payments',
 
   // CHECKOUT
   EXTERNAL_PAGE_DETAILS: '/externalPage/get-subscription-page-details',

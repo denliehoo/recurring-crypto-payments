@@ -101,7 +101,6 @@ export const initiateSubscription = async (
 
   // 1. reduces user balance
   const transactionHash = await sendReduceUserBalanceTransactionasync(
-    vendorContract,
     userAddress,
     amount,
   );
@@ -448,7 +447,6 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
       });
 
     transactionHash = await sendReduceUserBalanceTransactionasync(
-      v.vendorContract!,
       wallet,
       v.amount!.toString(),
     );
