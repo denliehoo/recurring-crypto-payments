@@ -13,9 +13,10 @@ export const API_URL = {
   PAYMENTS: {
     LIST: '/payments/list',
   },
+  VENDOR_CLIENTS: {
+    LIST: '/vendorclients/list',
+  },
 
-  // DASHBOARD
-  GET_VENDOR_CLIENTS: '/vendorclients/get-vendor-clients-by-vendor',
   VENDOR: '/vendors',
   VENDOR_BY_TOKEN: '/vendors/getVendorByToken',
 

@@ -10,11 +10,9 @@ import {
 import { verifyToken } from '../middleware/verifyToken';
 const router = Router();
 
-router.get(
-  '/get-vendor-clients-by-vendor',
-  verifyToken,
-  getVendorClientsByVendor,
-);
+router.get('/list', verifyToken, getVendorClientsByVendor);
+
+// For vendors to create their customers
 router.post('/create/:id', createVendorClient);
 
 // for testing (so far)

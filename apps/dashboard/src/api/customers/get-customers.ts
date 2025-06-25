@@ -5,5 +5,5 @@ import type { VendorClient } from '@core/types';
 export const apiGetCustomers = () =>
   apiRequest<VendorClient[]>({
     method: 'get',
-    subPath: API_URL.GET_VENDOR_CLIENTS,
+    subPath: API_URL.VENDOR_CLIENTS.LIST,
   });

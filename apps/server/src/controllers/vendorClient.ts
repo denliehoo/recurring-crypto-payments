@@ -33,10 +33,9 @@ export const getVendorClientById = async (req: Request, res: Response) => {
     const vendorClient = await VendorClient.findById(id);
     if (vendorClient) {
       return res.send(vendorClient);
-    } else {
-      return res.status(404).json({ error: 'VendorClient not found' });
     }
-  } catch (error) {
+    return res.status(404).json({ error: 'VendorClient not found' });
+  } catch {
     return res.status(500).json({ error: 'Failed to retrieve VendorClient' });
   }
 };
@@ -61,11 +60,11 @@ export const getVendorClientsByVendor = async (
   }
 };
 
-export const getAllVendorClients = async (req: Request, res: Response) => {
+export const getAllVendorClients = async (_req: Request, res: Response) => {
   try {
     const vendorClients = await VendorClient.find().populate('vendor');
     return res.json(vendorClients);
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Failed to fetch vendorClients' });
   }
 };
@@ -79,8 +78,6 @@ export const updateVendorClient = async (req: Request, res: Response) => {
     let vendorClient = await VendorClient.findById(id);
     if (!vendorClient)
       return res.status(404).json({ error: 'Vendor Client not found' });
-    // if (!name || !wallet || !email)
-    //   return res.status(400).json({ error: "Cannot be empty" });
 
     vendorClient.billingInfo = billingInfo;
     vendorClient.paymentMethod = paymentMethod;
@@ -90,7 +87,7 @@ export const updateVendorClient = async (req: Request, res: Response) => {
     vendorClient = await vendorClient.save();
 
     return res.send(vendorClient);
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Failed to update VendorClient' });
   }
 };
@@ -101,7 +98,7 @@ export const deleteVendorClient = async (req: Request, res: Response) => {
     const id = req.params.id;
     await VendorClient.findByIdAndDelete(id);
     return res.sendStatus(204);
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Failed to delete VendorClient' });
   }
 };
