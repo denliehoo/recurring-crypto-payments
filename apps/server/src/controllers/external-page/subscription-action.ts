@@ -1,83 +1,31 @@
-import type { Request, Response } from 'express';
-import type { CustomRequest } from '../types/requests';
-import models from '../models';
-import { findVendorById, findVendorClientById } from '../utility/findFromDb';
+import type { Response } from 'express';
+import type { CustomRequest } from '../../types/requests';
+import models from '../../models';
+import { findVendorById, findVendorClientById } from '../../utility/findFromDb';
 import moment from 'moment';
-import type { ICompletedPayment } from '../models/completedPayment';
-import type { IScheduledPayment } from '../models/scheduledPayment';
+import type { ICompletedPayment } from '../../models/completedPayment';
+import type { IScheduledPayment } from '../../models/scheduledPayment';
 import {
   isAllowanceAndBalanceSufficient,
   sendReduceUserBalanceTransactionasync,
-} from '../utility/interactWithBlockchain';
+} from '../../utility/interactWithBlockchain';
 import {
   addCompletedPayment,
   addScheduledPayment,
   deleteScheduledPayment,
   findScheduledPayment,
-  updateScheduledPayment,
-} from '../utility/payments';
+} from '../../utility/payments';
 
-import { generateJWT } from '../utility/generateJWT';
-import { sendWebHook } from '../utility/sendWebhook';
+import { sendWebHook } from '../../utility/sendWebhook';
 import {
   addPendingEndSubscription,
   deletePendingEndSubscription,
   findPendingEndSubscription,
-} from '../utility/pendingEndSubscription';
-import type { IPendingEndSubscription } from '../models/pendingEndSubscription';
-import type { VendorClientSubscriptionDetails } from '@core/types/VendorClientSubscriptionDetails';
+} from '../../utility/pendingEndSubscription';
+import type { IPendingEndSubscription } from '../../models/pendingEndSubscription';
 import type { InitiateSubscription } from '@core/types/checkout';
 
-// import sendWebHook from "../utility/sendWebhook";
-
-const {
-  VendorClient,
-  ScheduledPayment,
-  CompletedPayment,
-  PendingEndSubscription,
-} = models;
-
-export const manageSubscription = async (req: Request, res: Response) => {
-  // should mandate that the API is called with some sort of token
-  // from the vendor
-
-  // for testing
-  // const vendor = await Vendor.find();
-  // const vendorClient = await VendorClient.find();
-  // const data = {
-  //   vendor: vendor[0]._id.toString(),
-  //   vendorClient: vendorClient[0]._id.toString(),
-  // };
-
-  // for prod
-  const auth = req.headers.authorization;
-
-  const { vendor, vendorClient } = req.body;
-  if (!vendor || !vendorClient)
-    return res
-      .status(401)
-      .json({ error: 'Please ensure to provide vendor and vendorClient' });
-
-  const v = await findVendorById(vendor);
-  const c = await findVendorClientById(vendorClient);
-  if (!v || !c)
-    return res
-      .status(404)
-      .json({ error: 'Error, vendor or vendorClient not found' });
-
-  if (auth !== v.apiKey)
-    return res.status(401).json({ error: 'Incorrect API Key' });
-
-  const data = { vendor: vendor, vendorClient: vendorClient };
-  // ----
-
-  const token = generateJWT(data, 86400);
-  const encodedToken = token.replace(/\./g, '~');
-  const baseUrl = process.env.FRONT_END_CHECKOUT_URL; // change this to actual frontend in future
-  return res.send({
-    url: `${baseUrl}?authToken=${encodedToken}`,
-  });
-};
+const { ScheduledPayment, CompletedPayment, PendingEndSubscription } = models;
 
 export const initiateSubscription = async (
   req: CustomRequest,
@@ -93,16 +41,22 @@ export const initiateSubscription = async (
   const vendor = await findVendorById(vendorId);
   let vendorClient = await findVendorClientById(vendorClientId);
 
-  if (!vendorClient || !vendor)
+  if (!vendorClient || !vendor) {
     return res.status(401).json({ error: 'Vendor or client id not found' });
+  }
 
-  const vendorContract = vendor?.vendorContract!;
-  const amount = vendor.amount!.toString();
+  const {
+    amount = 0,
+    vendorContract = '',
+    tokenAddress = '',
+    apiKey,
+    webhookUrl = '',
+  } = vendor;
 
   // 1. reduces user balance
   const transactionHash = await sendReduceUserBalanceTransactionasync(
     userAddress,
-    amount,
+    amount.toString(),
   );
 
   if (!transactionHash)
@@ -119,7 +73,7 @@ export const initiateSubscription = async (
     vendorClient.invoices = [
       {
         date: currentDate,
-        amount: vendor.amount!, // replace this
+        amount,
         token: 'USDT',
         status: 'paid',
         hash: `https://sepolia.etherscan.io/tx/${transactionHash}`,
@@ -128,18 +82,18 @@ export const initiateSubscription = async (
     ];
 
     vendorClient = await vendorClient.save();
-  } catch (error) {
+  } catch {
     return res.status(500).json({ error: 'Failed to update VendorClient' });
   }
 
   const paymentDetails = {
-    vendorContract: vendorContract,
-    userAddress: userAddress,
-    amount: Number.parseInt(amount),
-    tokenAddress: vendor!.tokenAddress!,
+    vendorContract,
+    userAddress,
+    amount,
+    tokenAddress,
     paymentDate: currentDate,
-    vendorId: vendorId,
-    vendorClientId: vendorClientId,
+    vendorId,
+    vendorClientId,
   };
 
   // 3. Add above to CompletedPayments
@@ -164,21 +118,21 @@ export const initiateSubscription = async (
 
   // 5. send a webhook to vendor that subscription should begin and payment received
 
-  const subscriptionBegunWebHook = await sendWebHook(
-    vendor.apiKey,
-    vendor.webhookUrl!,
+  const _subscriptionBegunWebHook = await sendWebHook(
+    apiKey,
+    webhookUrl,
     'SUBSCRIPTION_BEGUN',
     {
       vendorId: vendor._id,
-      vendorClientId: vendorClientId,
+      vendorClientId,
       begun: currentDate,
-      nextDate: nextDate,
+      nextDate,
     },
   );
 
-  const successfulPaymentWebhook = await sendWebHook(
-    vendor.apiKey,
-    vendor.webhookUrl!,
+  const _successfulPaymentWebhook = await sendWebHook(
+    apiKey,
+    webhookUrl,
     'SUCCESSFUL_PAYMENT',
     { ...paymentDetails, hash: transactionHash },
   );
@@ -188,122 +142,6 @@ export const initiateSubscription = async (
 
   // return at end
   return res.send(vendorClient);
-};
-
-export const getSubscriptionPageDetails = async (
-  req: CustomRequest,
-  res: Response,
-) => {
-  const decoded = req.decoded;
-  const vendorId = decoded.vendor;
-  const clientId = decoded.vendorClient;
-  const v = await findVendorById(vendorId);
-  const c = await findVendorClientById(clientId);
-
-  if (!v || !c)
-    return res.status(401).json({ error: 'Vendor or client id not found' });
-
-  let paymentMethod;
-  if (c?.paymentMethod?.wallet) {
-    const userAddress = c.paymentMethod.wallet;
-    const [sufficientAllowance, sufficientBalance] =
-      await isAllowanceAndBalanceSufficient(
-        userAddress,
-        v.tokenAddress!,
-        v.vendorContract!,
-        v.amount!,
-      );
-    if (
-      c.paymentMethod.sufficientAllowance !== sufficientAllowance ||
-      c.paymentMethod.sufficientBalance !== sufficientBalance
-    ) {
-      paymentMethod = {
-        ...c.paymentMethod,
-        sufficientAllowance: sufficientAllowance,
-        sufficientBalance: sufficientBalance,
-      };
-      c.paymentMethod = paymentMethod;
-
-      await c.save();
-      try {
-      } catch (err) {
-        console.log(err);
-        return res
-          .status(400)
-          .json({ error: 'an error occured in updating the client' });
-      }
-    } else {
-      paymentMethod = c.paymentMethod;
-    }
-  } else {
-    paymentMethod = null;
-  }
-
-  const data: VendorClientSubscriptionDetails = {
-    vendor: v!.name || '',
-    plan: v!.plan || '',
-    amount: v!.amount || 0,
-    token: 'USDT', // get the token name via api or something and put heere
-    status: c!.status,
-    nextDate: c?.nextDate || null,
-    tokenAddress: v?.tokenAddress || '',
-    vendorContract: v?.vendorContract || '',
-    paymentMethod: paymentMethod,
-    billingInfo: c?.billingInfo || null,
-    invoices: c?.invoices || [],
-    webhookUrl: v!.webhookUrl || '',
-    returnUrl: v!.returnUrl || '',
-  };
-  return res.send(data);
-};
-
-export const changePaymentMethod = async (
-  req: CustomRequest,
-  res: Response,
-) => {
-  // update the new payment method in vendorclient
-  // look for the given vendor id and client id in scheduledPayments entity
-  // update the scheduledPayment to deduct from the new address
-  const { newAddress } = req.body;
-  if (!newAddress)
-    return res
-      .status(401)
-      .json({ error: 'User Address field cannot be empty' });
-
-  const decoded = req.decoded;
-  const vendorId = decoded.vendor;
-  const clientId = decoded.vendorClient;
-  const v = await findVendorById(vendorId);
-  let c = await findVendorClientById(clientId);
-
-  if (!v || !c)
-    return res.status(404).json({ error: 'Vendor or client id not found' });
-  if (!c?.paymentMethod?.wallet)
-    return res
-      .status(401)
-      .json({ error: 'The user does not have a current payment method' });
-  const sp = await findScheduledPayment(vendorId, clientId);
-  if (!sp)
-    return res.status(404).json({ error: 'Unable to find scheduled payment' });
-
-  const isScheduledPaymentUpdated = await updateScheduledPayment(
-    sp,
-    newAddress,
-  );
-  if (!isScheduledPaymentUpdated)
-    return res
-      .status(500)
-      .json({ error: 'An error occured in updating the scheduled payment' });
-
-  c!.paymentMethod!.wallet = newAddress;
-  try {
-    c = await c.save();
-  } catch {
-    return res
-      .status(500)
-      .json({ error: 'An error occured in updating the vendor client' });
-  }
-  return res.send(c);
 };
 
 export const cancelSubscription = async (req: CustomRequest, res: Response) => {
@@ -358,7 +196,7 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
 
   const newPendingEndSubscription: IPendingEndSubscription =
     new PendingEndSubscription({
-      endDate: c.nextDate!,
+      endDate: c.nextDate,
       vendorId: v._id.toString(),
       vendorClientId: c._id.toString(),
     });
@@ -372,11 +210,15 @@ export const cancelSubscription = async (req: CustomRequest, res: Response) => {
     });
 
   // send a webhook to inform vendor that user cancelled...
-  const cancelSubscriptionWebhook = await sendWebHook(
+  const _cancelSubscriptionWebhook = await sendWebHook(
     v.apiKey,
-    v.webhookUrl!,
+    v.webhookUrl || '',
     'SUBSCRIPTION_CANCELLED',
-    { vendorId: v._id, vendorClientId: c._id, endDate: c.nextDate! },
+    {
+      vendorId: v._id,
+      vendorClientId: c._id,
+      endDate: c.nextDate || new Date(),
+    },
   );
 
   // if (!cancelSubscriptionWebhook)
@@ -396,24 +238,25 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
   const v = await findVendorById(vendorId);
   let c = await findVendorClientById(clientId);
 
-  let transactionHash;
+  let transactionHash: string | null = null;
 
-  if (!v || !c)
+  if (!v || !c) {
     return res.status(404).json({ error: 'Vendor or client id not found' });
+  }
 
   const paymentDetails = {
-    vendorContract: v.vendorContract!,
-    userAddress: wallet!,
-    amount: v.amount!,
-    tokenAddress: v.tokenAddress!,
+    vendorContract: v.vendorContract,
+    userAddress: wallet,
+    amount: v.amount,
+    tokenAddress: v.tokenAddress,
     vendorId: vendorId,
     vendorClientId: clientId,
   };
   const currentDate = new Date();
 
-  let schedluledPaymentDate;
+  let schedluledPaymentDate: Date;
 
-  if (c.nextDate! > currentDate) {
+  if (c.nextDate && c.nextDate > currentDate) {
     // means still have time in subscription
     schedluledPaymentDate = c.nextDate;
     const pendingEndSubscriptionToDelete = await findPendingEndSubscription(
@@ -436,30 +279,32 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
     const [sufficientAllowance, sufficientBalance] =
       await isAllowanceAndBalanceSufficient(
         wallet,
-        v.tokenAddress!,
-        v.vendorContract!,
-        v.amount!,
+        v.tokenAddress || '',
+        v.vendorContract || '',
+        v.amount || 0,
       );
 
-    if (!sufficientAllowance || !sufficientBalance)
+    if (!sufficientAllowance || !sufficientBalance) {
       return res.status(401).json({
         error: 'Unable to proceed because of insufficient allowance or balance',
       });
+    }
 
     transactionHash = await sendReduceUserBalanceTransactionasync(
       wallet,
-      v.amount!.toString(),
+      (v.amount || 0).toString(),
     );
 
-    if (!transactionHash)
+    if (!transactionHash) {
       return res.status(400).json({ error: 'Deduction failed' });
+    }
 
     schedluledPaymentDate = moment().add(1, 'months').toDate();
 
     c.nextDate = schedluledPaymentDate;
     c.invoices.push({
       date: currentDate,
-      amount: v.amount!, // replace this
+      amount: v.amount || 0,
       token: 'USDT',
       status: 'paid',
       hash: `https://sepolia.etherscan.io/tx/${transactionHash}`,
@@ -491,59 +336,46 @@ export const renewSubscription = async (req: CustomRequest, res: Response) => {
 
   // update vendor client
   c.status = 'active';
-  c.paymentMethod!.wallet = wallet;
+  if (c.paymentMethod) {
+    c.paymentMethod.wallet = wallet;
+  }
   try {
     c = await c.save();
-  } catch (err) {
+  } catch {
     return res
       .status(500)
       .json({ error: 'An error occured while updating vendor client' });
   }
   // send webhook that user renew plan....
-  const subscriptionRenewalWebhook = await sendWebHook(
+  const _subscriptionRenewalWebhook = await sendWebHook(
     v.apiKey,
-    v.webhookUrl!,
+    v.webhookUrl || '',
     'SUBSCRIPTION_RENEWED',
     {
       vendorId: v._id,
       vendorClientId: c._id,
-      nextDate: c.nextDate!,
+      nextDate: c.nextDate || new Date(),
     },
   );
 
-  const successfulPaymentWebhook = await sendWebHook(
+  const _successfulPaymentWebhook = await sendWebHook(
     v.apiKey,
-    v.webhookUrl!,
+    v.webhookUrl || '',
     'SUCCESSFUL_PAYMENT',
-    { ...paymentDetails, paymentDate: currentDate, hash: transactionHash! },
+    {
+      vendorContract: paymentDetails.vendorContract || '',
+      userAddress: paymentDetails.userAddress || '',
+      amount: paymentDetails.amount || 0,
+      tokenAddress: paymentDetails.tokenAddress || '',
+      vendorId: paymentDetails.vendorId?.toString() || '',
+      vendorClientId: paymentDetails.vendorClientId?.toString() || '',
+      paymentDate: currentDate,
+      hash: transactionHash || '',
+    },
   );
 
+  // TODO: Maybe add logs instead of throwing error since not all would set the webhook url
   // if (!subscriptionRenewalWebhook || !successfulPaymentWebhook)
   //   return res.status(401).json({ error: "Failed to send webhook" });
   return res.send(c);
-};
-
-export const updateVendorClientPaymentMethod = async (
-  req: CustomRequest,
-  res: Response,
-) => {
-  try {
-    const clientId = req.decoded.vendorClient;
-
-    const billingInfo = req.body;
-
-    let vendorClient = await VendorClient.findById(clientId);
-    if (!vendorClient)
-      return res.status(404).json({ error: 'Vendor Client not found' });
-    if (!billingInfo.name || !billingInfo.address || !billingInfo.email)
-      return res.status(400).json({ error: 'Cannot be empty' });
-
-    vendorClient.billingInfo = billingInfo;
-
-    vendorClient = await vendorClient.save();
-
-    return res.send(vendorClient);
-  } catch (error) {
-    return res.status(500).json({ error: 'Failed to update VendorClient' });
-  }
 };

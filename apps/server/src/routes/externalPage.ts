@@ -6,13 +6,13 @@ import {
   changePaymentMethod,
   getSubscriptionPageDetails,
   initiateSubscription,
-  manageSubscription,
+  getSubscriptionPageLink,
   renewSubscription,
   updateVendorClientPaymentMethod,
-} from '../controllers/externalPage';
+} from '../controllers/external-page';
 const router = Router();
 
-router.post('/manage-subscription', manageSubscription);
+router.post('/manage-subscription', getSubscriptionPageLink);
 router.post('/initiate-subscription', verifyToken, initiateSubscription);
 router.get(
   '/get-subscription-page-details',
@@ -25,7 +25,7 @@ router.post('/cancel-subscription', verifyToken, cancelSubscription);
 router.post('/renew-subscription', verifyToken, renewSubscription);
 
 router.put(
-  '/update-vendor-client-billing-info',
+  '/update-billing-info',
   verifyToken,
   updateVendorClientPaymentMethod,
 );
