@@ -65,6 +65,7 @@ const Payouts = () => {
   );
   const [refreshData, setRefreshData] = useState(true);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Intended to refetch data upon refresh. TODO: Find a different way to implement, maybe tanstack>
   useEffect(() => {
     const getDetails = async () => {
       try {
@@ -76,7 +77,7 @@ const Payouts = () => {
         setPendingBalance(pendingBalance);
         setVendorDetails(vendor);
         setIsLoading(false);
-      } catch (err) {
+      } catch {
         setIsLoading(false);
       }
     };
@@ -87,7 +88,8 @@ const Payouts = () => {
     <PageLayout isLoading={isLoading}>
       <Typography variant="h5">Payouts</Typography>
       <Typography>
-        You currently have {Number.parseInt(pendingBalance) / 10 ** 6} USDT Pending
+        You currently have {Number.parseInt(pendingBalance) / 10 ** 6} USDT
+        Pending
       </Typography>
       <CustomButton
         variant="contained"

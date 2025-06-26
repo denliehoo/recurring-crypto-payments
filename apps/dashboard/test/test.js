@@ -7,17 +7,19 @@ const { assert } = require('chai');
 require('chai').use(require('chai-as-promised')).should();
 
 contract('Test for contracts', (accounts) => {
-  let master, vendor, usdt;
+  let master;
+  let vendor;
+  let usdt;
   const u1 = accounts[0];
-  const u2 = accounts[1];
+  // const u2 = accounts[1];
 
-  const toWei = (num) => {
-    return (num * 10 ** 18).toString();
-  };
-  // simulate waiting for next block
-  async function waitForNextBlock() {
-    await web3.eth.sendTransaction({ from: u1, to: u1, value: 0 });
-  }
+  // const toWei = (num) => {
+  //   return (num * 10 ** 18).toString();
+  // };
+  // // simulate waiting for next block
+  // async function waitForNextBlock() {
+  //   await web3.eth.sendTransaction({ from: u1, to: u1, value: 0 });
+  // }
 
   before(async () => {
     // Load contracts

@@ -1,6 +1,7 @@
 import { Box, Container } from '@mui/material';
+import { FC } from 'react';
 
-const CentrePage = (props: any) => {
+const CentrePage: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <Container
       component="main"
@@ -15,7 +16,7 @@ const CentrePage = (props: any) => {
           alignItems: 'center',
         }}
       >
-        {props.children}
+        {children}
       </Box>
     </Container>
   );

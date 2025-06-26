@@ -15,7 +15,8 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
   ]);
   const stepsButtonText = ['Connect Wallet', 'Continue', 'Confirm'];
   const [activeStep, setActiveStep] = useState(0);
-  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
+  const [_web3, setWeb3] = useState<Web3 | undefined>(undefined);
+  // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -35,7 +36,9 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
       const accounts = await w3.eth.getAccounts();
       setAddress(accounts[0]);
 
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const abi: any = RecurringPaymentsVendor.abi;
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const instance: any = new w3.eth.Contract(abi, vendor.vendorContract);
       setContract(instance);
       //   let userBalance = await usdt.methods.balanceOf(accounts[0]).call();
@@ -65,7 +68,7 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
         const withdraw = await contract.methods
           .withdraw()
           .send({ from: address })
-          .on('transactionHash', (hash: any) => {
+          .on('transactionHash', (hash: unknown) => {
             console.log(hash);
           });
 
@@ -106,6 +109,7 @@ export const useRequestPayoutModal = (vendor: Vendor, owner: string) => {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <TODO: Fix >
   useEffect(() => {
     // Add event listener for account changes when the component mounts
     if (window.ethereum) {

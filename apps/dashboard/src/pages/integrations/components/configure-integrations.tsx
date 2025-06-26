@@ -38,7 +38,7 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({
   const [validationErrors, setValidationErrors] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [walletAddress, setWalletAddress] = useState('');
-  // TODO: Typing for contracts
+  // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
   const [contract, setContract] = useState<any>(null);
   const [addressError, setAddressError] = useState(false);
   const dispatch = useAppDispatch();
@@ -72,7 +72,9 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({
       const accounts = await w3.eth.getAccounts();
       setWalletAddress(accounts[0]);
 
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const abi: any = RecurringPayments.abi;
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const master: any = new w3.eth.Contract(
         abi,
         '0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7',
@@ -104,7 +106,7 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({
         const createContract = await contract.methods
           .createVendorContract(vendorDetails?.tokenAddress)
           .send({ from: walletAddress })
-          .on('transactionHash', (hash: any) => {
+          .on('transactionHash', (hash: unknown) => {
             console.log(hash);
           });
 
@@ -166,7 +168,7 @@ const ConfigureIntegrations: FC<ConfigureIntegrationsProps> = ({
       {/* Steps */}
       <Box sx={{ width: '100%', mt: 2 }}>
         <Stepper activeStep={activeStep}>
-          {steps.map((label, index) => {
+          {steps.map((label) => {
             const stepProps: { completed?: boolean } = {};
             const labelProps: {
               optional?: React.ReactNode;

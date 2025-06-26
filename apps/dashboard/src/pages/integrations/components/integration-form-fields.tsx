@@ -15,14 +15,16 @@ interface IntegrationFormFieldsProps {
   setVendorDetails: React.Dispatch<
     React.SetStateAction<IVendorDetails | undefined>
   >;
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   validationErrors: any;
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   setValidationErrors: React.Dispatch<React.SetStateAction<any>>;
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   fieldsTypes: any;
   addressError: boolean;
   setAddressError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: Proper typing
 const IntegrationFormFields: FC<IntegrationFormFieldsProps> = ({
   vendorDetails,
   setVendorDetails,

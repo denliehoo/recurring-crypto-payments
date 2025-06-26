@@ -7,20 +7,20 @@ import {
   renderStatus,
 } from '../../utils/renderTableCell';
 
-interface Row {
-  _id: string;
-  updatedAt: string;
-  vendorClientId: string;
-  amount: number;
-  status: string;
-  paymentDate: string;
-  remarks?: string;
-  userAddress: string;
-  hash?: string;
-  paymentMethod?: {
-    wallet: string;
-  };
-}
+// interface Row {
+//   _id: string;
+//   updatedAt: string;
+//   vendorClientId: string;
+//   amount: number;
+//   status: string;
+//   paymentDate: string;
+//   remarks?: string;
+//   userAddress: string;
+//   hash?: string;
+//   paymentMethod?: {
+//     wallet: string;
+//   };
+// }
 
 const columns: GridColDef[] = [
   {
@@ -81,6 +81,7 @@ const columns: GridColDef[] = [
 ];
 
 interface PaymentsTableProps {
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   rows: any[];
   hideFooter?: boolean;
 }

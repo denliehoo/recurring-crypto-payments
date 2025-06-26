@@ -16,6 +16,7 @@ const VerifyEmail = () => {
 
   const navigate = useNavigate();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <Intended to run once only upon init>
   useEffect(() => {
     const verifyEmail = async () => {
       if (!token) {

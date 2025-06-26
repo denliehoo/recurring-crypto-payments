@@ -8,6 +8,7 @@ import {
   Label,
   ResponsiveContainer,
 } from 'recharts';
+import { DashboardChartData } from '@core/types';
 
 // const data = [
 //   { time: "00:00", amount: 0 },
@@ -21,9 +22,12 @@ import {
 //   { time: "24:00", amount: undefined },
 // ];
 
-export default function DashboardLineChart(props: any) {
+interface IDashboardLineChart {
+  data: DashboardChartData[];
+}
+
+export default function DashboardLineChart({ data }: IDashboardLineChart) {
   const theme = useTheme();
-  const { data } = props;
   return (
     <React.Fragment>
       <ResponsiveContainer>

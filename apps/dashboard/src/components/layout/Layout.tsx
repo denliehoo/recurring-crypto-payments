@@ -1,6 +1,6 @@
 // import classes from "./Dashboard.module.css";
 
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -23,7 +23,7 @@ import SideBar from './SideBar';
 import DropDownMenu from '../UI/DropDownMenu';
 import IconAndText from '../UI/IconAndText';
 
-const Layout = (props: any) => {
+const Layout: FC<React.PropsWithChildren> = ({ children }) => {
   const { pathname } = useLocation();
 
   const [open, setOpen] = useState(true);
@@ -43,7 +43,7 @@ const Layout = (props: any) => {
   };
 
   if (!shouldUseLayout()) {
-    return <Box>{props.children}</Box>;
+    return <Box>{children}</Box>;
   }
 
   return (
@@ -134,7 +134,7 @@ const Layout = (props: any) => {
         <Toolbar />
         {/* dashboard contents */}
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          {props.children}
+          {children}
         </Container>
       </Box>
     </Box>
