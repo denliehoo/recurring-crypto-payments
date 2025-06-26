@@ -2,7 +2,7 @@ import models from '../models';
 import type { ICompletedPayment } from '../models/completedPayment';
 import type { IScheduledPayment } from '../models/scheduledPayment';
 
-const { ScheduledPayment, CompletedPayment } = models;
+const { ScheduledPayment } = models;
 export const findScheduledPayment = async (
   vendorId: string,
   vendorClientId: string,

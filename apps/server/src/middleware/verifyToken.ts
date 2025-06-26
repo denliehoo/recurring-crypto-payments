@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from 'express';
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 import type { CustomRequest } from '../types/requests';
 import { clearTokenFromCookies } from '@src/utility/cookies';
@@ -34,7 +34,8 @@ export const verifyToken = (
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  jwt.verify(token, process.env.JWT_KEY, (err: any, decoded: any) => {
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO: FIx>
+  jwt.verify(token, process.env.JWT_KEY || '', (err: unknown, decoded: any) => {
     if (err) {
       clearTokenFromCookies(res);
       return res.sendStatus(401);

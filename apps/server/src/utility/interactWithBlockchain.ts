@@ -13,6 +13,7 @@ export const sendReduceUserBalanceTransactionasync = async (
     // Contract address and ABI of master contract
     const contractAddress = '0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7';
     const contract = new web3.eth.Contract(
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       RecurringPayments.abi as any,
       contractAddress,
     );
@@ -45,6 +46,7 @@ export const sendReduceUserBalanceTransactionasync = async (
     };
 
     const signedTransaction = await web3.eth.accounts.signTransaction(
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       transactionObject as any,
       senderPrivateKey,
     );
@@ -83,6 +85,7 @@ export const isAllowanceAndBalanceSufficient = async (
 ): Promise<[boolean, boolean]> => {
   const web3 = new Web3(process.env.WEB3_PROVIDER || '');
   const tokenContract = new web3.eth.Contract(
+    // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
     FakeUSDT.abi as any,
     vendorTokenAddress,
   );

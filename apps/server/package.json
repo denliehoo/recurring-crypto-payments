@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.9",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongodb": "^4.0.7",
     "@types/nodemailer": "^6.4.9",
     "@types/uuid": "^9.0.2",
