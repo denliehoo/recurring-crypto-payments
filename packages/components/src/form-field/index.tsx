@@ -37,7 +37,9 @@ interface IFieldTypes {
 
 // TODO: Fix any
 interface ICustomFormFieldsProps {
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   detailsToSubmit: any;
+  // biome-ignore lint/suspicious/noExplicitAny: <Intended any>
   setDetailsToSubmit: (details: any) => void;
   validationErrors: IValidationErrors;
   setValidationErrors: (errors: IValidationErrors) => void;

@@ -52,6 +52,7 @@ export const useConfigurePlanContent = () => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
+  // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -108,6 +109,7 @@ export const useConfigurePlanContent = () => {
         return;
       }
 
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const abi: any = USDTABI.abi;
       const usdt = new w3.eth.Contract(abi, tokenAddress);
       setContract(usdt);
@@ -173,7 +175,7 @@ export const useConfigurePlanContent = () => {
           const approveToken = await contract.methods
             .approve(vendorContract, '1000000000000000')
             .send({ from: address })
-            .on('transactionHash', (hash: any) => {
+            .on('transactionHash', (hash: unknown) => {
               console.log(hash);
             });
 

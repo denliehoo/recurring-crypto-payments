@@ -25,12 +25,13 @@ export const useAddAllowanceContent = () => {
       minAmountText * 12
     } to ensure a smooth subscription`,
   ]);
-  const [stepsButtonText, setStepsButtonText] = useState([
+  const [stepsButtonText, _setStepsButtonText] = useState([
     'Connect Wallet',
     'Add Allowance',
   ]);
   const [activeStep, setActiveStep] = useState(0);
-  const [web3, setWeb3] = useState<Web3 | undefined>(undefined);
+  const [_web3, setWeb3] = useState<Web3 | undefined>(undefined);
+  // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
   const [contract, setContract] = useState<any>(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [address, setAddress] = useState('');
@@ -58,7 +59,9 @@ export const useAddAllowanceContent = () => {
         return;
       }
 
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const abi: any = USDTABI.abi;
+      // biome-ignore lint/suspicious/noExplicitAny: <Unable to get typing>
       const usdt: any = new w3.eth.Contract(abi, tokenAddress);
       setContract(usdt);
 
@@ -74,7 +77,7 @@ export const useAddAllowanceContent = () => {
         const approveToken = await contract.methods
           .approve(vendorContract, '1000000000000000')
           .send({ from: address })
-          .on('transactionHash', (hash: any) => {
+          .on('transactionHash', (hash: unknown) => {
             console.log(hash);
           });
 

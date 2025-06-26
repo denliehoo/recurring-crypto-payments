@@ -17,9 +17,9 @@ const UpdateBillingInfoModal: FC = () => {
 
   const setRefreshData = useSubcriptionDetail((state) => state.setRefreshData);
 
-  const [detailsToSubmit, setDetailsToSubmit] = useState<BillingInfo>(
-    billingInfo!,
-  );
+  const [detailsToSubmit, setDetailsToSubmit] = useState<
+    BillingInfo | null | undefined
+  >(billingInfo);
   const [validationErrors, setValidationErrors] = useState({});
   const fieldsTypes = {
     address: 'text',
@@ -30,8 +30,12 @@ const UpdateBillingInfoModal: FC = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!validateForm(detailsToSubmit, fieldsTypes, setValidationErrors))
+    if (
+      !validateForm(detailsToSubmit, fieldsTypes, setValidationErrors) ||
+      !detailsToSubmit
+    ) {
       return;
+    }
     setButtonLoading(true);
 
     try {
@@ -53,7 +57,7 @@ const UpdateBillingInfoModal: FC = () => {
       </Typography>
 
       <CustomFormFields
-        detailsToSubmit={detailsToSubmit as any}
+        detailsToSubmit={detailsToSubmit}
         setDetailsToSubmit={setDetailsToSubmit}
         validationErrors={validationErrors}
         setValidationErrors={setValidationErrors}
