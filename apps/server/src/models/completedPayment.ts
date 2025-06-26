@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
-import { type IScheduledPayment, scheduledPaymentSchema } from './scheduledPayment';
+import {
+  type IScheduledPayment,
+  scheduledPaymentSchema,
+} from './scheduledPayment';
 import type { CompletedPayment } from '@core/types';
 
 export interface ICompletedPayment

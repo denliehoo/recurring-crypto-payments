@@ -1,4 +1,7 @@
-import type { BillingInfo, PaymentMethod } from './VendorClientSubscriptionDetails';
+import type {
+  BillingInfo,
+  PaymentMethod,
+} from './VendorClientSubscriptionDetails';
 
 export interface InitiateSubscription {
   billingInfo: BillingInfo;

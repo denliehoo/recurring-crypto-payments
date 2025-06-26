@@ -1,5 +1,4 @@
-
-import type { FC, } from 'react';
+import type { FC } from 'react';
 import ConfigurePlanModalHeader from './header';
 import ConfigurePlanModalStepper from './stepper';
 import ConfigurePlanModalContent from './content';

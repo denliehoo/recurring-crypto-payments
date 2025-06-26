@@ -5,4 +5,9 @@ const extraAliases = {
   '@checkout': path.resolve(__dirname, 'src'),
 };
 
-module.exports = baseConfig({ appDir: __dirname, port: 3032, extraAliases, subdomain: 'checkout' });
+module.exports = baseConfig({
+  appDir: __dirname,
+  port: 3032,
+  extraAliases,
+  subdomain: 'checkout',
+});
