@@ -1,17 +1,13 @@
-export const testRequest = () => {
-  console.log('url is:', process.env.REACT_APP_API_URL);
-};
-
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
-class ApiCallError extends Error {
-  public responseStatus: number;
+// class ApiCallError extends Error {
+//   public responseStatus: number;
 
-  constructor(message: string, responseStatus: number) {
-    super(message);
-    this.responseStatus = responseStatus;
-  }
-}
+//   constructor(message: string, responseStatus: number) {
+//     super(message);
+//     this.responseStatus = responseStatus;
+//   }
+// }
 
 interface IAxiosHeaders {
   Authorization?: string;
@@ -20,8 +16,8 @@ interface IAxiosHeaders {
 export interface IApiRequest {
   method: 'get' | 'post' | 'put' | 'patch' | 'delete';
   subPath: string;
-  data?: any; // body data
-  params?: any; // query params
+  data?: unknown; // body data
+  params?: unknown; // query params
   headers?: IAxiosHeaders;
   useLocalStorageToken?: boolean;
 }
@@ -74,7 +70,7 @@ export const apiRequest = async <T>({
       throw err;
     }
 
-    throw new Error(`Unexpected error during API call: ${err?.message}`);
+    throw new Error('Unexpected error during API call: ');
   }
 };
 
