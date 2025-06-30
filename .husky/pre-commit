@@ -1,1 +1,53 @@
+#!/bin/sh
+# NOTE: We are intentionally NOT using 'set -e' here so that the script
+# can continue and check all workspaces even if one of them fails.
+
+# Run Biome linter (your existing check)
 pnpm lint:read
+
+echo "Dynamically checking for staged files in workspaces..."
+
+AFFECTED_WORKSPACES=$(git diff --cached --name-only --diff-filter=ACM | \
+                      grep -E '^(apps|packages)/' | \
+                      sed -e 's|^\(apps/[^/]*\)/.*|\1|' -e 's|^\(packages/[^/]*\)/.*|\1|' | \
+                      sort -u)
+
+if [ -z "$AFFECTED_WORKSPACES" ]; then
+  echo "No changes found in TypeScript workspaces. Skipping checks."
+  echo "Pre-commit checks passed!"
+  exit 0
+fi
+
+# This variable will track the overall result.
+# 0 means success, 1 means failure.
+FINAL_EXIT_CODE=0
+
+for WORKSPACE_DIR in $AFFECTED_WORKSPACES
+do
+  WORKSPACE_NAME=$(basename "$WORKSPACE_DIR")
+  
+  echo "---"
+  echo "Checking TypeScript in '$WORKSPACE_NAME'..."
+  
+  if [ -f "$WORKSPACE_DIR/tsconfig.json" ]; then
+    # Run the command and if it fails, update the final exit code to 1.
+    if ! pnpm --filter "$WORKSPACE_NAME" exec tsc --noEmit; then
+      echo "🔴 TypeScript check FAILED for '$WORKSPACE_NAME'"
+      FINAL_EXIT_CODE=1
+    else
+      echo "✅ TypeScript check PASSED for '$WORKSPACE_NAME'"
+    fi
+  else
+    echo "⚪ No tsconfig.json found in '$WORKSPACE_DIR', skipping."
+  fi
+done
+
+# After the loop, if any check failed, FINAL_EXIT_CODE will be 1.
+if [ $FINAL_EXIT_CODE -ne 0 ]; then
+  echo "---"
+  echo "🔴 Pre-commit hook failed due to TypeScript errors in one or more workspaces."
+fi
+
+# Exit with the final code. This will be 0 if all checks passed,
+# or 1 if any of them failed, which will block the commit.
+exit $FINAL_EXIT_CODE
