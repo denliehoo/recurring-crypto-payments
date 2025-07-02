@@ -37,11 +37,13 @@ connectDb().then(async () => {
   // Uncomment to reseed database
   // reSeedDatabase()
 
-  const hostname = 'recurcrypt-api.denliehoo.localhost';
-
   app.listen(port, () => {
-    // console.log('Running on Environment:', process.env.ENV);
+    if (process.env.ENV === 'DEV') {
+      const hostname = 'recurcrypt-api.denliehoo.localhost';
 
-    console.log(`Server listening on http://${hostname}:${port}`);
+      console.log(`Server listening on http://${hostname}:${port}`);
+    } else {
+      console.log(`Server is up and listening on port ${port}`);
+    }
   });
 });
