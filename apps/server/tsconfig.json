@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    // "rootDir": "src",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@core": ["../../packages/core/src"],
+      "@core/*": ["../../packages/core/src/*"],
+      "@src": ["./src"],
+      "@src/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "../../packages/core"],
+  "exclude": ["node_modules", "dist"]
+}

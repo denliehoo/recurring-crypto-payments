@@ -1,8 +1,10 @@
 # RecurCrypt
 
-This is an application that allows vendors or users to accept recurring cryptocurrency payments from ERC20 tokens from stablecoins such as USDC and USDT.
-This allows users to have a subscription-based model similar to stripe
-Stack includes: MERN + Typescript + Solidity (Smart Contract) + AWS Lambda (cron job)
+RecurCrypt is a full-stack application that enables businesses to accept recurring cryptocurrency payments using ERC20 stablecoins like USDC and USDT. It provides a subscription-based model similar to Stripe, built on the blockchain.
+
+**Core Technologies:** MERN (MongoDB, Express, React, Node.js) + TypeScript, Solidity (Smart Contracts), and AWS Lambda (for cron jobs).
+
+## How It Works
 
 This is the overall flow of the integrations required:
 
@@ -30,31 +32,88 @@ This is the overall flow of the clients on the businesses' web application:
 
 ![Flow diagram](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-281EueFK_7Z3ifrSoBx2A.png)
 
-# client
+<!-- TODO: Proper documentation and explaination -->
 
-- cd client
-- npm start
-- if running prod: npm run start:prod
+## Project Structure
 
-# server
+This app follows a **monorepo** structure:
 
-- set up mongodb first (Instructions TBC)
-- in a separate terminal start up mongodb by running:
-  - mongod
-- cd server
-- npm run dev
+```
+apps/
+  dashboard     # Client dashboard page
+  checkout      # Client checkout page
+  bff           # TODO: GraphQL layer for frontend to call server (certain APIs)
+  server        # Backend server
 
-# contracts
+packages/
+  components    # Frontend UI components
+  configs       # Shared application configs
+  core          # Shared code among all apps and packages (e.g. types, utils)
+```
 
-cd client
+- **apps/**: Contains all application entry points (frontend and backend).
 
-- in 1 terminal: ganache-cli
-- in another terminal: truffle migrate --reset
-- or to test contracts: truffle test
+  - **dashboard**: Main client dashboard.
+  - **checkout**: Payment/checkout flow for clients.
+  - **bff**: Backend-for-frontend GraphQL API layer.
+  - **server**: Main backend server.
 
-# .env in server:
+- **packages/**: Contains shared code and libraries.
+  - **components**: Reusable frontend UI components.
+  - **configs**: Shared application configs
+  - **core**: Logic, types and utilities shared across all apps and packages.
 
-- .env.dev
+This structure helps organize code for scalability and code sharing across multiple applications.
+
+## Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed on your system:
+
+- **Node.js**: `v22.14.0`
+- **pnpm**: `v10.11.0` (`npm install -g pnpm`)
+- **nodemon**: (`npm install -g nodemon`)
+- **MongoDB**: Must be installed and running locally.
+<!--TODO: Add instructions for mongo db installation  -->
+
+### Running locally
+
+**1. Clone the repository**
+
+**2. Configure Local Domains**
+
+You need to map local subdomains to your localhost IP. Add the following lines to your hosts file:
+
+```sh
+127.0.0.1 recurcrypt-dashboard.denliehoo.localhost
+127.0.0.1 recurcrypt-checkout.denliehoo.localhost
+127.0.0.1 recurcrypt-api.denliehoo.localhost
+```
+
+- On macOS/Linux: Edit the file at `/etc/hosts`.
+
+  1. In terminal: `vim /etc/host`s OR `code /etc/hosts`
+  2. Add the above code snippet to the bottom and save
+
+- For Windows:
+  1. Search for Notepad in applications, right click and run as administrator
+  2. In the notepad, go to FIle> Open
+  3. Navigate to `C:\Windows\System32\Drivers\etc\`
+  4. For file type, change from `\*.txt` to `All files`
+  5. Select hosts
+  6. Paste the above snippet into the file and save
+  7. Search for cmd in applications, right click and run as administrator
+  8. Type `ipconfig /flushdns` and press enter
+
+**3. Install Dependencies**
+
+Navigate to the project root and run:
+`pnpm install`
+
+**4. Environment Configuration**
+
+`apps/server/.env.dev`
 
 ```Javascript
 DB_URL=mongodb://127.0.0.1:27017/recurring-crypto-payments
@@ -63,7 +122,8 @@ WEB3_PROVIDER=WEB3_PROVIDER_URL_EXAMPLE_INFURA_SEPOLIA
 OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
 OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
 CRON_API_KEY=RECUR_CRYPT_CRON_API_KEY_HERE
-FRONT_END_URL=http://localhost:3031
+FRONT_END_URL=http://recurcrypt-dashboard.denliehoo.localhost:3031
+FRONT_END_CHECKOUT_URL=http://recurcrypt-checkout.denliehoo.localhost:3032
 MAILER_EMAIL=YOUR_MAILER_EMAIL
 MAILER_PASSWORD=YOUR_MAILER_PASSWORD
 MAILER_APP_PASSWORD=YOUR_MAILER_APP_PASSWORD
@@ -71,7 +131,7 @@ PORT=3030
 ENV=DEV
 ```
 
-- .env.prod
+`apps/server/.env.prod`
 
 ```Javascript
 DB_URL=DB_URL_INSTRUCTIONS_IN_DOCUMENTATION
@@ -81,6 +141,7 @@ OWNER_WALLET_ADDRESS=WALLET_ADDRESS_OF_OWNER_OF_MAIN_VENDOR_CONTRACT
 OWNER_PRIVATE_KEY=PRIVATE_KEY_OF_OWNER
 CRON_API_KEY=RECUR_CRYPT_CRON_API_KEY_HERE
 FRONT_END_URL=DEPLOYED_FRONTEND_URL
+FRONT_END_CHECKOUT_URL=DEPLOYED_FRONTEND_CHECKOUT_URL
 MAILER_EMAIL=YOUR_MAILER_EMAIL
 MAILER_PASSWORD=YOUR_MAILER_PASSWORD
 MAILER_APP_PASSWORD=YOUR_MAILER_APP_PASSWORD
@@ -88,24 +149,69 @@ PORT=3030
 ENV=PROD
 ```
 
-# .env in client:
-
-- .env.dev
+`apps/dashboard/.env.dev` and `apps/checkout/.env.dev`
 
 ```Javascript
 REACT_APP_ENV=DEV
-REACT_APP_API_URL=http://localhost:3030
+REACT_APP_API_URL=http://recurcrypt-api.denliehoo.localhost:3030
 ```
 
-- .env.prod
+`apps/dashboard/.env.prod` and `apps/checkout/.env.prod`
 
 ```Javascript
 REACT_APP_ENV=PROD
 REACT_APP_API_URL=URL_OF_DEPLOYED_SERVER
 ```
 
-# deployed smart contracts:
+**4. Run the application**
+
+- To run client dasboard page: `pnpm dev:dashboard`
+- To run client checkout page:`pnpm dev:checkout`
+- To run deployment server:
+  - First, Ensure mongodb is running first by running `mongod` in a separate terminal.
+- `pnpm dev:server`
+
+<!-- TODO: Contracts -->
+<!-- cd client
+
+- in 1 terminal: ganache-cli
+- in another terminal: truffle migrate --reset
+- or to test contracts: truffle test -->
+
+### Building the app:
+
+- To build client dasboard page: `pnpm prod:dashboard`
+- To build client checkout page:`pnpm prod:checkout`
+- To run server: `pnpm prod:server`
+
+## Deployed smart contracts:
+
+These contracts are deployed on the Sepolia Testnet.
 
 - Master (0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7): https://sepolia.etherscan.io/address/0x8880DA75707ea777c0bdFBbF679b56cfac41a7d7#code
 - VendorContract (0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4): https://sepolia.etherscan.io/address/0x6f4E72BF6F989656a9B9C4F4271ce1d47CCDb9A4#code
 - FakeUSDT (0xC9606fea595Ed3a94B4c8548ca0C2252C7856E89): https://sepolia.etherscan.io/address/0xc9606fea595ed3a94b4c8548ca0c2252c7856e89#code
+
+## Linting and Formatting
+
+This project uses [Biome](https://biomejs.dev/) for code formatting and linting.  
+For the best experience, install the Biome extension in your code editor.
+
+**Common commands:**
+
+- **Format all files:**
+
+  ```sh
+  pnpm format:write
+  ```
+
+- **Check for linting issues:**
+
+  ```sh
+  pnpm lint:read
+  ```
+
+- **Automatically fix linting issues:**
+  ```sh
+  pnpm lint:write
+  ```

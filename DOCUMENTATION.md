@@ -22,8 +22,7 @@ Server deployment is done using Render
   - start command: npm start [ensure server/ before it]
   - auto-deploy: no [can be yes if want]
 - Add environmental values that are already in the server. In addition add this environmental value:
-  - NODE_VERSION=16.15.1
-  - Need to specify node version because the default version of 14.x.x doesn't have the CRYPTO module. Thus will face issue when running the server. This issue can be prevent by specifying the node version in env values; hence it will use that node version instead. Note: can use other versions as long as it has the crypto module. Using 16.x.x because that is the version used on my local machine
+  - NODE_VERSION=22.14.0
 - Deploy it and wait
 - To redeploy: push commit to github, click on manual deploy on the webserver > deploy latest commit > wait and done
 

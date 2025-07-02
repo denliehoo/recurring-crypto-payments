@@ -1,7 +1,24 @@
 # Todo:
 
+- HTTP-only cookie instead of local storage for JWT
+- Set up domain e.g. checkout. and dashboard. locally, this is because cookies in localhost is shared throughout and will cause issue. it also is better cause it simulates the real end result
+  - Maybe just separate the tokens. e.g. instead of using "token", use "dashboard-token" and "checkout-token"
+- Re-do API routes properly
+  - Remove unecessary
+  - Almost everything should require authentication
+- Clean up APIs
+- Update subdomain
+- Do code splitting by routes
+- Build and deploy (test)
+- GraphQL layer
+- Upgrade to React 19
+- Use react compiler
+- Proper typing for contracts
+
 - Give options for network and tokens; tokens available should be based of network
 - Need get ABI data from API
+- Fix remaining eslint errors
+- husky pre-hook commit
 
 # Future Task
 
