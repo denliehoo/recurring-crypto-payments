@@ -14,7 +14,9 @@ module.exports = ({
   entry: path.resolve(appDir, 'src/index.tsx'),
   output: {
     path: path.resolve(appDir, 'dist'),
-    filename: 'bundle.js',
+    filename: 'static/js/[name].[contenthash:8].js',
+    chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
+    publicPath: '/',
     clean: true,
   },
   module: {
@@ -84,5 +86,22 @@ module.exports = ({
     allowedHosts: 'all', // Allow custom domain in dev
     historyApiFallback: true,
     open: true,
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        // Define a cache group called 'vendors'
+        vendors: {
+          // This test selects modules from the node_modules directory
+          test: /[\\/]node_modules[\\/]/,
+
+          // The name of the resulting chunk
+          name: 'vendors',
+
+          // This setting includes all types of chunks (initial, async, etc.)
+          chunks: 'all',
+        },
+      },
+    },
   },
 });

@@ -1,10 +1,33 @@
 import type { FC } from 'react';
-import AddAllowanceContent from './add-allowance-content';
-import CancelPlanContent from './cancel-plan-content';
-import ConfigurePlanContent from './configure-plan-content';
-import UpdateBillingInfoContent from './update-billing-info-content';
+import { lazy, Suspense } from 'react';
+
 import { ECheckoutModal, useCheckoutModal } from '@checkout/store';
 import CustomModal from '@components/modal';
+
+import LoadingOverlay from '@components/loading-overlay';
+
+const AddAllowanceContent = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "modal-add-allowance" */ './add-allowance-content'
+    ),
+);
+const CancelPlanContent = lazy(
+  () =>
+    import(/* webpackChunkName: "modal-cancel-plan" */ './cancel-plan-content'),
+);
+const ConfigurePlanContent = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "modal-configure-plan" */ './configure-plan-content'
+    ),
+);
+const UpdateBillingInfoContent = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "modal-update-billing" */ './update-billing-info-content'
+    ),
+);
 
 const Modals: FC = () => {
   const modal = useCheckoutModal((state) => state.modal);
@@ -28,9 +51,12 @@ const Modals: FC = () => {
   if (!modal) {
     return null;
   }
+
   return (
     <CustomModal open={!!modal} onClose={() => setModal(undefined)}>
-      {getModalContent()}
+      <Suspense fallback={<LoadingOverlay isLoading />}>
+        {getModalContent()}
+      </Suspense>
     </CustomModal>
   );
 };
