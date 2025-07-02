@@ -21,12 +21,12 @@ const Modals: FC = () => {
       case ECheckoutModal.UPDATE_BILLING:
         return <UpdateBillingInfoContent />;
       default:
-        return;
+        return null;
     }
   };
 
   if (!modal) {
-    return;
+    return null;
   }
   return (
     <CustomModal open={!!modal} onClose={() => setModal(undefined)}>

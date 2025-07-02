@@ -1,6 +1,6 @@
 export enum ESubdomain {
-  DASHBOARD = 'dashboard',
-  CHECKOUT = 'checkout',
+  DASHBOARD = 'recurcrypt-dashboard',
+  CHECKOUT = 'recurcrypt-checkout',
 }
 
 export const DOMAIN_TOKEN_MAPPING: Record<ESubdomain, string> = {

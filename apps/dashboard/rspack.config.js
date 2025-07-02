@@ -9,5 +9,5 @@ module.exports = baseConfig({
   appDir: __dirname,
   port: 3031,
   extraAliases,
-  subdomain: 'dashboard',
+  subdomain: 'recurcrypt-dashboard',
 });

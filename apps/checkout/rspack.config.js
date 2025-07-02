@@ -9,5 +9,5 @@ module.exports = baseConfig({
   appDir: __dirname,
   port: 3032,
   extraAliases,
-  subdomain: 'checkout',
+  subdomain: 'recurcrypt-checkout',
 });

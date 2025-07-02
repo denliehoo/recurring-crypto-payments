@@ -7,6 +7,8 @@
   - Remove unecessary
   - Almost everything should require authentication
 - Clean up APIs
+- Update subdomain
+- Do code splitting by routes
 - Build and deploy (test)
 - GraphQL layer
 - Upgrade to React 19

@@ -79,7 +79,7 @@ module.exports = ({
   },
   devServer: {
     hot: true,
-    host: `${subdomain}.recurcrypt.localhost`,
+    host: `${subdomain}.denliehoo.localhost`,
     port,
     allowedHosts: 'all', // Allow custom domain in dev
     historyApiFallback: true,
