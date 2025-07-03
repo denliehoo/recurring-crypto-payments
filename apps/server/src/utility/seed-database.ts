@@ -8,7 +8,7 @@ const seedDataBase = async () => {
     'sk-ac469da4-37bf-4930-9750-38e36d209877d20b4e27-dac5-4959-ad54-42940bf05f7e3a0cda4a-dd1b-4c04-802b-7676ea76ed2b';
   const testVendor = new models.Vendor({
     name: 'Test Company',
-    email: 'test@test.com',
+    email: 'denliehoo.dev@gmail.com',
     isVerified: true,
     password: testPassword,
     apiKey: testApiKeys,
@@ -51,6 +51,9 @@ const seedDataBase = async () => {
   // scheduledPayment1.save();
   // scheduledPayment2.save();
   // scheduledPayment3.save();
+
+  console.log('Successfully re-seeded')
+
 };
 
 const dropAllCollections = async () => {
@@ -80,7 +83,7 @@ export const reSeedDatabase = async () => {
   if (process.env.ENV === 'DEV') {
     console.log('Re-seeding database!');
     // drops all collection
-    dropAllCollections();
+    await dropAllCollections();
 
     // clear database
     await Promise.all([
@@ -88,6 +91,8 @@ export const reSeedDatabase = async () => {
       models.VendorClient.deleteMany({}),
       models.CompletedPayment.deleteMany({}),
       models.ScheduledPayment.deleteMany({}),
+      models.Payout.deleteMany({}),
+      models.PendingEndSubscription.deleteMany({})
     ]);
     await seedDataBase();
   } else if (process.env.ENV === 'PROD') {

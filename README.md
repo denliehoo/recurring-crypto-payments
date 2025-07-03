@@ -178,11 +178,15 @@ REACT_APP_API_URL=URL_OF_DEPLOYED_SERVER
 - in another terminal: truffle migrate --reset
 - or to test contracts: truffle test -->
 
-### Building the app:
+### Prod:
 
 - To build client dasboard page: `pnpm prod:dashboard`
 - To build client checkout page:`pnpm prod:checkout`
-- To run server: `pnpm prod:server`
+- To run server in prod mode: `pnpm prod:server`
+- To build and run prod server:
+  - `pnpm prod:build-server`
+  - `pnpm prod:server-dist`
+  - Note: won't be able to test the built server due to lack of env configs. This is purely for deployment only.
 
 ## Deployed smart contracts:
 

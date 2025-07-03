@@ -20,10 +20,11 @@ Server deployment is done using Render
 - Build & Deploy settings:
 
   - Branch: main
-
-  - build command: pnpm install --frozen-lockfile
-  - start command: pnpm prod:server
+  - root directory: apps/server
+  - build command: cd ../.. && pnpm install --frozen-lockfile && cd apps/server && pnpm build
+  - start command: pnpm prod-dist
   - auto-deploy: no [can be yes if want]
+  - Note: The reason why we chose to specify a root directory is so that the .env.prod file can be detected and also to prevent unnecessary trigger of auto-deployment
 
 - Add environmental values that are already in the server. In addition add this environmental value:
   - NODE_VERSION=22.14.0
@@ -40,6 +41,13 @@ Server deployment is done using Render
 - public directory: doesn't matter for now
 - configure as single page app: yes
 - then manually configure firebase.json to suit the monorepo
+- To Build and deploy:
+- pnpm build:dashboard
+- pnpm build:checkout
+- firebase deploy --only hosting:dashboard,hosting:checkout
+
+- To redeploy:
+- repeat the above
 
 <!-- - refer to : https://hackernoon.com/how-to-deploy-a-react-application-with-firebase-hosting-p92m37b7 -->
 
