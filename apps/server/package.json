@@ -6,6 +6,8 @@
   "scripts": {
     "prod": "env-cmd -f .env.prod ts-node -r tsconfig-paths/register src/app.ts",
     "dev": "env-cmd -f .env.dev nodemon --exec ts-node -r tsconfig-paths/register src/app.ts",
+    "build": "tsc && tsc-alias",
+    "prod-dist": "node dist/apps/server/src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -35,6 +37,7 @@
     "@types/nodemailer": "^6.4.9",
     "@types/uuid": "^9.0.2",
     "mongodb": "^5.7.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.16"
   }
 }

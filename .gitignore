@@ -4,3 +4,5 @@ build
 .env.prod
 .env.dev
 dist
+pglite-debug.log
+.firebase

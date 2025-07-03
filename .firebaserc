@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "recurcrypt-8a21d"
+  },
+  "targets": {
+    "recurcrypt-8a21d": {
+      "hosting": {
+        "dashboard": [
+          "recurcrypt-dashboard"
+        ],
+        "checkout": [
+          "recurcrypt-checkout"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -13,6 +13,8 @@
     "build:dashboard": "pnpm --filter dashboard build",
     "build:checkout": "pnpm --filter checkout build",
     "prod:server": "pnpm --filter server prod",
+    "prod:build-server": "pnpm --filter server build",
+    "prod:server-dist": "pnpm --filter server prod-dist",
     "format:write": "pnpm exec biome format --write",
     "lint:read": "pnpm exec biome lint",
     "lint:write": "pnpm exec biome lint --write",
