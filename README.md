@@ -2,7 +2,39 @@
 
 RecurCrypt is a full-stack application that enables businesses to accept recurring cryptocurrency payments using ERC20 stablecoins like USDC and USDT. It provides a subscription-based model similar to Stripe, built on the blockchain.
 
-**Core Technologies:** MERN (MongoDB, Express, React, Node.js) + TypeScript, Solidity (Smart Contracts), and AWS Lambda (for cron jobs).
+## Teck stack
+
+- **Frontend:**
+
+  - **React**
+  - **TypeScript**
+  - **MUI (Material-UI)**
+  - **Zustand:** A small, fast, and scalable state-management solution.
+  - **Rspack:** A high-performance web bundler for building our frontend assets.
+
+<!-- - **BFF (Backend-for-Frontend):**
+
+  - **GraphQL:** A query language for our API that empowers the frontend to request exactly the data it needs.
+  - **Apollo Server:** A robust GraphQL server, integrated with Express, that acts as the single entry point for our frontend and orchestrates data from downstream services. -->
+
+- **Backend:**
+
+  - **Node.js**
+  - **TypeScript**
+  - **Express**
+  - **MongoDB**
+
+- **Blockchain:**
+
+  - **Solidity:** The primary language for writing smart contracts on Ethereum and other compatible blockchains.
+
+- **DevOps & Tooling:**
+  - **AWS Lambda:** Used for running serverless functions, such as our cron jobs.
+  <!-- - **GitHub Actions:** For our Continuous Integration and Continuous Deployment (CI/CD) pipelines. -->
+  - **Husky:** To manage and run Git hooks, ensuring code quality before commits.
+  - **Biome:** A high-performance toolchain for linting, formatting, and more.
+  - **pnpm:** A fast, disk space-efficient package manager.
+  - **Monorepo:** A single repository containing multiple distinct projects with well-defined relationships.
 
 ## How It Works
 
