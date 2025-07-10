@@ -121,6 +121,7 @@ You need to map local subdomains to your localhost IP. Add the following lines t
 127.0.0.1 recurcrypt-dashboard.denliehoo.localhost
 127.0.0.1 recurcrypt-checkout.denliehoo.localhost
 127.0.0.1 recurcrypt-api.denliehoo.localhost
+127.0.0.1 recurcrypt-bff.denliehoo.localhost
 ```
 
 - On macOS/Linux: Edit the file at `/etc/hosts`.

@@ -10,6 +10,7 @@
     "dev:dashboard": "pnpm --filter dashboard start",
     "dev:checkout": "pnpm --filter checkout start",
     "dev:server": "pnpm --filter server dev",
+    "dev:bff": "pnpm --filter bff dev",
     "build:dashboard": "pnpm --filter dashboard build",
     "build:checkout": "pnpm --filter checkout build",
     "prod:server": "pnpm --filter server prod",
