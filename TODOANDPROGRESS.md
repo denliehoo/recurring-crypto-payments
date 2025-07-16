@@ -1,6 +1,7 @@
 # Todo:
 
-- CI/CD for FE
+- Tailwind for styling
+- Tanstack query for fetching api
 - GraphQL layer
 - CI/CD for server and maybe docker
 - Upgrade to React 19
@@ -147,3 +148,4 @@
 - Update subdomain
 - Do code splitting by routes
 - Build and deploy (test)
+- CI/CD for FE

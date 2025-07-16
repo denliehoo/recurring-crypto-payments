@@ -26,6 +26,7 @@
   "scripts": {
     "start": "cross-env PORT=3031 env-cmd -f .env.dev rspack serve --config rspack.config.js",
     "build": "cross-env env-cmd -f .env.prod rspack build --config rspack.config.prod.js",
+    "build:ci": "cross-env rspack build --config rspack.config.prod.js",
     "test": "echo \"No test configured yet\" && exit 0"
   },
   "eslintConfig": {

@@ -1,0 +1,77 @@
+name: Deploy Frontend to Firebase Hosting
+
+# Only trigger workflow when there is a push to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy: # "deploy" is the name of the job
+    name: Running deploy job for ${{ matrix.app }} appplication
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ["dashboard", "checkout"] # Run "deploy" job twice. We assign "dashboard" and "checkout" to the variable matrix.app for the separate job runs
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+        # This step checks if there are any changed files for our respective apps (e.g. apps/dashboard) along with any changes in packages/
+        # If there are, it would set steps.changed-files.outputs.any_changed to true
+        # Essentially, if no changes are found for the app, the job ends after this step
+
+      - name: 2. Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            apps/${{ matrix.app }}/**
+            packages/**
+
+      - name: 3. Setup PNPM
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.11.0
+
+      - name: 4. Setup Node.js
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: "pnpm"
+
+      - name: 5. Install Dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: pnpm install
+
+      - name: 6. Build Application
+        if: steps.changed-files.outputs.any_changed == 'true'
+        # Gets the secrets stored in github actions and runs the build command
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_ENV: ${{ secrets.REACT_APP_ENV }}
+        # Calls the app's respective build command
+        run: pnpm build:ci:${{ matrix.app }}
+
+      - name: 7. Deploy to Firebase
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          channelId: live
+          projectId: recurcrypt-8a21d
+          target: ${{ matrix.app }} # Refers to the target in the firebase.json. This is how we know where the built assets are
+
+      - name: 8. Post Job Summary
+        run: |
+          if [[ "${{ steps.changed-files.outputs.any_changed }}" == "true" ]]; then
+            echo "### ✅ Deployment Successful for ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+            echo "A new version of the **${{ matrix.app }}** application has been deployed." >> $GITHUB_STEP_SUMMARY
+            echo "You can view the deployment at https://recurcrypt-${{ matrix.app }}.denliehoo.com" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚪ No Changes Detected for ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+            echo "The deployment for the **${{ matrix.app }}** application was skipped as there were no relevant file changes." >> $GITHUB_STEP_SUMMARY
+          fi
