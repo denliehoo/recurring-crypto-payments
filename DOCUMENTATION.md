@@ -45,6 +45,7 @@ Server deployment is done using Render
 - pnpm build:dashboard
 - pnpm build:checkout
 - firebase deploy --only hosting:dashboard,hosting:checkout
+- Note: we can doing host:dashboard because we specified where our built assets are in our firebase.json config
 
 - To redeploy:
 - repeat the above

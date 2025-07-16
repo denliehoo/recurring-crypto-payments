@@ -12,6 +12,8 @@
     "dev:server": "pnpm --filter server dev",
     "build:dashboard": "pnpm --filter dashboard build",
     "build:checkout": "pnpm --filter checkout build",
+    "build:ci:dashboard": "pnpm --filter dashboard build:ci",
+    "build:ci:checkout": "pnpm --filter checkout build:ci",
     "prod:server": "pnpm --filter server prod",
     "prod:build-server": "pnpm --filter server build",
     "prod:server-dist": "pnpm --filter server prod-dist",

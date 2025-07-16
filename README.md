@@ -30,7 +30,7 @@ RecurCrypt is a full-stack application that enables businesses to accept recurri
 
 - **DevOps & Tooling:**
   - **AWS Lambda:** Used for running serverless functions, such as our cron jobs.
-  <!-- - **GitHub Actions:** For our Continuous Integration and Continuous Deployment (CI/CD) pipelines. -->
+  - **GitHub Actions:** For our Continuous Integration and Continuous Deployment (CI/CD) pipelines.
   - **Husky:** To manage and run Git hooks, ensuring code quality before commits.
   - **Biome:** A high-performance toolchain for linting, formatting, and more.
   - **pnpm:** A fast, disk space-efficient package manager.
